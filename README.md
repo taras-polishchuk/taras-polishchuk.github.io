@@ -74,4 +74,4 @@ The project repos each have a `.github/workflows/deploy.yml` that runs on push a
 - GitHub: [@taras-polishchuk](https://github.com/taras-polishchuk)
 - LinkedIn: [taras-p-349902213](https://www.linkedin.com/in/taras-p-349902213/)
 - Telegram: [@taras_pie](https://t.me/taras_pie)
-- Email: trs.plshchk@gmail.com
+- Email: poli.taras.shchuk@gmail.com
