@@ -43,7 +43,7 @@ taras-polishchuk.github.io/
 ├── goddest/                # "Goddest" — landing page layout project
 ├── monblan/                # "Monblan" — landing page layout project
 ├── uber/                   # "Uber" — landing page layout project
-└── uberem/                 # "Uber EM" — responsive em-based version of Uber layout
+└── uberem/                 # "Uberem" — cleaning services company website
 ```
 
 ---
@@ -73,7 +73,7 @@ Each sub-folder is a self-contained website layout built from a design mockup:
 | **Goddest** | `/goddest` | Stylish goods/lifestyle landing page |
 | **Monblan** | `/monblan` | Product landing page |
 | **Uber** | `/uber` | Uber-inspired landing page layout |
-| **Uber EM** | `/uberem` | Responsive em-unit version of the Uber layout |
+| **Uberem** | `/uberem` | Cleaning services company website with work examples and service explanations |
 | **CV** | `/cv` | Interactive résumé page with scroll-triggered skill animations |
 
 ---
