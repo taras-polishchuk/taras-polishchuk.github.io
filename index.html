@@ -807,6 +807,57 @@ a { color: inherit; text-decoration: none; cursor: none; }
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ============================
+   AUDIO TOGGLE
+   ============================ */
+#audioToggle {
+  position: fixed;
+  bottom: var(--space-8);
+  right: var(--space-8);
+  z-index: 201;
+  width: 40px; height: 40px;
+  border-radius: var(--radius-full);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: none;
+  transition:
+    color var(--transition-interactive),
+    background var(--transition-interactive),
+    border-color var(--transition-interactive),
+    box-shadow var(--transition-interactive);
+}
+#audioToggle:hover {
+  color: var(--color-text);
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.14);
+}
+#audioToggle.active {
+  color: var(--color-primary);
+  border-color: rgba(124,111,255,0.35);
+  box-shadow: 0 0 20px rgba(124,111,255,0.18);
+}
+#audioToggle svg { width: 16px; height: 16px; }
+@keyframes audioRipple {
+  0%   { transform: scale(1); opacity: 0.5; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+#audioToggle.active::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-primary);
+  animation: audioRipple 2.2s ease-out infinite;
+  pointer-events: none;
+}
+@media (max-width: 600px) {
+  #audioToggle { bottom: var(--space-5); right: var(--space-5); }
+}
 </style>
 </head>
 <body>
@@ -1412,6 +1463,190 @@ if (window.matchMedia('(hover: none)').matches) {
   document.body.style.cursor = 'auto';
   document.querySelectorAll('*').forEach(el => el.style.cursor = '');
 }
+
+/* ==============================================================
+   AUDIO SYSTEM
+   ============================================================== */
+(function initAudio() {
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return;
+
+  let ac = null, master = null;
+  let ambiStarted = false, enabled = false;
+
+  function boot() {
+    if (ac) { if (ac.state === 'suspended') ac.resume(); return; }
+    ac = new AC();
+    master = ac.createGain();
+    master.gain.value = 0;
+    master.connect(ac.destination);
+  }
+
+  // ── Ambient pad — Ab minor chord, procedural convolver reverb ──
+  function startAmbient() {
+    if (ambiStarted) return;
+    ambiStarted = true;
+    const now = ac.currentTime;
+
+    const convolver = ac.createConvolver();
+    const irLen = ac.sampleRate * 3.5;
+    const ir = ac.createBuffer(2, irLen, ac.sampleRate);
+    for (let c = 0; c < 2; c++) {
+      const d = ir.getChannelData(c);
+      for (let i = 0; i < irLen; i++)
+        d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / irLen, 2.2);
+    }
+    convolver.buffer = ir;
+
+    const wetGain = ac.createGain(); wetGain.gain.value = 0.45;
+    convolver.connect(wetGain); wetGain.connect(master);
+
+    const lpf = ac.createBiquadFilter();
+    lpf.type = 'lowpass'; lpf.frequency.value = 700; lpf.Q.value = 0.4;
+    lpf.connect(convolver);
+
+    const dryOut = ac.createGain(); dryOut.gain.value = 0.55;
+    dryOut.connect(master);
+
+    const ambiOut = ac.createGain(); ambiOut.gain.value = 0.13;
+    ambiOut.connect(lpf); ambiOut.connect(dryOut);
+
+    // Ab Cb Eb across 3 octaves
+    const notes = [
+      { f: 51.9,  t: 'sine',     g: 0.55 },
+      { f: 61.7,  t: 'sine',     g: 0.30 },
+      { f: 77.8,  t: 'sine',     g: 0.28 },
+      { f: 103.8, t: 'sine',     g: 0.42 },
+      { f: 123.5, t: 'triangle', g: 0.18 },
+      { f: 155.6, t: 'sine',     g: 0.20 },
+      { f: 207.7, t: 'sine',     g: 0.14 },
+      { f: 247.0, t: 'triangle', g: 0.07 },
+    ];
+
+    notes.forEach(({ f, t, g }, i) => {
+      const osc = ac.createOscillator(), gain = ac.createGain();
+      const lfo = ac.createOscillator(), lfoGain = ac.createGain();
+      const aLfo = ac.createOscillator(), aGain = ac.createGain();
+
+      osc.type = t; osc.frequency.value = f;
+
+      lfo.frequency.value = 0.06 + i * 0.025; lfoGain.gain.value = 0.12;
+      lfo.connect(lfoGain); lfoGain.connect(osc.frequency);
+
+      aLfo.frequency.value = 0.04 + i * 0.018; aGain.gain.value = g * 0.28;
+      aLfo.connect(aGain); aGain.connect(gain.gain);
+
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(g, now + 4 + i * 1.4);
+      osc.connect(gain); gain.connect(ambiOut);
+      osc.start(now); lfo.start(now); aLfo.start(now);
+    });
+  }
+
+  // ── SFX helpers ───────────────────────────────────────
+  function sTone(freq, type, dur, vol, freqEnd) {
+    if (!enabled || !ac) return;
+    const t = ac.currentTime;
+    const osc = ac.createOscillator(), g = ac.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t);
+    if (freqEnd) osc.frequency.exponentialRampToValueAtTime(freqEnd, t + dur);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(vol, t + 0.004);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    osc.connect(g); g.connect(master);
+    osc.start(); osc.stop(t + dur + 0.015);
+  }
+
+  function sNoise(dur, vol, f1, f2, filterType) {
+    if (!enabled || !ac) return;
+    const t = ac.currentTime, sr = ac.sampleRate;
+    const buf = ac.createBuffer(1, sr * dur, sr);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    const src = ac.createBufferSource(); src.buffer = buf;
+    const flt = ac.createBiquadFilter();
+    flt.type = filterType;
+    flt.frequency.setValueAtTime(f1, t);
+    flt.frequency.exponentialRampToValueAtTime(f2, t + dur);
+    flt.Q.value = 1.5;
+    const g = ac.createGain();
+    g.gain.setValueAtTime(vol, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(flt); flt.connect(g); g.connect(master);
+    src.start(); src.stop(t + dur);
+  }
+
+  const sfx = {
+    hover()  { sTone(1800, 'sine', 0.07, 0.022, 2400); },
+    click()  { sTone(2000, 'sine', 0.10, 0.055, 700); sTone(900, 'triangle', 0.05, 0.025); },
+    open()   { sNoise(0.65, 0.07, 400, 2800, 'bandpass'); sTone(110, 'sine', 1.1, 0.045, 220); },
+    close()  { sNoise(0.50, 0.06, 2400, 300, 'bandpass'); sTone(440, 'sine', 0.55, 0.04, 110); },
+  };
+
+  // ── Toggle button ────────────────────────────────────────
+  const ICON_ON  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a10 10 0 0 1 0 14"/></svg>`;
+  const ICON_OFF = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="22" y1="9" x2="16" y2="15"/><line x1="16" y1="9" x2="22" y2="15"/></svg>`;
+
+  const btn = document.createElement('button');
+  btn.id = 'audioToggle';
+  btn.setAttribute('aria-label', 'Toggle ambient audio');
+  btn.title = 'Ambient audio';
+  btn.innerHTML = ICON_OFF;
+  document.body.appendChild(btn);
+
+  const cRing = document.getElementById('cursorRing');
+  btn.addEventListener('mouseenter', () => cRing && cRing.classList.add('hover'));
+  btn.addEventListener('mouseleave', () => cRing && cRing.classList.remove('hover'));
+
+  btn.addEventListener('click', () => {
+    boot();
+    if (enabled) {
+      enabled = false;
+      master.gain.setTargetAtTime(0, ac.currentTime, 0.5);
+      btn.innerHTML = ICON_OFF;
+      btn.classList.remove('active');
+    } else {
+      enabled = true;
+      startAmbient();
+      master.gain.setTargetAtTime(1, ac.currentTime, 2.0);
+      btn.innerHTML = ICON_ON;
+      btn.classList.add('active');
+    }
+  });
+
+  // ── Hook SFX to page interactions ───────────────────────────
+  document.addEventListener('mousedown', e => {
+    if (!enabled) return;
+    if (e.target.closest('a, button, [role="button"]')) sfx.click();
+  }, true);
+
+  document.querySelectorAll('a, button, [role="button"], .social-icon').forEach(el => {
+    el.addEventListener('mouseenter', () => { if (enabled) sfx.hover(); });
+  });
+
+  // Overlay open / close via MutationObserver
+  let overlayWasActive = false;
+  const overlayEl = document.getElementById('projects-overlay');
+  if (overlayEl) {
+    new MutationObserver(() => {
+      const isActive = overlayEl.classList.contains('active');
+      if (isActive  && !overlayWasActive) { if (enabled) sfx.open();  }
+      if (!isActive && overlayWasActive)  { if (enabled) sfx.close(); }
+      overlayWasActive = isActive;
+    }).observe(overlayEl, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  // Add hover SFX to project cards when grid is populated
+  const gridEl = document.getElementById('projectsGrid');
+  if (gridEl) {
+    new MutationObserver(() => {
+      gridEl.querySelectorAll('.project-card').forEach(el => {
+        el.addEventListener('mouseenter', () => { if (enabled) sfx.hover(); });
+      });
+    }).observe(gridEl, { childList: true });
+  }
+})();
 </script>
 </body>
 </html>
