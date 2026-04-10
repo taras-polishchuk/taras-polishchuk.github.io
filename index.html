@@ -785,6 +785,23 @@ a { color: inherit; text-decoration: none; cursor: none; }
   0%, 100% { transform: translateY(0); opacity: 1; }
   60% { transform: translateY(8px); opacity: 0.3; }
 }
+.scroll-hint-swipe {
+  display: none;
+  color: rgba(255,255,255,0.35);
+  animation: swipeArrow 2s ease-in-out infinite;
+}
+.scroll-hint-swipe svg { width: 22px; height: 22px; }
+@keyframes swipeArrow {
+  0%, 100% { transform: translateY(0); opacity: 0.7; }
+  50% { transform: translateY(5px); opacity: 0.3; }
+}
+.scroll-hint-text--touch { display: none; }
+@media (hover: none) {
+  .scroll-hint-mouse { display: none; }
+  .scroll-hint-swipe { display: block; }
+  .scroll-hint-text--mouse { display: none; }
+  .scroll-hint-text--touch { display: block; }
+}
 
 /* ============================
    RESPONSIVE
@@ -881,7 +898,11 @@ a { color: inherit; text-decoration: none; cursor: none; }
 <!-- Scroll hint -->
 <div class="scroll-hint" id="scrollHint">
   <div class="scroll-hint-mouse"><div class="scroll-hint-dot"></div></div>
-  <div class="scroll-hint-text">Scroll or click to explore</div>
+  <div class="scroll-hint-swipe">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+  </div>
+  <div class="scroll-hint-text scroll-hint-text--mouse">Scroll or click to explore</div>
+  <div class="scroll-hint-text scroll-hint-text--touch">Swipe to explore</div>
 </div>
 
 <!-- Main -->
