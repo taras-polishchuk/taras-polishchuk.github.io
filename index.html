@@ -2234,13 +2234,9 @@ if (window.matchMedia('(hover: none)').matches) {
 
 <script>
 (function () {
-  const fromUpwork =
-    document.referrer.includes('upwork.com') ||
-    new URLSearchParams(location.search).get('ref') === 'upwork';
+  if (new URLSearchParams(location.search).get('ref') !== 'frontend') return;
 
-  if (fromUpwork) return; // default HTML is already Shopify/Upwork version
-
-  // General frontend developer version — for non-Upwork visitors
+  // Frontend developer version — shown only with ?ref=frontend
   const titleEl = document.getElementById('card-title-text');
   if (titleEl) titleEl.textContent = 'Frontend Developer • Web Apps & UI';
 
