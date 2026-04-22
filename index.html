@@ -1173,12 +1173,12 @@ a { color: inherit; text-decoration: none; cursor: none; }
         <h1 class="card-name">Taras Polishchuk</h1>
         <div class="card-title">
           <span class="status-dot" aria-hidden="true"></span>
-          <span>Shopify Developer • Product Pages & Custom UI</span>
+          <span id="card-title-text">Shopify Developer • Product Pages & Custom UI</span>
         </div>
       </div>
 
       <!-- Tags -->
-      <div class="card-tags" role="list">
+      <div class="card-tags" id="card-tags" role="list">
         <span class="tag" role="listitem" data-tip="Shopify's template language — variables, filters, loops, conditionals">Liquid</span>
         <span class="tag" role="listitem" data-tip="OS 2.0 themes: Dawn, custom themes, section schema, metafields">Shopify Theme Dev</span>
         <span class="tag" role="listitem" data-tip="Product info, variants, media, add-to-cart, reviews integration">Product Pages (PDP)</span>
@@ -1189,7 +1189,7 @@ a { color: inherit; text-decoration: none; cursor: none; }
         <span class="tag" role="listitem" data-tip="Utility-first CSS — fast, consistent, responsive styling">Tailwind CSS</span>
       </div>
 
-      <p class="card-availability">Available for freelance&nbsp;·&nbsp;Shopify projects</p>
+      <p class="card-availability" id="card-availability">Available for freelance&nbsp;·&nbsp;Shopify projects</p>
 
       <div class="card-divider" aria-hidden="true"></div>
 
@@ -2229,6 +2229,39 @@ if (window.matchMedia('(hover: none)').matches) {
     if (Math.abs(delta) < 8) return; // ignore micro-swipes
     scrollWarp(delta, Math.abs(delta) / dt);
   }, { passive: true });
+})();
+</script>
+
+<script>
+(function () {
+  const fromUpwork =
+    document.referrer.includes('upwork.com') ||
+    new URLSearchParams(location.search).get('ref') === 'upwork';
+
+  if (fromUpwork) return; // default HTML is already Shopify/Upwork version
+
+  // General frontend developer version — for non-Upwork visitors
+  const titleEl = document.getElementById('card-title-text');
+  if (titleEl) titleEl.textContent = 'Frontend Developer • Web Apps & UI';
+
+  const tagsEl = document.getElementById('card-tags');
+  if (tagsEl) {
+    tagsEl.innerHTML = [
+      ['HTML / CSS',        'Semantic markup, Flexbox, Grid, animations, responsive layouts'],
+      ['JavaScript (ES6+)', 'Vanilla JS, DOM, async/await, fetch API, modular code'],
+      ['Svelte',            'Svelte 5 runes — reactive apps, stores, component architecture'],
+      ['TypeScript',        'Type-safe JavaScript for larger apps and component libraries'],
+      ['Responsive Design', 'Mobile-first layouts that work across all screen sizes'],
+      ['CSS Animations',    'Scroll-triggered effects, transitions, keyframe animations'],
+      ['Performance',       'Lazy loading, render-blocking fixes, Core Web Vitals'],
+      ['Tailwind CSS',      'Utility-first CSS — fast, consistent, responsive styling'],
+    ].map(([label, tip]) =>
+      `<span class="tag" role="listitem" data-tip="${tip}">${label}</span>`
+    ).join('');
+  }
+
+  const availEl = document.getElementById('card-availability');
+  if (availEl) availEl.remove();
 })();
 </script>
 </body>
