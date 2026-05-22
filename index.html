@@ -1439,8 +1439,12 @@ const ANALYTICS_CONFIG = {
 const analytics = window.analytics = (() => {
   const params = new URLSearchParams(window.location.search);
   const trackingKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid', 'msclkid'];
-  const variant = params.get('ref') === 'frontend' ? 'frontend' : 'default';
   const refValue = params.get('ref') || '';
+  const variant = refValue === 'frontend'
+    ? 'frontend'
+    : refValue === 'shopify'
+      ? 'shopify'
+      : 'default';
   const pageSessionStartedAt = Date.now();
   let engagedSent = false;
 
