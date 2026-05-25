@@ -223,7 +223,7 @@ a { color: inherit; text-decoration: none; cursor: none; }
 .hero-card {
   position: relative;
   width: 100%;
-  max-width: 461px;
+  max-width: 540px;
   padding: var(--space-10) var(--space-8);
   background: linear-gradient(135deg, rgba(22,22,26,0.9) 0%, rgba(16,16,20,0.95) 100%);
   border: 1px solid rgba(255,255,255,0.08);
@@ -339,14 +339,21 @@ a { color: inherit; text-decoration: none; cursor: none; }
   color: var(--color-text);
 }
 .card-title {
-  display: flex;
-  align-items: center;
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
   gap: var(--space-2);
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
   font-size: var(--text-sm);
   font-weight: 400;
   color: var(--color-text-muted);
   letter-spacing: 0.02em;
+  line-height: 1.32;
+  text-align: left;
 }
+.card-title > :last-child { min-width: 0; }
 .status-dot {
   width: 6px; height: 6px;
   border-radius: 50%;
@@ -354,6 +361,7 @@ a { color: inherit; text-decoration: none; cursor: none; }
   box-shadow: 0 0 8px var(--color-accent);
   animation: pulse 2.5s ease-in-out infinite;
   flex-shrink: 0;
+  margin-top: 0.38em;
 }
 @keyframes pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
@@ -424,9 +432,15 @@ a { color: inherit; text-decoration: none; cursor: none; }
   font-weight: 500;
   color: #36ac61b2;
   letter-spacing: 0.04em;
-  display: flex;
-  align-items: center;
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
   gap: var(--space-2);
+  width: fit-content;
+  /* max-width: min(100%, 31ch); */
+  margin-inline: auto;
+  line-height: 1.35;
+  text-align: left;
 }
 .card-availability::before {
   content: '';
@@ -438,6 +452,16 @@ a { color: inherit; text-decoration: none; cursor: none; }
   box-shadow: 0 0 4px #4ade80;
   flex-shrink: 0;
   animation: pulse 2.5s ease-in-out infinite;
+  margin-top: 0.4em;
+}
+
+.card-capability {
+  max-width: 34ch;
+  margin: 0;
+  font-size: var(--text-xs);
+  line-height: 1.65;
+  color: var(--color-text-muted);
+  text-align: center;
 }
 
 /* Email */
@@ -1173,7 +1197,7 @@ a { color: inherit; text-decoration: none; cursor: none; }
         <h1 class="card-name">Taras Polishchuk</h1>
         <div class="card-title">
           <span class="status-dot" aria-hidden="true"></span>
-          <span id="card-title-text">Shopify Developer • Product Pages & Custom UI</span>
+          <span id="card-title-text">Shopify Developer • UI Systems & Workflow Logic</span>
         </div>
       </div>
 
@@ -1181,15 +1205,17 @@ a { color: inherit; text-decoration: none; cursor: none; }
       <div class="card-tags" id="card-tags" role="list">
         <span class="tag" role="listitem" data-tip="Shopify's template language — variables, filters, loops, conditionals">Liquid</span>
         <span class="tag" role="listitem" data-tip="OS 2.0 themes: Dawn, custom themes, section schema, metafields">Shopify Theme Dev</span>
-        <span class="tag" role="listitem" data-tip="Product info, variants, media, add-to-cart, reviews integration">Product Pages (PDP)</span>
         <span class="tag" role="listitem" data-tip="New sections with full theme editor settings — no code for the client">Custom Sections</span>
-        <span class="tag" role="listitem" data-tip="Layout fixes, spacing, typography, responsiveness, animations">UI / UX Improvements</span>
+        <span class="tag" role="listitem" data-tip="Checkout UI Extensions, app blocks, and platform-level storefront integrations">Checkout Extensions</span>
+        <span class="tag" role="listitem" data-tip="API integrations, Klaviyo tracking, Ajax API, and webhook-style data flow thinking">API / Webhooks</span>
+        <span class="tag" role="listitem" data-tip="Conditional logic, data mapping, and repeatable implementation flows across projects">Workflow Logic</span>
         <span class="tag" role="listitem" data-tip="Image lazy loading, render-blocking fixes, Core Web Vitals">Performance</span>
-        <span class="tag" role="listitem" data-tip="Vanilla JS, fetch API, cart AJAX, custom interactivity">JavaScript (ES6+)</span>
-        <span class="tag" role="listitem" data-tip="Utility-first CSS — fast, consistent, responsive styling">Tailwind CSS</span>
+        <span class="tag" role="listitem" data-tip="Copilot and Claude in daily workflow with manual validation and structured prompts">AI-assisted Delivery</span>
       </div>
 
-      <p class="card-availability" id="card-availability">Available for freelance&nbsp;·&nbsp;Shopify projects</p>
+      <p class="card-availability" id="card-availability">Available for Shopify, automation, and integration projects</p>
+
+      <p class="card-capability" id="card-capability">Also build AI-assisted research, documentation, and workflow systems around real engineering tasks.</p>
 
       <div class="card-divider" aria-hidden="true"></div>
 
@@ -2650,7 +2676,42 @@ if (window.matchMedia('(hover: none)').matches) {
 
 <script>
 (function () {
-  if (new URLSearchParams(location.search).get('ref') !== 'frontend') return;
+  const ref = new URLSearchParams(location.search).get('ref');
+
+  if (ref === 'automation') {
+    const titleEl = document.getElementById('card-title-text');
+    if (titleEl) titleEl.textContent = 'Automation Developer • Workflow Systems & Integrations';
+
+    const tagsEl = document.getElementById('card-tags');
+    if (tagsEl) {
+      tagsEl.innerHTML = [
+        ['API / Webhooks',          'Third-party integrations, event payloads, request flows, and service-to-service thinking'],
+        ['Workflow Automation',     'Repeatable execution flows, conditional logic, and structured delivery systems'],
+        ['AI-assisted Delivery',    'Copilot and Claude in daily workflow with manual validation and clear task framing'],
+        ['Prompt Systems',          'Reusable prompts and context structures for technical tasks and documentation'],
+        ['Agent Orchestration',     'Task routing across narrow agents for research, debugging, and execution'],
+        ['Data Mapping',            'Transforming business inputs into structured outputs across tools and processes'],
+        ['JavaScript (ES6+)',       'Core implementation language for integrations, scripting, and logic-heavy workflows'],
+        ['Research Workflows',      'Structured vacancy analysis, documentation, and planning flows backed by source evidence'],
+      ].map(([label, tip]) =>
+        `<span class="tag" role="listitem" data-tip="${tip}">${label}</span>`
+      ).join('');
+    }
+
+    const availEl = document.getElementById('card-availability');
+    if (availEl) {
+      availEl.innerHTML = 'Available for automation, integration, and AI-adjacent projects';
+    }
+
+    const capabilityEl = document.getElementById('card-capability');
+    if (capabilityEl) {
+      capabilityEl.textContent = 'Best fit for workflow automation, technical integrations, internal tools, and AI-assisted delivery systems.';
+    }
+
+    return;
+  }
+
+  if (ref !== 'frontend') return;
 
   // Frontend developer version — shown only with ?ref=frontend
   const titleEl = document.getElementById('card-title-text');
@@ -2674,6 +2735,9 @@ if (window.matchMedia('(hover: none)').matches) {
 
   const availEl = document.getElementById('card-availability');
   if (availEl) availEl.remove();
+
+  const capabilityEl = document.getElementById('card-capability');
+  if (capabilityEl) capabilityEl.remove();
 })();
 </script>
 </body>
