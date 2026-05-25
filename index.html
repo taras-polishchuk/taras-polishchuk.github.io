@@ -1310,7 +1310,7 @@ window.ANALYTICS_CONFIG = Object.assign({
   posthogApiKey: 'phc_nioFGgbzJqft35dKUL79MaXnLjynvGTPobmQf3fQFoND',
   posthogApiHost: 'https://eu.i.posthog.com',
   gaTrackingId: 'G-8RQ3J37DYE',
-  debug: true
+  debug: false
 }, window.ANALYTICS_CONFIG || {});
 </script>
 
@@ -1745,7 +1745,7 @@ const analytics = window.analytics = (() => {
     }
 
     if (window.gtag && ANALYTICS_CONFIG.gaTrackingId) {
-      const gaPayload = ANALYTICS_CONFIG.debug ? { ...payload, debug_mode: true } : payload;
+      const gaPayload = ANALYTICS_CONFIG.debug ? { ...payload, debug_mode: false } : payload;
       window.gtag('event', eventName, gaPayload);
     }
   }
