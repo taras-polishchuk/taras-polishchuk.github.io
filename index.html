@@ -1745,7 +1745,8 @@ const analytics = window.analytics = (() => {
     }
 
     if (window.gtag && ANALYTICS_CONFIG.gaTrackingId) {
-      window.gtag('event', eventName, payload);
+      const gaPayload = ANALYTICS_CONFIG.debug ? { ...payload, debug_mode: true } : payload;
+      window.gtag('event', eventName, gaPayload);
     }
   }
 
