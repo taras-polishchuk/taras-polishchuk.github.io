@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shopify Metafields & Metaobjects: The Practical CMS Guide — Taras Polishchuk</title>
+<meta name="description" content="How to use Shopify Metafields and Metaobjects as a flexible CMS — definitions, Liquid access, Storefront API, and real patterns for building dynamic theme content.">
+<link rel="canonical" href="https://taras-polishchuk.github.io/blog/shopify-metafields-metaobjects-guide.html">
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://taras-polishchuk.github.io/blog/shopify-metafields-metaobjects-guide.html">
+<meta property="og:title" content="Shopify Metafields & Metaobjects: The Practical CMS Guide">
+<meta property="og:description" content="How to use Shopify Metafields and Metaobjects as a flexible CMS — definitions, Liquid access, Storefront API, and real patterns for building dynamic theme content.">
+<meta property="og:image" content="https://taras-polishchuk.github.io/assets/Taras-Polishchuk.jpg">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-04-18">
+<meta property="article:author" content="Taras Polishchuk">
+<meta property="article:tag" content="Shopify">
+<meta property="article:tag" content="Metafields">
+<meta property="article:tag" content="Metaobjects">
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Shopify Metafields & Metaobjects: The Practical CMS Guide">
+<meta name="twitter:description" content="How to use Shopify Metafields and Metaobjects as a flexible CMS — definitions, Liquid access, Storefront API, and real patterns.">
+<meta name="twitter:image" content="https://taras-polishchuk.github.io/assets/Taras-Polishchuk.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,700,800,900&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Shopify Metafields & Metaobjects: The Practical CMS Guide",
+  "description": "How to use Shopify Metafields and Metaobjects as a flexible CMS — definitions, Liquid access, Storefront API, and real patterns for building dynamic theme content.",
+  "image": "https://taras-polishchuk.github.io/assets/Taras-Polishchuk.jpg",
+  "url": "https://taras-polishchuk.github.io/blog/shopify-metafields-metaobjects-guide.html",
+  "datePublished": "2026-04-18",
+  "dateModified": "2026-04-18",
+  "inLanguage": "en-US",
+  "author": {
+    "@type": "Person",
+    "name": "Taras Polishchuk",
+    "url": "https://taras-polishchuk.github.io/",
+    "jobTitle": "Shopify Theme Developer"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Taras Polishchuk",
+    "url": "https://taras-polishchuk.github.io/"
+  },
+  "keywords": ["shopify metafields", "shopify metaobjects", "shopify metafields guide", "shopify custom content", "shopify liquid metafields", "shopify cms"]
+}
+</script>
+
+<style>
+:root {
+  --text-xs:   clamp(0.75rem,  0.7rem  + 0.25vw, 0.875rem);
+  --text-sm:   clamp(0.875rem, 0.8rem  + 0.35vw, 1rem);
+  --text-base: clamp(1rem,     0.95rem + 0.25vw, 1.125rem);
+  --text-lg:   clamp(1.125rem, 1rem    + 0.75vw, 1.5rem);
+  --text-xl:   clamp(1.5rem,   1.2rem  + 1.25vw, 2.25rem);
+  --text-2xl:  clamp(2rem,     1.2rem  + 2.5vw,  3.5rem);
+
+  --space-1:  0.25rem; --space-2:  0.5rem;  --space-3:  0.75rem;
+  --space-4:  1rem;    --space-5:  1.25rem; --space-6:  1.5rem;
+  --space-8:  2rem;    --space-10: 2.5rem;  --space-12: 3rem;
+  --space-16: 4rem;    --space-20: 5rem;
+
+  --radius-sm: 0.375rem; --radius-md: 0.5rem; --radius-lg: 0.75rem;
+  --radius-xl: 1rem;     --radius-2xl: 1.5rem; --radius-full: 9999px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --color-bg:        #0a0a0b;
+  --color-surface:   #111113;
+  --color-border:    rgba(255,255,255,0.07);
+  --color-divider:   rgba(255,255,255,0.04);
+  --color-text:      #e8e8f0;
+  --color-text-muted:  rgba(232,232,240,0.5);
+  --color-text-faint:  rgba(232,232,240,0.25);
+  --color-primary:   #7c6fff;
+  --color-accent:    #4eecc8;
+
+  --font-display: 'Cabinet Grotesk', 'Inter', sans-serif;
+  --font-body:    'Inter', sans-serif;
+  --font-mono:    'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+body {
+  min-height: 100dvh;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  overflow-x: hidden;
+  line-height: 1.75;
+}
+a { color: inherit; text-decoration: none; }
+::selection { background: rgba(124,111,255,0.3); color: var(--color-text); }
+:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; border-radius: var(--radius-sm); }
+
+body::before {
+  content: '';
+  position: fixed;
+  top: -20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px; height: 600px;
+  background: radial-gradient(ellipse, rgba(124,111,255,0.05) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-10) var(--space-6) var(--space-20);
+}
+
+.nav-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: rgba(255,255,255,0.02);
+  margin-bottom: var(--space-10);
+  transition: color 180ms var(--ease-out), border-color 180ms var(--ease-out), background 180ms var(--ease-out);
+}
+.nav-back:hover {
+  color: var(--color-text);
+  border-color: rgba(124,111,255,0.25);
+  background: rgba(124,111,255,0.06);
+}
+
+.article-header { margin-bottom: var(--space-12); }
+.article-eyebrow {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  margin-bottom: var(--space-3);
+}
+.article-title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: var(--space-5);
+}
+.article-lead {
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+  font-weight: 300;
+  line-height: 1.6;
+  margin-bottom: var(--space-6);
+}
+.article-byline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-divider);
+  flex-wrap: wrap;
+}
+.byline-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  flex-shrink: 0;
+}
+.byline-avatar img { width: 100%; height: 100%; object-fit: cover; object-position: 50% center; }
+.byline-name { font-size: var(--text-sm); font-weight: 600; }
+.byline-meta { font-size: var(--text-xs); color: var(--color-text-faint); }
+.byline-tags { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-left: auto; }
+.tag {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px var(--space-3);
+  border-radius: var(--radius-full);
+  background: rgba(124,111,255,0.1);
+  border: 1px solid rgba(124,111,255,0.2);
+  color: var(--color-primary);
+}
+
+.article-body { font-size: var(--text-base); line-height: 1.8; }
+.article-body h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: var(--color-text);
+  margin: var(--space-12) 0 var(--space-4);
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--color-divider);
+}
+.article-body h2:first-child { margin-top: 0; }
+.article-body h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: var(--color-text);
+  margin: var(--space-8) 0 var(--space-3);
+}
+.article-body p { margin-bottom: var(--space-5); color: var(--color-text-muted); }
+.article-body p strong { color: var(--color-text); font-weight: 600; }
+.article-body a {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(124,111,255,0.35);
+  transition: text-decoration-color 180ms;
+}
+.article-body a:hover { text-decoration-color: var(--color-primary); }
+.article-body ul, .article-body ol {
+  padding-left: var(--space-5);
+  margin-bottom: var(--space-5);
+  color: var(--color-text-muted);
+}
+.article-body li { margin-bottom: var(--space-2); line-height: 1.7; }
+.article-body li strong { color: var(--color-text); font-weight: 600; }
+
+.article-body pre {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5) var(--space-6);
+  overflow-x: auto;
+  margin: var(--space-6) 0;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  line-height: 1.7;
+  position: relative;
+}
+.article-body pre::before {
+  content: attr(data-lang);
+  position: absolute;
+  top: var(--space-3); right: var(--space-4);
+  font-size: 0.7em; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--color-text-faint);
+  font-family: var(--font-body);
+}
+.article-body code {
+  color: var(--color-accent);
+  background: rgba(78,236,200,0.07);
+  padding: 0.15em 0.45em;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+}
+.article-body pre code { color: var(--color-text); background: none; padding: 0; font-size: 1em; }
+.code-comment { color: rgba(232,232,240,0.3); }
+.code-string  { color: var(--color-accent); }
+.code-keyword { color: var(--color-primary); }
+.code-fn      { color: #e4b870; }
+.code-tag     { color: #7dd3fc; }
+.code-filter  { color: #f9a8d4; }
+
+.callout {
+  border-left: 3px solid var(--color-primary);
+  background: rgba(124,111,255,0.06);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  padding: var(--space-4) var(--space-5);
+  margin: var(--space-6) 0;
+}
+.callout--accent { border-left-color: var(--color-accent); background: rgba(78,236,200,0.05); }
+.callout--warning { border-left-color: #f59e0b; background: rgba(245,158,11,0.05); }
+.callout p { margin-bottom: 0; color: var(--color-text-muted); }
+.callout strong { color: var(--color-text); }
+
+/* Comparison table */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--space-6) 0;
+  font-size: var(--text-sm);
+}
+.compare-table th {
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+  border-bottom: 1px solid var(--color-border);
+}
+.compare-table td {
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-divider);
+  vertical-align: top;
+  line-height: 1.5;
+}
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table td:first-child { font-weight: 600; color: var(--color-text); white-space: nowrap; }
+.compare-table strong { color: var(--color-text); }
+
+.cta-block {
+  margin-top: var(--space-16);
+  padding: var(--space-10) var(--space-8);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cta-block::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+}
+.cta-label {
+  font-size: var(--text-xs); font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--color-primary); margin-bottom: var(--space-3);
+}
+.cta-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl); font-weight: 800;
+  letter-spacing: -0.03em; margin-bottom: var(--space-3);
+}
+.cta-desc {
+  font-size: var(--text-sm); color: var(--color-text-muted);
+  max-width: 44ch; margin: 0 auto var(--space-6); line-height: 1.6;
+}
+.cta-actions { display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  font-size: var(--text-sm); font-weight: 600;
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-lg);
+  background: var(--color-primary); color: #fff;
+  transition: opacity 180ms, transform 180ms var(--ease-out), box-shadow 180ms var(--ease-out);
+  box-shadow: 0 4px 24px rgba(124,111,255,0.3);
+}
+.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 8px 30px rgba(124,111,255,0.4); }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  font-size: var(--text-sm); font-weight: 500;
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted); background: rgba(255,255,255,0.02);
+  transition: color 180ms, border-color 180ms, background 180ms;
+}
+.btn-secondary:hover { color: var(--color-text); border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.04); }
+
+.page-footer {
+  margin-top: var(--space-12);
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--color-divider);
+  display: flex; align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6); flex-wrap: wrap;
+}
+.footer-author { display: flex; align-items: center; gap: var(--space-3); }
+.footer-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  overflow: hidden; border: 1px solid var(--color-border);
+  flex-shrink: 0; background: var(--color-surface);
+}
+.footer-avatar img { width: 100%; height: 100%; object-fit: cover; object-position: 50% center; }
+.footer-name { font-size: var(--text-sm); font-weight: 600; color: var(--color-text); }
+.footer-role { font-size: var(--text-xs); color: var(--color-text-faint); }
+.footer-back {
+  font-size: var(--text-xs); color: var(--color-text-faint);
+  display: flex; align-items: center; gap: var(--space-1);
+  transition: color 180ms;
+}
+.footer-back:hover { color: var(--color-text-muted); }
+
+@media (max-width: 600px) {
+  .page-wrapper { padding: var(--space-6) var(--space-5) var(--space-16); }
+  .cta-block { padding: var(--space-8) var(--space-5); }
+  .byline-tags { margin-left: 0; margin-top: var(--space-2); }
+  .compare-table { font-size: var(--text-xs); }
+}
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <a
+    href="https://taras-polishchuk.github.io/?ref=shopify&utm_source=blog&utm_medium=article&utm_campaign=portfolio_profile&utm_content=back_nav_metafields"
+    class="nav-back"
+  >
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Portfolio
+  </a>
+
+  <article itemscope itemtype="https://schema.org/BlogPosting">
+    <header class="article-header">
+      <div class="article-eyebrow">Shopify Development</div>
+      <h1 class="article-title" itemprop="headline">Shopify Metafields &amp; Metaobjects: The Practical CMS Guide</h1>
+      <p class="article-lead" itemprop="description">Metafields and Metaobjects are Shopify's native answer to "I need more data on this product/page than the default fields allow." Here's how the whole system fits together — and how I use it to build flexible, content-rich themes without custom apps.</p>
+      <div class="article-byline">
+        <div class="byline-avatar">
+          <img src="../assets/Taras-Polishchuk.jpg" alt="Taras Polishchuk — Shopify Developer" width="40" height="40" itemprop="image">
+        </div>
+        <div>
+          <div class="byline-name" itemprop="author" itemscope itemtype="https://schema.org/Person">
+            <span itemprop="name">Taras Polishchuk</span>
+          </div>
+          <div class="byline-meta">
+            <time datetime="2026-04-18" itemprop="datePublished">April 18, 2026</time>
+            &nbsp;·&nbsp; 9 min read
+          </div>
+        </div>
+        <div class="byline-tags">
+          <span class="tag">Shopify</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="article-body" itemprop="articleBody">
+
+      <h2>The problem they solve</h2>
+      <p>Every Shopify product has a title, description, price, images, and variants. That's often not enough. A furniture store needs materials, dimensions, and care instructions. A skincare brand needs ingredient lists, certifications, and skin-type recommendations. A B2B store needs per-customer pricing tiers and lead times.</p>
+      <p>Before Metafields were first-class citizens (properly exposed in the admin and Liquid), the workaround was stuffing this data into product descriptions with custom formatting, or building private app integrations just to hold extra fields. Both are terrible.</p>
+      <p>Metafields are Shopify's built-in solution: arbitrary key/value data attached to any resource (products, variants, collections, pages, orders, customers, the shop itself). Metaobjects take it further — they're standalone custom content types, like a headless CMS built into Shopify.</p>
+
+      <h2>Metafields vs Metaobjects — when to use which</h2>
+
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Metafields</th>
+            <th>Metaobjects</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Attached to</td>
+            <td>An existing resource (product, variant, collection, page…)</td>
+            <td>Standalone — not tied to a specific product or page</td>
+          </tr>
+          <tr>
+            <td>Best for</td>
+            <td>Extra attributes on existing content: ingredients, dimensions, specs</td>
+            <td>Independent content types: team members, testimonials, FAQs, size guides</td>
+          </tr>
+          <tr>
+            <td>Admin UI</td>
+            <td>Appears in the product/page/collection edit screen</td>
+            <td>Has its own section in Content → Metaobjects</td>
+          </tr>
+          <tr>
+            <td>References</td>
+            <td>Can reference a Metaobject or another resource</td>
+            <td>Can be referenced by metafields or other metaobjects</td>
+          </tr>
+          <tr>
+            <td>Liquid access</td>
+            <td><code>product.metafields.namespace.key</code></td>
+            <td><code>metaobject.field_key.value</code> after fetching via reference or <code>all_products</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>In practice: use <strong>Metafields</strong> to enrich existing resources, use <strong>Metaobjects</strong> when you need content that lives on its own — a library of entries a merchant manages centrally and references from multiple places.</p>
+
+      <h2>Setting up Metafield definitions</h2>
+      <p>You can create metafields ad-hoc (just set a value via API and it exists), but that's messy. The right approach is to define them first — this registers the field with a type, validation rules, and makes it appear as a proper editable field in the Shopify admin.</p>
+      <p>Go to <strong>Settings → Custom data → Products</strong> (or whichever resource) → <strong>Add definition</strong>.</p>
+      <p>What you configure per definition:</p>
+      <ul>
+        <li><strong>Namespace</strong> — a grouping prefix. Use something consistent like <code>custom</code> for merchant-managed fields or your app/theme name for programmatic ones.</li>
+        <li><strong>Key</strong> — the identifier used in Liquid: <code>product.metafields.custom.care_instructions</code></li>
+        <li><strong>Type</strong> — this matters a lot. Shopify has rich types: <code>single_line_text_field</code>, <code>multi_line_text_field</code>, <code>rich_text_field</code>, <code>number_decimal</code>, <code>boolean</code>, <code>date</code>, <code>color</code>, <code>url</code>, <code>file_reference</code>, <code>product_reference</code>, <code>metaobject_reference</code>, and list variants of most.</li>
+        <li><strong>Storefront access</strong> — must be explicitly enabled per definition if you want to read it via Storefront API or in Liquid on the frontend.</li>
+      </ul>
+
+      <div class="callout">
+        <p><strong>Type choice has downstream consequences.</strong> A <code>rich_text_field</code> returns a JSON object in Liquid, not a plain string — you need the <code>metafield_tag</code> filter or manual parsing to render it. A <code>file_reference</code> returns a file object. Choose the right type from the start; changing it later is destructive.</p>
+      </div>
+
+      <h2>Reading Metafields in Liquid</h2>
+      <p>The basic pattern is simple:</p>
+
+<pre data-lang="liquid">
+<span class="code-comment">{%- comment -%} Access a plain text metafield {%- endcomment -%}</span>
+<span class="code-tag">{{</span> product.metafields.custom.care_instructions <span class="code-tag">}}</span>
+
+<span class="code-comment">{%- comment -%} With a fallback {%- endcomment -%}</span>
+<span class="code-tag">{{</span> product.metafields.custom.care_instructions | default: <span class="code-string">'See packaging for care details'</span> <span class="code-tag">}}</span>
+
+<span class="code-comment">{%- comment -%} Conditional rendering — only output if value exists {%- endcomment -%}</span>
+<span class="code-keyword">{%- if</span> product.metafields.custom.care_instructions != blank <span class="code-keyword">-%}</span>
+  &lt;div class=<span class="code-string">"care-instructions"</span>&gt;
+    <span class="code-tag">{{</span> product.metafields.custom.care_instructions <span class="code-tag">}}</span>
+  &lt;/div&gt;
+<span class="code-keyword">{%- endif -%}</span>
+</pre>
+
+      <h3>Rich text metafields</h3>
+      <p>Rich text is stored as a Shopify-specific JSON structure. To render it as HTML, use the <code>metafield_tag</code> filter:</p>
+
+<pre data-lang="liquid">
+<span class="code-tag">{{</span> product.metafields.custom.extended_description <span class="code-filter">| metafield_tag</span> <span class="code-tag">}}</span>
+</pre>
+
+      <p>This outputs clean HTML — headings, paragraphs, lists, bold/italic — that the merchant wrote in the rich text editor. It's the closest thing to a built-in WYSIWYG for product content.</p>
+
+      <h3>File reference metafields</h3>
+      <p>A <code>file_reference</code> metafield returns a file object. For images:</p>
+
+<pre data-lang="liquid">
+<span class="code-keyword">{%- assign</span> badge = product.metafields.custom.trust_badge.value <span class="code-keyword">-%}</span>
+<span class="code-keyword">{%- if</span> badge != blank <span class="code-keyword">-%}</span>
+  <span class="code-tag">{{</span> badge | image_url: width: 120 <span class="code-filter">| image_tag</span>: alt: badge.alt, loading: <span class="code-string">'lazy'</span> <span class="code-tag">}}</span>
+<span class="code-keyword">{%- endif -%}</span>
+</pre>
+
+      <h3>List metafields</h3>
+      <p>List types return arrays, so you iterate them:</p>
+
+<pre data-lang="liquid">
+<span class="code-keyword">{%- assign</span> features = product.metafields.custom.key_features.value <span class="code-keyword">-%}</span>
+<span class="code-keyword">{%- if</span> features != blank <span class="code-keyword">-%}</span>
+  &lt;ul class=<span class="code-string">"features-list"</span>&gt;
+    <span class="code-keyword">{%- for</span> feature <span class="code-keyword">in</span> features <span class="code-keyword">-%}</span>
+      &lt;li&gt;<span class="code-tag">{{</span> feature <span class="code-tag">}}</span>&lt;/li&gt;
+    <span class="code-keyword">{%- endfor -%}</span>
+  &lt;/ul&gt;
+<span class="code-keyword">{%- endif -%}</span>
+</pre>
+
+      <h2>Metaobjects — building content types</h2>
+      <p>A Metaobject definition is a schema: you define a set of fields (each with a type), and merchants create as many entries as they need. Think of it like a custom post type in WordPress, but native to Shopify.</p>
+      <p>Example use case: a <strong>Testimonial</strong> metaobject type with fields: <code>author_name</code> (single_line_text), <code>quote</code> (multi_line_text), <code>rating</code> (number_integer), <code>product_reference</code> (product_reference).</p>
+      <p>Create the definition at <strong>Settings → Custom data → Metaobjects → Add definition</strong>. Merchants then add testimonial entries from <strong>Content → Metaobjects</strong>.</p>
+
+      <h3>Referencing Metaobjects from products</h3>
+      <p>The most common pattern: a product has a metafield of type <code>metaobject_reference</code> (or a list of them) pointing to metaobject entries. This links, say, a product to its size guide, or a collection to a set of featured testimonials.</p>
+
+<pre data-lang="liquid">
+<span class="code-comment">{%- comment -%}
+  Product has a 'size_guide' metafield
+  of type metaobject_reference → SizeGuide type
+{%- endcomment -%}</span>
+<span class="code-keyword">{%- assign</span> guide = product.metafields.custom.size_guide.value <span class="code-keyword">-%}</span>
+
+<span class="code-keyword">{%- if</span> guide != blank <span class="code-keyword">-%}</span>
+  &lt;div class=<span class="code-string">"size-guide"</span>&gt;
+    &lt;h3&gt;<span class="code-tag">{{</span> guide.fields.title.value <span class="code-tag">}}</span>&lt;/h3&gt;
+    <span class="code-tag">{{</span> guide.fields.content.value <span class="code-filter">| metafield_tag</span> <span class="code-tag">}}</span>
+  &lt;/div&gt;
+<span class="code-keyword">{%- endif -%}</span>
+</pre>
+
+      <h3>Rendering a list of Metaobject entries in a section</h3>
+      <p>For a testimonials section that the merchant controls entirely through the Metaobjects admin:</p>
+
+<pre data-lang="liquid">
+<span class="code-comment">{%- comment -%}
+  In your section schema, expose a metaobject_reference list setting.
+  Or fetch all entries of a type and iterate.
+  Here we use a list metafield on the shop object.
+{%- endcomment -%}</span>
+
+<span class="code-keyword">{%- assign</span> testimonials = shop.metafields.custom.featured_testimonials.value <span class="code-keyword">-%}</span>
+
+<span class="code-keyword">{%- if</span> testimonials != blank <span class="code-keyword">-%}</span>
+  &lt;ul class=<span class="code-string">"testimonials"</span>&gt;
+    <span class="code-keyword">{%- for</span> item <span class="code-keyword">in</span> testimonials <span class="code-keyword">-%}</span>
+      &lt;li class=<span class="code-string">"testimonial-card"</span>&gt;
+        &lt;blockquote&gt;<span class="code-tag">{{</span> item.fields.quote.value <span class="code-tag">}}</span>&lt;/blockquote&gt;
+        &lt;cite&gt;<span class="code-tag">{{</span> item.fields.author_name.value <span class="code-tag">}}</span>&lt;/cite&gt;
+        <span class="code-keyword">{%- if</span> item.fields.rating.value != blank <span class="code-keyword">-%}</span>
+          &lt;div class=<span class="code-string">"rating"</span> aria-label=<span class="code-string">"<span class="code-tag">{{</span> item.fields.rating.value <span class="code-tag">}}</span> out of 5"</span>&gt;
+            <span class="code-tag">{{</span> item.fields.rating.value <span class="code-tag">}}</span>/5
+          &lt;/div&gt;
+        <span class="code-keyword">{%- endif -%}</span>
+      &lt;/li&gt;
+    <span class="code-keyword">{%- endfor -%}</span>
+  &lt;/ul&gt;
+<span class="code-keyword">{%- endif -%}</span>
+</pre>
+
+      <h2>Exposing Metaobjects as section settings</h2>
+      <p>You can let merchants pick a specific metaobject entry directly in the theme editor, without writing any Liquid logic for fetching. In your section schema:</p>
+
+<pre data-lang="json">
+{
+  "type": "metaobject",
+  "id": "promo_banner",
+  "label": "Promo banner content",
+  "metaobject_type": "promo_banner"
+}
+</pre>
+
+      <p>Then in your section Liquid:</p>
+
+<pre data-lang="liquid">
+<span class="code-keyword">{%- assign</span> banner = section.settings.promo_banner <span class="code-keyword">-%}</span>
+<span class="code-keyword">{%- if</span> banner != blank <span class="code-keyword">-%}</span>
+  &lt;div class=<span class="code-string">"promo-banner"</span> style=<span class="code-string">"background-color: <span class="code-tag">{{</span> banner.fields.bg_color.value <span class="code-tag">}}</span>"</span>&gt;
+    &lt;p&gt;<span class="code-tag">{{</span> banner.fields.message.value <span class="code-tag">}}</span>&lt;/p&gt;
+    <span class="code-keyword">{%- if</span> banner.fields.cta_url.value != blank <span class="code-keyword">-%}</span>
+      &lt;a href=<span class="code-string">"<span class="code-tag">{{</span> banner.fields.cta_url.value <span class="code-tag">}}</span>"</span>&gt;
+        <span class="code-tag">{{</span> banner.fields.cta_label.value | default: <span class="code-string">'Shop now'</span> <span class="code-tag">}}</span>
+      &lt;/a&gt;
+    <span class="code-keyword">{%- endif -%}</span>
+  &lt;/div&gt;
+<span class="code-keyword">{%- endif -%}</span>
+</pre>
+
+      <p>This is the pattern I reach for most. The merchant manages the content in the Content admin. The developer controls the schema and the rendering. Neither has to touch the other's domain.</p>
+
+      <h2>Storefront API access</h2>
+      <p>If you're building headless or using JavaScript to fetch product data (for example, via the Ajax API for a quick-add drawer), metafields don't come back in the standard product JSON by default. You need to use the Storefront API with a GraphQL query, or use the <code>fields</code> parameter on the REST endpoints if you're accessing them server-side.</p>
+      <p>For client-side JavaScript access, the Storefront API is the right tool:</p>
+
+<pre data-lang="graphql">
+<span class="code-keyword">query</span> <span class="code-fn">ProductMetafields</span>($handle: String!) {
+  productByHandle(handle: $handle) {
+    title
+    metafield(namespace: <span class="code-string">"custom"</span>, key: <span class="code-string">"care_instructions"</span>) {
+      value
+      type
+    }
+    <span class="code-comment"># For a list metafield:</span>
+    keyFeatures: metafield(namespace: <span class="code-string">"custom"</span>, key: <span class="code-string">"key_features"</span>) {
+      value   <span class="code-comment"># returns JSON array string</span>
+      type
+    }
+  }
+}
+</pre>
+
+      <div class="callout callout--warning">
+        <p><strong>Storefront access must be enabled.</strong> Each metafield definition has a "Storefront access" toggle in the admin. If it's off, the Storefront API returns <code>null</code> for that field — not an error, just null. This is the most common gotcha when metafields work in Liquid but not in API responses.</p>
+      </div>
+
+      <h2>Common patterns and practical tips</h2>
+
+      <h3>Namespace conventions</h3>
+      <p>Use consistent namespaces across a project. My convention:</p>
+      <ul>
+        <li><code>custom</code> — merchant-managed content fields (care instructions, specs, badges)</li>
+        <li><code>theme</code> — fields the theme reads but that aren't meant for general CMS use</li>
+        <li><code>app.[appname]</code> — fields owned by a specific app integration</li>
+      </ul>
+
+      <h3>Always check for blank before rendering</h3>
+      <p>Metafields return <code>nil</code> if undefined or empty. Always guard with <code>!= blank</code> before outputting to avoid rendering empty tags or broken layout sections.</p>
+
+      <h3>Use .value for complex types</h3>
+      <p>For reference types (file, product, metaobject) and list types, you need <code>.value</code> to get the actual usable object. Without it, you're looking at the raw metafield object, not its content. Plain text and number fields don't need <code>.value</code> — they output directly.</p>
+
+<pre data-lang="liquid">
+<span class="code-comment">{%- comment -%} Plain text — no .value needed {%- endcomment -%}</span>
+<span class="code-tag">{{</span> product.metafields.custom.subtitle <span class="code-tag">}}</span>
+
+<span class="code-comment">{%- comment -%} File reference — .value gives the file object {%- endcomment -%}</span>
+<span class="code-keyword">{%- assign</span> icon = product.metafields.custom.category_icon.value <span class="code-keyword">-%}</span>
+<span class="code-tag">{{</span> icon | image_url: width: 48 <span class="code-filter">| image_tag</span>: loading: <span class="code-string">'lazy'</span> <span class="code-tag">}}</span>
+</pre>
+
+      <h3>Metaobjects as a page builder replacement</h3>
+      <p>One of the most powerful uses: create a <code>landing_section</code> metaobject type with fields for heading, body copy, image, CTA label, and CTA URL. Merchants build "pages" by creating an ordered list of these entries and attaching it to a page metafield. The theme iterates and renders each section. This gives merchants a lightweight page builder without a third-party app.</p>
+
+      <div class="callout callout--accent">
+        <p><strong>Metafields + Metaobjects replace a large class of custom app requirements.</strong> Before reaching for a private app or a third-party CMS integration, check whether the data model fits natively. In most content-driven use cases, it does.</p>
+      </div>
+
+    </div><!-- /article-body -->
+  </article>
+
+  <section class="cta-block" aria-label="Portfolio CTA">
+    <div class="cta-label">See the work</div>
+    <h2 class="cta-title">Shopify theme work in practice</h2>
+    <p class="cta-desc">Metafields, Metaobjects, OS 2.0 sections, Checkout Extensions — see how I put these together on real client projects.</p>
+    <div class="cta-actions">
+      <a
+        href="https://taras-polishchuk.github.io/?ref=shopify&utm_source=blog&utm_medium=article&utm_campaign=portfolio_profile&utm_content=cta_metafields"
+        class="btn-primary"
+      >
+        View portfolio
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <a href="mailto:trs.plshchk@gmail.com" class="btn-secondary">
+        Get in touch
+      </a>
+    </div>
+  </section>
+
+  <footer class="page-footer">
+    <div class="footer-author">
+      <div class="footer-avatar">
+        <img src="../assets/Taras-Polishchuk.jpg" alt="Taras Polishchuk" width="36" height="36">
+      </div>
+      <div>
+        <div class="footer-name">Taras Polishchuk</div>
+        <div class="footer-role">Shopify Theme Developer &amp; Frontend Engineer</div>
+      </div>
+    </div>
+    <a
+      href="https://taras-polishchuk.github.io/blog/?ref=shopify&utm_source=blog&utm_medium=article&utm_campaign=portfolio_profile&utm_content=footer_back_metafields"
+      class="footer-back"
+    >
+      ← Back to blog
+    </a>
+  </footer>
+
+</div>
+</body>
+</html>
