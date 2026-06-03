@@ -1,0 +1,18 @@
+name: Test Self-Hosted Runner
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  run-check:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run test command on MacBook
+        run: |
+          echo "Привіт з локального сервера MacBook!"
+          uname -a
+          node -v
