@@ -1,13 +1,17 @@
 /* ============================================================
    AI Portfolio Assistant — chat widget
-   Connects to n8n Chat Trigger webhook:
-   https://photo-expressed-birmingham-your.trycloudflare.com/webhook/fa5b882d-bba9-49ea-9db4-2b7a1d3dfbf0/chat
+   Connects to n8n Chat Trigger webhook.
+   Updated 2026-06-21 22:14 UTC after chat outage RCA:
+   - Previous tunnel (`photo-expressed-birmingham-your`) died with n8n process
+   - New tunnel: `https://lead-athens-plymouth-situation.trycloudflare.com`
+   - New webhook ID (regenerated on n8n restart): `0c620ad2-9b69-4484-a56f-5c1eddc47ead`
+   - See `.project-state/rentberry-interview-readiness/decisions.md` §"INCIDENT 2026-06-21 21:30"
    ============================================================ */
 (function () {
   'use strict';
 
   const N8N_WEBHOOK_URL =
-    'https://photo-expressed-birmingham-your.trycloudflare.com/webhook/fa5b882d-bba9-49ea-9db4-2b7a1d3dfbf0/chat';
+    'https://lead-athens-plymouth-situation.trycloudflare.com/webhook/0c620ad2-9b69-4484-a56f-5c1eddc47ead/chat';
 
   const STORAGE_KEY = 'taras-ai-chat-history-v1';
   const SESSION_ID =
