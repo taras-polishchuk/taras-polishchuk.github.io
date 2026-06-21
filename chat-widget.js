@@ -543,9 +543,15 @@
   function renderAll() {
     messagesEl.innerHTML = '';
     if (history.length === 0) {
-      addMessage('bot', WELCOME_MESSAGE, { skipSave: true });
+      // Single source of truth for initial chat state. The welcome message
+      // is both rendered to the DOM AND saved to history, so subsequent
+      // opens, refreshes, and state restorations all see exactly one entry.
+      const welcomeMsg = { role: 'bot', text: WELCOME_MESSAGE, ts: Date.now() };
+      history = [welcomeMsg];
+      saveHistory(history);
+      addMessage('bot', WELCOME_MESSAGE, { ts: welcomeMsg.ts, skipSave: true });
     } else {
-      history.forEach((m) => addMessage(m.role, m.text, { skipSave: true }));
+      history.forEach((m) => addMessage(m.role, m.text, { ts: m.ts, skipSave: true }));
     }
     scrollToBottom();
   }
@@ -583,11 +589,9 @@
     panelEl.setAttribute('aria-hidden', 'false');
     fabEl.setAttribute('aria-expanded', 'true');
     setTimeout(() => inputEl.focus(), 50);
-    if (history.length === 0) {
-      addMessage('bot', WELCOME_MESSAGE);
-      history = [{ role: 'bot', text: WELCOME_MESSAGE, ts: Date.now() }];
-      saveHistory(history);
-    }
+    // Note: the welcome message is injected (and saved to history) by
+    // renderAll() during mount — never here. Injecting here would cause
+    // a duplicate welcome on first open (RCA-2026-06-21 / decision.md #6).
   }
 
   function closePanel() {
