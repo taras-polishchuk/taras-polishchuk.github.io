@@ -828,6 +828,22 @@ a { color: inherit; text-decoration: none; cursor: none; }
   background: rgba(124,111,255,0.12);
   border-color: rgba(124,111,255,0.4);
 }
+button.project-link-ai {
+  background: linear-gradient(135deg, rgba(124,111,255,0.18), rgba(78,236,200,0.12));
+  border-color: rgba(124,111,255,0.35);
+  color: var(--color-text);
+  font-family: inherit;
+  cursor: none;
+}
+button.project-link-ai:hover {
+  background: linear-gradient(135deg, rgba(124,111,255,0.28), rgba(78,236,200,0.18));
+  border-color: rgba(124,111,255,0.55);
+  color: #fff;
+}
+button.project-link-ai:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
 
 /* Project description modal */
 .project-desc-modal {
@@ -904,6 +920,84 @@ a { color: inherit; text-decoration: none; cursor: none; }
   color: var(--color-text-muted);
   line-height: 1.75;
   font-size: var(--text-base);
+}
+.project-desc-modal-text strong {
+  color: var(--color-text);
+  font-weight: 600;
+}
+.project-desc-modal-text h4 {
+  color: var(--color-text);
+  font-size: var(--text-base);
+  font-weight: 600;
+  margin: var(--space-6) 0 var(--space-3) 0;
+  letter-spacing: 0.01em;
+}
+.project-desc-modal-text h4:first-child {
+  margin-top: var(--space-3);
+}
+.project-desc-modal-text ul {
+  margin: var(--space-2) 0 var(--space-4) 0;
+  padding-left: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.project-desc-modal-text ul li {
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+.project-desc-modal-text ul li::marker {
+  color: var(--color-accent);
+}
+.project-desc-modal-text pre {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin: var(--space-2) 0 var(--space-4) 0;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.55;
+  color: #c5beff;
+}
+.project-desc-modal-text code {
+  font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  color: #4eecc8;
+  background: rgba(78, 236, 200, 0.08);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+.project-desc-modal-text pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+.project-desc-cta {
+  margin-top: var(--space-6);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-radius: 9999px;
+  border: 1px solid rgba(124, 111, 255, 0.4);
+  background: linear-gradient(135deg, rgba(124, 111, 255, 0.18), rgba(78, 236, 200, 0.12));
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: none;
+  transition: transform var(--transition-interactive), background var(--transition-interactive), border-color var(--transition-interactive);
+}
+.project-desc-cta:hover {
+  background: linear-gradient(135deg, rgba(124, 111, 255, 0.28), rgba(78, 236, 200, 0.18));
+  border-color: rgba(124, 111, 255, 0.6);
+  transform: translateY(-1px);
+}
+.project-desc-cta:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
 }
 .project-desc-modal-dialog.switching .project-desc-modal-title,
 .project-desc-modal-dialog.switching .project-desc-modal-text {
@@ -1045,7 +1139,7 @@ a { color: inherit; text-decoration: none; cursor: none; }
 #audioHint {
   position: fixed;
   bottom: calc(var(--space-8) + 52px);
-  right: var(--space-8);
+  left: var(--space-8);
   z-index: 202;
   display: flex;
   align-items: flex-start;
@@ -1133,7 +1227,7 @@ a { color: inherit; text-decoration: none; cursor: none; }
 #audioToggle {
   position: fixed;
   bottom: var(--space-8);
-  right: var(--space-8);
+  left: var(--space-8);
   z-index: 201;
   width: 40px; height: 40px;
   border-radius: var(--radius-full);
@@ -1175,144 +1269,72 @@ a { color: inherit; text-decoration: none; cursor: none; }
   pointer-events: none;
 }
 @media (max-width: 600px) {
-  #audioToggle { bottom: var(--space-5); right: var(--space-5); }
+  #audioToggle { bottom: var(--space-5); left: var(--space-5); }
 }
 
 /* ============================
-   AI ASSISTANT CTA SECTION
+   AI ASSISTANT HINT (subtle, points to project #17)
    ============================ */
-#ai-assistant {
+#ai-assistant-hint {
   width: min(680px, calc(100% - var(--space-8)));
-  margin: var(--space-20) auto var(--space-24);
+  margin: 0 auto var(--space-12);
   padding: 0;
-  scroll-margin-top: 100px;
 }
-.ai-cta {
-  position: relative;
-  padding: var(--space-10) var(--space-8);
-  border-radius: var(--radius-2xl);
-  background:
-    radial-gradient(circle at 0% 0%, rgba(124, 111, 255, 0.18), transparent 55%),
-    radial-gradient(circle at 100% 100%, rgba(78, 236, 200, 0.14), transparent 55%),
-    linear-gradient(180deg, var(--color-surface) 0%, var(--color-surface-2) 100%);
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-lg), var(--shadow-glow);
-  overflow: hidden;
-  isolation: isolate;
-}
-.ai-cta::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-  background-size: 28px 28px;
-  mask-image: radial-gradient(circle at 50% 0%, black 0%, transparent 70%);
-  -webkit-mask-image: radial-gradient(circle at 50% 0%, black 0%, transparent 70%);
-  pointer-events: none;
-  z-index: -1;
-}
-.ai-cta-eyebrow {
+.ai-hint {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
   font-size: var(--text-xs);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-accent);
-  margin: 0 0 var(--space-3) 0;
-  font-weight: 600;
-  display: inline-flex;
+  color: var(--color-text-muted);
+  background: rgba(124, 111, 255, 0.04);
+  border: 1px solid rgba(124, 111, 255, 0.12);
+  border-radius: var(--radius-md);
+  display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  line-height: 1.5;
 }
-.ai-cta-eyebrow::before {
-  content: '';
-  width: 6px;
-  height: 6px;
+.ai-hint strong {
+  color: var(--color-text);
+  font-weight: 600;
+}
+.ai-hint-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
   border-radius: 9999px;
   background: var(--color-accent);
   box-shadow: 0 0 8px var(--color-accent-glow);
-  animation: ai-cta-pulse 1.6s ease-in-out infinite;
+  animation: ai-hint-pulse 1.6s ease-in-out infinite;
+  flex-shrink: 0;
 }
-@keyframes ai-cta-pulse {
+@keyframes ai-hint-pulse {
   0%, 100% { opacity: 0.6; }
   50% { opacity: 1; }
 }
-.ai-cta-title {
-  font-family: var(--font-display);
-  font-size: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  margin: 0 0 var(--space-4) 0;
-  color: var(--color-text);
-}
-.ai-cta-text {
-  font-size: var(--text-base);
-  line-height: 1.55;
-  color: var(--color-text-muted);
-  margin: 0 0 var(--space-6) 0;
-  max-width: 56ch;
-}
-.ai-cta-bullets {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 var(--space-8) 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-.ai-cta-bullets li {
-  position: relative;
-  padding-left: 24px;
-  font-size: var(--text-sm);
-  color: var(--color-text);
-  line-height: 1.5;
-}
-.ai-cta-bullets li::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0.5em;
-  width: 12px;
-  height: 12px;
-  border-radius: 9999px;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-  box-shadow: 0 0 8px var(--color-primary-glow);
-}
-.ai-cta-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 22px;
-  border-radius: 9999px;
+.ai-hint-btn {
+  background: none;
   border: none;
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
-  color: #0a0a0b;
+  padding: 2px 6px;
+  margin: 0;
+  color: var(--color-primary);
   font-family: inherit;
-  font-size: var(--text-sm);
-  font-weight: 700;
+  font-size: inherit;
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 10px 30px rgba(124, 111, 255, 0.35), 0 2px 6px rgba(0, 0, 0, 0.4);
-  transition: transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 180ms ease;
+  border-radius: var(--radius-sm);
+  text-decoration: underline;
+  text-decoration-color: rgba(124, 111, 255, 0.3);
+  text-underline-offset: 3px;
+  transition: color var(--transition-interactive), text-decoration-color var(--transition-interactive);
 }
-.ai-cta-btn:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 14px 40px rgba(124, 111, 255, 0.5), 0 4px 10px rgba(0, 0, 0, 0.5);
+.ai-hint-btn:hover {
+  color: var(--color-accent);
+  text-decoration-color: var(--color-accent);
 }
-.ai-cta-btn:active { transform: translateY(0) scale(0.98); }
-.ai-cta-btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
-.ai-cta-btn svg { transition: transform 180ms ease; }
-.ai-cta-btn:hover svg { transform: translateX(3px); }
-.ai-cta-foot {
-  font-size: var(--text-xs);
-  color: var(--color-text-faint);
-  margin: var(--space-4) 0 0 0;
-}
-
-@media (max-width: 600px) {
-  .ai-cta { padding: var(--space-8) var(--space-5); }
-  .ai-cta-bullets { margin-bottom: var(--space-6); }
-  .ai-cta-btn { width: 100%; justify-content: center; }
+.ai-hint-btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 </style>
 <!-- Google tag (gtag.js) -->
@@ -1452,23 +1474,13 @@ a { color: inherit; text-decoration: none; cursor: none; }
     </article>
   </section>
 
-  <section id="ai-assistant" aria-label="AI Portfolio Assistant">
-    <article class="ai-cta">
-      <p class="ai-cta-eyebrow">Live demo · n8n workflow</p>
-      <h2 class="ai-cta-title">AI Portfolio Assistant</h2>
-      <p class="ai-cta-text">Talk directly with my AI assistant trained on my projects, technical background, and experience. It answers in first person, references real work, and is honest about gaps.</p>
-      <ul class="ai-cta-bullets" role="list">
-        <li>27 questions answered across projects, stack, and Rentberry fit</li>
-        <li>Powered by an n8n workflow with MiniMax language model</li>
-        <li>Knowledge base syncs from a structured Q&amp;A data table</li>
-        <li>No signup, no tracking — open the chat and ask</li>
-      </ul>
-      <button type="button" class="ai-cta-btn" id="aiCtaOpen" aria-label="Open AI Portfolio Assistant chat">
-        <span>Try AI Assistant</span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </button>
-      <p class="ai-cta-foot">Or click the chat icon in the bottom-right corner of any page.</p>
-    </article>
+  <section id="ai-assistant-hint" aria-label="AI Assistant hint">
+    <p class="ai-hint">
+      <span class="ai-hint-dot" aria-hidden="true"></span>
+      <strong>Live demo:</strong> the AI Portfolio Assistant is project&nbsp;#17 in the projects grid.
+      <button type="button" class="ai-hint-btn" data-open-ai-chat>Open chat <span aria-hidden="true">→</span></button>
+      or click the bubble at the bottom-right.
+    </p>
   </section>
 </main>
 
@@ -1668,6 +1680,54 @@ const PROJECTS = [
     gradient: "linear-gradient(135deg, #08131f 0%, #102b46 50%, #1b5f7a 100%)",
     emoji: "🧠",
     link: "https://quizpilot-a.vercel.app/"
+  },
+  {
+    id: 17,
+    name: "AI Portfolio Assistant",
+    desc: "Interactive AI assistant trained on my projects, technical background and automation experience. Powered by an n8n workflow with a structured Q&A knowledge base, an LLM agent, and a custom lightweight chat widget embedded directly in this portfolio.",
+    tags: ["AI", "n8n", "Automation", "RAG", "Workflow", "LLM", "Portfolio"],
+    gradient: "linear-gradient(135deg, #1a0d3a 0%, #2d1b69 50%, #0f2027 100%)",
+    emoji: "🤖",
+    link: "__ai_assistant__",
+    longDescription: `<p><strong>AI Portfolio Assistant</strong> is a working demonstration of an end-to-end AI workflow that you can talk to right now — open the chat bubble in the bottom-right corner of any page and ask about my projects, stack, automation experience, or fit for a role.</p>
+
+<h4>Architecture</h4>
+<pre><code>Website (this page)
+   ↓ fetch POST
+Cloudflare Quick Tunnel
+   ↓
+n8n Chat Trigger (public webhook)
+   ↓
+AI Agent v3.1 (system prompt = inline KB)
+   ↓
+MiniMax Chat Model (gpt-style API)
+   ↓
+Respond to Webhook (JSON output)
+   ↓
+fetch response → chat panel UI</code></pre>
+
+<h4>Technologies</h4>
+<ul>
+  <li><strong>n8n 2.26</strong> — workflow orchestration, Chat Trigger, AI Agent node</li>
+  <li><strong>MiniMax LLM</strong> — language model behind the chat responses</li>
+  <li><strong>Cloudflare Quick Tunnel</strong> — public ingress from the open internet to a private n8n instance</li>
+  <li><strong>Data Tables</strong> — structured Q&amp;A knowledge base inside n8n</li>
+  <li><strong>Vanilla JavaScript</strong> — custom 20 KB chat widget (no framework, no dependencies)</li>
+  <li><strong>GitHub Pages</strong> — static site hosting</li>
+</ul>
+
+<h4>Challenges</h4>
+<ul>
+  <li><strong>Public ingress</strong> — the n8n instance runs on a private Tailscale IP. A Cloudflare tunnel bridges that to a public <code>trycloudflare.com</code> subdomain so any visitor can reach the chat.</li>
+  <li><strong>Tool execution path</strong> — n8n 2.26's <code>toolHttpRequest</code> is a tool node but is not executable by the Agent's runtime, so the Q&amp;A knowledge base is inlined into the agent's system prompt instead. This trades 7 KB of static context for a working chat — fine for a 27-question KB, would need replacement past ~100 entries.</li>
+  <li><strong>First-load cost</strong> — chat widget is 20 KB and lazy-loaded, but the LLM call itself takes 4–8 seconds. A typing indicator and optimistic UI cover the wait without faking the response.</li>
+  <li><strong>State recovery</strong> — history is persisted to <code>localStorage</code> (capped at 40 messages) and session ID is stable per browser, so a refresh does not break the conversation.</li>
+</ul>
+
+<h4>Outcome</h4>
+<p>The chat is live on every page of this portfolio, answers questions about my work in first person, references specific projects from the knowledge base, and is honest when it does not know. It is a concrete answer to the question "can you actually build production AI workflows?" — every step of the pipeline is mine, not a vendor demo.</p>
+
+<p>Try it: click the chat bubble at the bottom-right, or hit the button below to open it now.</p>`
   },
 ];
 
@@ -2178,6 +2238,18 @@ function buildProjectCards() {
     card.dataset.projectId = String(p.id);
     card.style.transitionDelay = `${i * 0.07 + 0.1}s`;
 
+    // Custom CTA for AI Portfolio Assistant: open chat instead of external link
+    const isAI = p.link === '__ai_assistant__';
+    const ctaHTML = isAI
+      ? `<button type="button" class="project-link project-link-ai" data-open-ai-chat>
+             Open Chat
+             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+           </button>`
+      : `<a href="${p.link}" class="project-link" target="_blank" rel="noopener noreferrer">
+             View
+             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"/></svg>
+           </a>`;
+
     card.innerHTML = `
       <div class="project-preview">
         <div class="project-preview-placeholder" style="background:${p.gradient}">
@@ -2193,10 +2265,7 @@ function buildProjectCards() {
           <div class="project-tags">
             ${p.tags.map(t => `<span class="project-tag">${t}</span>`).join('')}
           </div>
-          <a href="${p.link}" class="project-link" target="_blank" rel="noopener noreferrer">
-            View
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"/></svg>
-          </a>
+          ${ctaHTML}
         </div>
       </div>
     `;
@@ -2246,7 +2315,26 @@ function openProjectDesc(project, source = 'unknown') {
 
   const switchContent = () => {
     projectDescTitle.textContent = project.name;
-    projectDescText.textContent = project.desc;
+    if (project.longDescription) {
+      // AI Portfolio Assistant and other rich projects: render structured HTML
+      projectDescText.innerHTML = project.longDescription;
+    } else {
+      projectDescText.textContent = project.desc;
+    }
+    // For AI Assistant, append an "Open Chat" CTA inside the modal
+    const existingCta = projectDescDialog.querySelector('.project-desc-cta');
+    if (existingCta) existingCta.remove();
+    if (project.link === '__ai_assistant__') {
+      const cta = document.createElement('button');
+      cta.type = 'button';
+      cta.className = 'project-desc-cta';
+      cta.setAttribute('data-open-ai-chat', '');
+      cta.innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>Open AI Assistant Chat</span>
+      `;
+      projectDescDialog.appendChild(cta);
+    }
     activeProjectId = project.id;
   };
 
