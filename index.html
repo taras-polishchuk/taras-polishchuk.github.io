@@ -5,7 +5,10 @@
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- Cache-bust the chat widget. GitHub Pages serves with Cache-Control: max-age=600;
+     a fresh user may otherwise keep loading a stale chat-widget.js for 10 minutes
+     after a deploy. Bumping WIDGET_VERSION forces a new fetch. -->
 <title>Taras Polishchuk — Shopify & Frontend Developer · AI Workflows</title>
 <meta name="description" content="Portfolio of Taras Polishchuk — Shopify Theme Developer and Frontend Engineer. Shopify Liquid, OS 2.0, Sections & Blocks, Checkout UI Extensions, SvelteKit, and AI-assisted workflows. Available for remote work.">
 <link rel="canonical" href="https://taras-polishchuk.github.io/">
@@ -3049,6 +3052,6 @@ if (window.matchMedia('(hover: none)').matches) {
   if (capabilityEl) capabilityEl.remove();
 })();
 </script>
-<script src="./chat-widget.js" defer></script>
+<script src="./chat-widget.js?v=2.0.1" defer></script>
 </body>
 </html>

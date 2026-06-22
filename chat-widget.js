@@ -12,8 +12,50 @@
 (function () {
   'use strict';
 
+  // ============================================================
+  // Versioning & localStorage migration
+  // ============================================================
+  // WIDGET_VERSION is exposed on window so support code (e.g. bug reports)
+  // can read which build is loaded. Bump it whenever the widget changes
+  // in a user-visible way, AND whenever STORAGE_KEY / STORAGE_RATE_KEY /
+  // STORAGE_COUNT_KEY schema changes — that triggers a flush-and-restart.
+  const WIDGET_VERSION = '2.0.1';
+  const STORAGE_VERSION_KEY = 'taras-ai-widget-version';
+
+  // If the on-disk widget version differs from the running version, nuke
+  // history / rate / count state so the user immediately sees the new
+  // welcome message and fresh limits — instead of being stuck on a stale
+  // "Why Rentberry?" placeholder or out-of-date quick prompts that were
+  // stored before the v2 hardening.
+  function _migrateStorage() {
+    try {
+      const onDisk = localStorage.getItem(STORAGE_VERSION_KEY);
+      if (onDisk === WIDGET_VERSION) return;
+      // Different version → flush user-visible state.
+      // (Keep SESSION_ID — it's safe to carry across widget builds.)
+      localStorage.removeItem('taras-ai-chat-history-v1');
+      localStorage.removeItem('taras-ai-rate-v2');
+      localStorage.removeItem('taras-ai-msgcount-v2');
+      // Also nuke legacy v1 keys that the pre-hardening widget used.
+      localStorage.removeItem('taras-ai-history');
+      localStorage.removeItem('taras-ai-rate');
+      localStorage.removeItem('taras-ai-msgcount');
+      localStorage.setItem(STORAGE_VERSION_KEY, WIDGET_VERSION);
+    } catch (e) {
+      /* private mode / quota — ignore */
+    }
+  }
+  _migrateStorage();
+
+  // ============================================================
+  // n8n Chat Trigger webhook URL
+  // ============================================================
+  // The Cloudflare Quick Tunnel hostname is ephemeral and rotates on every
+  // cloudflared restart. On a stale URL the fetch fails with a network
+  // error and we surface a "Tunnel temporarily unavailable" status.
+  // Recovery: re-run /home/taras/projects/ai/infrastructure/n8n/portfolio-agent-day0/scripts/recover-chat.sh
   const N8N_WEBHOOK_URL =
-    'https://gathering-chosen-main-permissions.trycloudflare.com/webhook/0c620ad2-9b69-4484-a56f-5c1eddc47ead/chat';
+    'https://assessed-received-comics-bride.trycloudflare.com/webhook/0c620ad2-9b69-4484-a56f-5c1eddc47ead/chat';
 
   const STORAGE_KEY = 'taras-ai-chat-history-v1';
   // ----- Hardening constants (v2: production hardening, 2026-06-21) -----
@@ -349,7 +391,10 @@
     background: #16161a;
     border: 1px solid rgba(255, 255, 255, 0.08);
     color: #e8e8f0;
-    font-size: 14px;
+    /* font-size 16px is REQUIRED on iOS: WebKit auto-zooms the viewport
+       on focus for any text input with computed font-size < 16px and
+       does NOT reset the scale on blur, leaving the page stuck zoomed in. */
+    font-size: 16px;
     font-family: inherit;
     padding: 10px 12px;
     border-radius: 12px;
@@ -357,6 +402,9 @@
     max-height: 120px;
     line-height: 1.4;
     transition: border-color 150ms;
+    /* Also prevent inherited zoom on iOS Safari (iOS 16+). */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
   .ai-input:focus {
     outline: none;
@@ -790,9 +838,17 @@
       clearTimeout(timeoutId);
       typing.remove();
       const isAbort = err.name === 'AbortError';
-      const errText = isAbort
-        ? 'Request timed out. The assistant took too long to respond. Please try again.'
-        : 'Network error. Please check your connection and try again.';
+      let errText;
+      if (isAbort) {
+        errText = 'Request timed out. The assistant took too long to respond. Please try again.';
+      } else if (err && err.name === 'TypeError' && /fetch/i.test(err.message || '')) {
+        // Most likely cause: Cloudflare Quick Tunnel hostname rotated and
+        // the hard-coded URL no longer resolves. Surface a more helpful
+        // message than the generic "Network error".
+        errText = 'Network error — the public tunnel is temporarily unavailable. Please retry in a few minutes; if it persists, the assistant URL needs a refresh.';
+      } else {
+        errText = 'Network error. Please check your connection and try again.';
+      }
       addMessage('error', errText);
       history.push({ role: 'error', text: errText, ts: Date.now() });
       saveHistory(history);
@@ -806,6 +862,9 @@
   }
 
   /* ---------- boot ---------- */
+  // Expose version for support / debugging.
+  try { window.__aiWidget = { version: WIDGET_VERSION, sessionId: SESSION_ID }; } catch (e) {}
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', mount);
   } else {
