@@ -1,1 +1,27 @@
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local files
 *UTM-CHEATSHEET.md
+*.local.html
+*.local.css
+*.local.js
+.env
+.env.*
+!.env.example
+
+# Backups
+*.bak
+*.bak-*
+*.backup
+*.orig
+*.rej
+
+# Logs
+*.log
+logs/

@@ -1,27 +1,96 @@
 /* ============================================================
    AI Portfolio Assistant — chat widget
    Connects to n8n Chat Trigger webhook.
-   Updated 2026-06-21 22:14 UTC after chat outage RCA:
-   - Previous tunnel (`photo-expressed-birmingham-your`) died with n8n process
-   - New tunnel: `https://lead-athens-plymouth-situation.trycloudflare.com`
-   - New webhook ID (regenerated on n8n restart): `0c620ad2-9b69-4484-a56f-5c1eddc47ead`
-   - See `.project-state/rentberry-interview-readiness/decisions.md` §"INCIDENT 2026-06-21 21:30"
+   Hardened v2 (2026-06-21):
+     - domain-restricted prompts (no company/role/Shopify quick prompts)
+     - prompt-injection resistance (pre-LLM guard on server)
+     - session isolation (crypto-strong session ID, 128-bit)
+     - cost protection (input cap 500, rate limit 5/min & 30/hr, max 50 msgs/session)
+     - identity protection (system message armor + post-LLM guard)
+   Webhook ID (regenerated on n8n restart): 0c620ad2-9b69-4484-a56f-5c1eddc47ead
    ============================================================ */
 (function () {
   'use strict';
 
   const N8N_WEBHOOK_URL =
-    'https://lead-athens-plymouth-situation.trycloudflare.com/webhook/0c620ad2-9b69-4484-a56f-5c1eddc47ead/chat';
+    'https://gathering-chosen-main-permissions.trycloudflare.com/webhook/0c620ad2-9b69-4484-a56f-5c1eddc47ead/chat';
 
   const STORAGE_KEY = 'taras-ai-chat-history-v1';
-  const SESSION_ID =
-    'sess-' +
-    (localStorage.getItem('taras-ai-session') ||
-      (() => {
-        const v = Math.random().toString(36).slice(2) + Date.now().toString(36);
-        localStorage.setItem('taras-ai-session', v);
-        return v;
-      })());
+  // ----- Hardening constants (v2: production hardening, 2026-06-21) -----
+  // Cost protection: cap input size, rate-limit per session, max messages per session.
+  const MAX_INPUT = 500;
+  const MAX_MESSAGES_PER_SESSION = 50;
+  const RATE_LIMIT_PER_MIN = 5;
+  const RATE_LIMIT_PER_HOUR = 30;
+  const RATE_WINDOW_MIN_MS = 60 * 1000;
+  const RATE_WINDOW_HOUR_MS = 60 * 60 * 1000;
+  const STORAGE_RATE_KEY = 'taras-ai-rate-v2';
+  const STORAGE_COUNT_KEY = 'taras-ai-msgcount-v2';
+
+  // Session ID: cryptographically random 128-bit value, base36.
+  // Replaces prior Math.random (weak) generator.
+  function _newSessionId() {
+    const arr = new Uint8Array(16);
+    (self.crypto || self.msCrypto).getRandomValues(arr);
+    return 'sess-' + Array.from(arr, (b) => b.toString(16).padStart(2, '0')).join('');
+  }
+  const SESSION_ID = (() => {
+    let v = localStorage.getItem('taras-ai-session');
+    if (!v || !/^sess-[0-9a-f]{32}$/.test(v)) {
+      v = _newSessionId();
+      localStorage.setItem('taras-ai-session', v);
+    }
+    return v;
+  })();
+
+  // Rate-limit state (windowed counters, per session).
+  function _loadRate() {
+    try {
+      const raw = localStorage.getItem(STORAGE_RATE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+  function _saveRate(arr) {
+    try {
+      localStorage.setItem(STORAGE_RATE_KEY, JSON.stringify(arr.slice(-200)));
+    } catch (e) {
+      /* quota or private mode — ignore */
+    }
+  }
+  function _rateCheck(now) {
+    const log = _loadRate();
+    // drop entries outside both windows
+    const fresh = log.filter((t) => now - t < RATE_WINDOW_HOUR_MS);
+    const minCount = fresh.filter((t) => now - t < RATE_WINDOW_MIN_MS).length;
+    const hourCount = fresh.length;
+    if (minCount >= RATE_LIMIT_PER_MIN) {
+      return { ok: false, reason: 'rate_limit_min', retryMs: RATE_WINDOW_MIN_MS - (now - fresh[fresh.length - RATE_LIMIT_PER_MIN]) };
+    }
+    if (hourCount >= RATE_LIMIT_PER_HOUR) {
+      return { ok: false, reason: 'rate_limit_hour', retryMs: RATE_WINDOW_HOUR_MS - (now - fresh[0]) };
+    }
+    return { ok: true, log: fresh };
+  }
+  function _rateRecord(now, log) {
+    log.push(now);
+    _saveRate(log);
+  }
+  function _getMsgCount() {
+    try {
+      return parseInt(localStorage.getItem(STORAGE_COUNT_KEY) || '0', 10) || 0;
+    } catch (e) {
+      return 0;
+    }
+  }
+  function _setMsgCount(n) {
+    try {
+      localStorage.setItem(STORAGE_COUNT_KEY, String(n));
+    } catch (e) {
+      /* ignore */
+    }
+  }
 
   /* ---------- styles (injected, scoped under #ai-assistant-root) ---------- */
   const CSS = `
@@ -340,18 +409,20 @@
   }
   `;
 
+  // Welcome: portfolio-only topics, no company/Shopify mention (hardening v2).
   const WELCOME_MESSAGE = `Hi 👋 I'm Taras's AI Portfolio Assistant. Ask me about:
-• AI projects
+• AI automation projects
 • n8n workflows
-• Shopify experience
-• automation systems
-• technical stack`;
+• Hermes platform
+• technical stack
+• engineering experience`;
 
+  // Quick prompts: portfolio-focused only (hardening v2).
   const QUICK_PROMPTS = [
-    'Why Rentberry?',
-    'What AI projects have you built?',
-    'Your n8n experience?',
-    'Strongest project?',
+    'What AI systems have you built?',
+    'How do you use n8n?',
+    'What is Hermes?',
+    'What is your strongest project?',
   ];
 
   /* ---------- helpers ---------- */
@@ -623,6 +694,43 @@
     text = (text || '').trim();
     if (!text || isBusy) return;
 
+    // --- Hardening v2: client-side guards (cost protection + abuse) ---
+
+    // 1. Length cap
+    if (text.length > MAX_INPUT) {
+      const errText = `Your message is too long (${text.length} characters). Please keep it under ${MAX_INPUT} characters.`;
+      addMessage('error', errText);
+      history.push({ role: 'error', text: errText, ts: Date.now() });
+      saveHistory(history);
+      setStatus('error', 'Too long');
+      return;
+    }
+
+    // 2. Max messages per session
+    const msgCount = _getMsgCount();
+    if (msgCount >= MAX_MESSAGES_PER_SESSION) {
+      const errText = `You've reached the message limit for this session (${MAX_MESSAGES_PER_SESSION}). Start a new session by clearing site data to continue.`;
+      addMessage('error', errText);
+      history.push({ role: 'error', text: errText, ts: Date.now() });
+      saveHistory(history);
+      setStatus('error', 'Limit reached');
+      return;
+    }
+
+    // 3. Rate limit
+    const now = Date.now();
+    const rate = _rateCheck(now);
+    if (!rate.ok) {
+      const secs = Math.ceil(rate.retryMs / 1000);
+      const errText = `You're sending messages too quickly. Please wait ${secs} second${secs === 1 ? '' : 's'} before trying again.`;
+      addMessage('error', errText);
+      history.push({ role: 'error', text: errText, ts: Date.now() });
+      saveHistory(history);
+      setStatus('error', 'Slow down');
+      return;
+    }
+
+    // --- Pass guards: proceed ---
     isBusy = true;
     inputEl.value = '';
     inputEl.disabled = true;
@@ -631,6 +739,10 @@
     addMessage('user', text);
     history.push({ role: 'user', text, ts: Date.now() });
     saveHistory(history);
+
+    // Record rate + message count (after pass)
+    _rateRecord(now, rate.log);
+    _setMsgCount(msgCount + 1);
 
     // hide quick prompts after first user message
     if (!quickEl.hidden) quickEl.hidden = true;
