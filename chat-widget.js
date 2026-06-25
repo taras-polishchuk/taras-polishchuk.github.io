@@ -393,24 +393,42 @@
     color: #e8e8f0;
     /* font-size 16px is REQUIRED on iOS: WebKit auto-zooms the viewport
        on focus for any text input with computed font-size < 16px and
-       does NOT reset the scale on blur, leaving the page stuck zoomed in. */
+       does NOT reset the scale on blur, leaving the page stuck zoomed in.
+       This MUST stay at 16px for any text input inside the panel. */
     font-size: 16px;
     font-family: inherit;
-    padding: 10px 12px;
+    padding: 8px 12px;
     border-radius: 12px;
     resize: none;
+    /* Single-line visual: scroll only when user types Enter for newline.
+       overflow-y: hidden kills the inner WebKit scrollbar; we manage
+       line count in JS (autosizeInput) instead. max-height caps the
+       textarea at ~5 lines if JS grows it. */
+    overflow-y: hidden;
+    overflow-x: hidden;
     max-height: 120px;
-    line-height: 1.4;
+    line-height: 1.3;
     transition: border-color 150ms;
-    /* Also prevent inherited zoom on iOS Safari (iOS 16+). */
+    /* Prevent inherited zoom on iOS Safari (iOS 16+). */
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
   }
+  /* Placeholder can stay smaller — it is NOT focused, so it does not
+     trigger iOS auto-zoom. This frees horizontal space so the hint
+     fits on one line in narrow mobile viewports. */
+  .ai-input::placeholder {
+    color: rgba(232, 232, 240, 0.4);
+    font-size: 13px;
+  }
+  /* Belt-and-suspenders: kill any webkit scrollbar that could appear
+     on the textarea itself (Safari sometimes shows a thin bar when
+     content overflows before JS autosizes). */
+  .ai-input::-webkit-scrollbar { width: 0; height: 0; display: none; }
+  .ai-input { scrollbar-width: none; }
   .ai-input:focus {
     outline: none;
     border-color: #7c6fff;
   }
-  .ai-input::placeholder { color: rgba(232, 232, 240, 0.4); }
   .ai-input:disabled { opacity: 0.6; cursor: not-allowed; }
 
   .ai-send {
@@ -633,6 +651,7 @@
       placeholder: 'Ask about projects, stack, experience…',
       'aria-label': 'Message',
       onkeydown: handleInputKey,
+      oninput: autosizeInput,
     });
     sendBtn = el(
       'button',
@@ -737,6 +756,20 @@
     }
   }
 
+  /* Autosize the textarea: keep it at one line until the user pastes
+     multi-line text or types a hard newline (Shift+Enter). Reset to
+     one line on send. The CSS already sets overflow:hidden so there
+     is no inner scrollbar at any height — this JS just keeps height
+     in sync with content. Single-line height = line-height + padding
+     (≈37px at 16px / 1.3 line-height / 8+8 padding). */
+  function autosizeInput() {
+    if (!inputEl) return;
+    inputEl.style.height = 'auto';
+    // Use scrollHeight which respects padding but ignores the hidden overflow.
+    const next = Math.min(inputEl.scrollHeight, 120);
+    inputEl.style.height = next + 'px';
+  }
+
   /* ---------- send ---------- */
   async function sendMessage(text) {
     text = (text || '').trim();
@@ -781,6 +814,7 @@
     // --- Pass guards: proceed ---
     isBusy = true;
     inputEl.value = '';
+    inputEl.style.height = 'auto'; // collapse back to single-line
     inputEl.disabled = true;
     sendBtn.disabled = true;
 
