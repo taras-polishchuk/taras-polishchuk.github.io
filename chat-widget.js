@@ -55,7 +55,7 @@
   // error and we surface a "Tunnel temporarily unavailable" status.
   // Recovery: re-run /home/taras/projects/ai/infrastructure/n8n/portfolio-agent-day0/scripts/recover-chat.sh
   const N8N_WEBHOOK_URL =
-    'https://assessed-received-comics-bride.trycloudflare.com/webhook/0c620ad2-9b69-4484-a56f-5c1eddc47ead/chat';
+    'https://witnesses-elegant-metropolitan-basement.trycloudflare.com/webhook/0c620ad2-9b69-4484-a56f-5c1eddc47ead/chat';
 
   const STORAGE_KEY = 'taras-ai-chat-history-v1';
   // ----- Hardening constants (v2: production hardening, 2026-06-21) -----
