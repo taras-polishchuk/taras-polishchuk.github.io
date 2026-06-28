@@ -1534,7 +1534,7 @@ button.project-link-ai:focus-visible {
 <script>
 window.ANALYTICS_CONFIG = Object.assign({
   clarityProjectId: 'wv916p35jj',
-  posthogApiKey: 'phc_nioFGgbzJqft35dKUL79MaXnLjynvGTPobmQf3fQFoND',
+  posthogApiKey: 'phc_ni...FoND',
   posthogApiHost: 'https://eu.i.posthog.com',
   gaTrackingId: 'G-8RQ3J37DYE',
   debug: false
@@ -1546,6 +1546,96 @@ window.ANALYTICS_CONFIG = Object.assign({
    DATA
    ============================================================== */
 const PROJECTS = [
+  {
+    id: 100,
+    name: "case-04 — AI Discovery Platform",
+    desc: "Multi-agent platform that turns a client intake form into a fully-structured Discovery → Workflow → Security → Architecture → Cost → Proposal pipeline. 7 specialist agents, 7 LLM providers (mock, OpenAI, Anthropic, Gemini, OpenRouter, Ollama, custom), Zod-validated outputs, full CRM-style Kanban and analytics.",
+    tags: ["AI", "Multi-Agent", "SvelteKit", "Zod", "LLM", "Production"],
+    gradient: "linear-gradient(135deg, #0a0e2a 0%, #1a1f4a 50%, #050a18 100%)",
+    emoji: "🧠",
+    link: "https://web-eta-liart-97.vercel.app/",
+    longDescription: `<p><strong>case-04</strong> is a production-quality multi-agent AI platform that automates the first 1–2 weeks of a typical AI consulting engagement. A client fills out a 7-section intake form and the system produces a complete discovery report, workflow models, security assessment, architecture proposal, cost estimation, and proposal document.</p>
+
+<h4>Architecture</h4>
+<pre><code>Client intake form (SvelteKit SSR + Svelte 5)
+   ↓
+runDiscoveryWorkflow(caseId, intake)
+   ↓
+[parallel] discovery-analyst    → DiscoveryCase
+[parallel] workflow-analyst     → WorkflowModels
+[parallel] security-analyst     → SecurityAssessment
+[parallel] solution-architect   → Architecture
+   ↓
+runCostEngine(caseId)           → Cost
+runProposalEngine(caseId)       → Proposal (markdown)</code></pre>
+
+<h4>Technologies</h4>
+<ul>
+  <li><strong>SvelteKit 2.21 + Svelte 5</strong> — server-rendered intake form, file-based routing, ECharts analytics dashboard</li>
+  <li><strong>Tailwind CSS v4 + Vite 7</strong> — dark theme, responsive UI</li>
+  <li><strong>Zod schemas</strong> — every agent output is validated at the boundary before reaching the user</li>
+  <li><strong>7 LLM providers</strong> — mock, OpenAI, Anthropic, Gemini, OpenRouter, Ollama, custom OpenAI-compatible</li>
+  <li><strong>Two-layer architecture</strong> — <code>project-context/</code> holds prompts + decisions in markdown; SvelteKit reads them at build time (ADR-001)</li>
+</ul>
+
+<h4>Agent registry</h4>
+<ul>
+  <li>discovery-analyst — business analysis</li>
+  <li>workflow-analyst — as-is / to-be workflow models</li>
+  <li>security-analyst — risk assessment with AI-specific threats</li>
+  <li>solution-architect — component diagrams + data flow</li>
+  <li>cost-estimator — one-time / monthly / support tiers</li>
+  <li>proposal-writer — structured proposal generation</li>
+  <li>report-generator — markdown report assembly</li>
+</ul>
+
+<h4>Challenges</h4>
+<ul>
+  <li><strong>Multi-LLM abstraction</strong> — every agent can run on any provider without rewriting prompts; switching providers is a registry change</li>
+  <li><strong>Schema-first design</strong> — Zod schemas define each agent's output contract; LLM responses are coerced or rejected before downstream agents consume them</li>
+  <li><strong>Two-layer separation</strong> — <code>project-context/</code> is pure markdown (editable by prompt engineers without touching app code); app reads at boot</li>
+</ul>
+
+<h4>Outcome</h4>
+<p>Deployed on Vercel with mock provider by default — full demo with seed data, no API keys required. Production swap path documented: Supabase Postgres + Trigger.dev jobs + Better Auth + Supabase Storage, all behind the same Collection&lt;T&gt; interface for one-file replacement.</p>
+
+<p><strong>Live:</strong> <a href="https://web-eta-liart-97.vercel.app/" target="_blank" rel="noopener noreferrer">web-eta-liart-97.vercel.app</a></p>`
+  },
+  {
+    id: 101,
+    name: "product-team — Multi-Service Reference Architecture",
+    desc: "Production-grade reference architecture for an AI product team. Monorepo with 3 apps (web · api · ai-composition) + 4 shared packages, full CI/CD, multi-LLM orchestration (Anthropic prod · Ollama dev · OpenAI fallback), 19-stage multi-agent workflow, 5 ADRs, Zod-shared contracts.",
+    tags: ["Monorepo", "Multi-Agent", "TypeScript", "Zod", "AI", "Reference"],
+    gradient: "linear-gradient(135deg, #0a1a2a 0%, #1a3050 50%, #050a18 100%)",
+    emoji: "🏗️",
+    link: "https://ai-job-application-assistant.vercel.app/",
+    longDescription: `<p><strong>product-team</strong> is a multi-app monorepo that models how a small AI engineering team ships a product end-to-end. It contains a complete multi-agent organization (Orchestrator + 18 specialists with explicit YAML handoff rules), 16 markdown project-context files (vision, PRD, architecture, ADRs), and three working apps that share Zod contracts across TypeScript.</p>
+
+<h4>Topology</h4>
+<pre><code>apps/
+  web/                 Next.js 15 (App Router) + Tailwind + next-intl
+  api/                 NestJS control plane (auth, billing, profile, session, integrations)
+  ai-composition/      Multi-LLM orchestration service
+packages/
+  contracts/           Shared Zod schemas + TypeScript types
+  i18n/                Shared message catalogs (EN/UK)
+  ui/                  Shared UI primitives
+  typescript-config/   Shared tsconfig presets</code></pre>
+
+<h4>Highlights</h4>
+<ul>
+  <li><strong>19-stage multi-agent workflow</strong> — Product Discovery → Planner → Growth Strategist → UX → Tech Advisor → Architect → Security → Project Planner → Frontend/Backend/DB/AI/Integration engineers → Code Reviewer → Security Reviewer → QA → QA Automation → DevOps → Observability</li>
+  <li><strong>Multi-LLM strategy</strong> — Anthropic prod, Ollama dev, OpenAI fallback. Mock provider for tests.</li>
+  <li><strong>GitHub Actions live</strong> — CI on self-hosted runner</li>
+  <li><strong>5 ADRs</strong> — architectural decisions documented in <code>project-context/decisions.md</code></li>
+  <li><strong>Zod boundary at every layer</strong> — web ↔ api ↔ ai-composition validated through shared contracts</li>
+</ul>
+
+<h4>Outcome</h4>
+<p>Web app deployed on Vercel. API + ai-composition are Docker-ready with <code>fly.toml</code> per app. The repo is the strongest reference architecture for an AI product team — handed off to Taras via the product-team monorepo workflow.</p>
+
+<p><strong>Live:</strong> <a href="https://ai-job-application-assistant.vercel.app/" target="_blank" rel="noopener noreferrer">ai-job-application-assistant.vercel.app</a></p>`
+  },
   {
     id: 1,
     name: "Ascent Protein",
