@@ -8,6 +8,7 @@
      - cost protection (input cap 500, rate limit 5/min & 30/hr, max 50 msgs/session)
      - identity protection (system message armor + post-LLM guard)
    Webhook ID (regenerated on n8n restart): 0c620ad2-9b69-4484-a56f-5c1eddc47ead
+   // Tunnel URL rotated 2026-07-02 (was: finishing-smart-celebs-graduates — DEAD/NXDOMAIN)
    ============================================================ */
 (function () {
   'use strict';
@@ -19,7 +20,7 @@
   // can read which build is loaded. Bump it whenever the widget changes
   // in a user-visible way, AND whenever STORAGE_KEY / STORAGE_RATE_KEY /
   // STORAGE_COUNT_KEY schema changes — that triggers a flush-and-restart.
-  const WIDGET_VERSION = '2.0.4';
+  const WIDGET_VERSION = '2.0.5';
   const STORAGE_VERSION_KEY = 'taras-ai-widget-version';
 
   // If the on-disk widget version differs from the running version, nuke
@@ -55,7 +56,7 @@
   // error and we surface a "Tunnel temporarily unavailable" status.
   // Recovery: re-run /home/taras/projects/ai/infrastructure/n8n/portfolio-agent-day0/scripts/recover-chat.sh
   const N8N_WEBHOOK_URL =
-    'https://finishing-smart-celebs-graduates.trycloudflare.com/webhook/0c620ad2-9b69-4484-a56f-5c1eddc47ead/chat';
+    'https://emily-ties-enter-planned.trycloudflare.com/webhook/0c620ad2-9b69-4484-a56f-5c1eddc47ead/chat';
 
   const STORAGE_KEY = 'taras-ai-chat-history-v1';
   // ----- Hardening constants (v2: production hardening, 2026-06-21) -----
