@@ -51,12 +51,12 @@
   // ============================================================
   // n8n Chat Trigger webhook URL
   // ============================================================
-  // The Cloudflare Quick Tunnel hostname is ephemeral and rotates on every
-  // cloudflared restart. On a stale URL the fetch fails with a network
-  // error and we surface a "Tunnel temporarily unavailable" status.
-  // Recovery: re-run /home/taras/projects/ai/infrastructure/n8n/portfolio-agent-day0/scripts/recover-chat.sh
+  // The Cloudflare Named Tunnel routes chat.taraspolishchuk.com -> n8n:5678.
+  // This URL is STABLE — no more rotating trycloudflare.com subdomains.
+  // Migration completed 2026-07-10 (mission portfolio-chat-production-2026-07-10).
+  // See homelab/scripts/healthcheck-chat-tunnel.sh for liveness probe.
   const N8N_WEBHOOK_URL =
-    'https://dollars-oral-qualifications-precise.trycloudflare.com/webhook/0c620ad2-9b69-4484-a56f-5c1eddc47ead/chat';
+    'https://chat.taraspolishchuk.com/webhook/0c620ad2-9b69-4484-a56f-5c1eddc47ead/chat';
 
   const STORAGE_KEY = 'taras-ai-chat-history-v1';
   // ----- Hardening constants (v2: production hardening, 2026-06-21) -----
@@ -877,10 +877,9 @@
       if (isAbort) {
         errText = 'Request timed out. The assistant took too long to respond. Please try again.';
       } else if (err && err.name === 'TypeError' && /fetch/i.test(err.message || '')) {
-        // Most likely cause: Cloudflare Quick Tunnel hostname rotated and
-        // the hard-coded URL no longer resolves. Surface a more helpful
-        // message than the generic "Network error".
-        errText = 'Network error — the public tunnel is temporarily unavailable. Please retry in a few minutes; if it persists, the assistant URL needs a refresh.';
+        // Most likely cause: Cloudflare Named Tunnel or n8n workflow down.
+        // Surface a more helpful message than the generic "Network error".
+        errText = 'Network error — the chat assistant is temporarily unavailable. Please retry; if it persists, the service may need attention.';
       } else {
         errText = 'Network error. Please check your connection and try again.';
       }
