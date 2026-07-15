@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>WhisperClip — Preview</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1440px; height:900px; overflow:hidden; font-family:'Segoe UI Variable','Segoe UI',system-ui,sans-serif; }
+  body { background: linear-gradient(135deg,#0f172a 0%,#1e293b 60%,#0f172a 100%); color:#e2e8f0; padding:48px; position:relative; }
+
+  /* Wallpaper */
+  body::before {
+    content: ""; position: absolute; inset:0;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(13,148,136,.18), transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(20,184,166,.10), transparent 60%);
+    pointer-events:none;
+  }
+
+  /* Title block */
+  .title { font-size: 28pt; font-weight:700; letter-spacing:-.5px; color:#f1f5f9; margin-bottom:8px; }
+  .subtitle { font-size: 11pt; color:#94a3b8; margin-bottom:32px; }
+  .badge { display:inline-block; font-size:9pt; padding:3px 10px; border-radius:99px; background:rgba(13,148,136,.18); color:#2dd4bf; border:1px solid rgba(45,212,191,.35); letter-spacing:.3px; margin-bottom:12px; }
+
+  /* Grid layout */
+  .stage { display:grid; grid-template-columns: 1fr 380px; gap:36px; position:relative; z-index:1; }
+
+  /* Main scene: Windows desktop with overlay + tray */
+  .desktop {
+    height: 720px; border-radius:14px;
+    background: linear-gradient(180deg, #0c1426 0%, #1a2333 100%);
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow: 0 30px 80px rgba(0,0,0,.55);
+    position:relative; overflow:hidden;
+  }
+
+  /* Fake notepad window */
+  .notepad { position:absolute; top:80px; left:80px; width:560px; height:380px; border-radius:8px; background:#0e1116; border:1px solid rgba(255,255,255,.08); box-shadow:0 16px 50px rgba(0,0,0,.5); overflow:hidden; }
+  .notepad-title { height:34px; background:#1a1f2b; display:flex; align-items:center; padding:0 12px; font-size:10pt; color:#94a3b8; gap:8px; }
+  .notepad-title .dot { width:10px; height:10px; border-radius:99px; }
+  .dot.r { background:#ef4444; } .dot.y { background:#f59e0b; } .dot.g { background:#10b981; }
+  .notepad-title .name { margin-left:8px; color:#cbd5e1; font-weight:500; font-size:9.5pt; }
+  .notepad-body { padding:18px 22px; font-size:11pt; line-height:1.7; color:#cbd5e1; font-family:'Cascadia Code','Consolas',monospace; }
+  .notepad-body .cursor { display:inline-block; width:2px; height:16px; background:#2dd4bf; margin-left:2px; vertical-align:middle; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity:0; } }
+
+  /* Recording overlay */
+  .overlay {
+    position:absolute; top:36px; right:36px;
+    width:280px; padding:14px 16px;
+    background:rgba(15,23,42,.92); backdrop-filter: blur(10px);
+    border-radius:10px; border:1px solid rgba(239,68,68,.5);
+    box-shadow:0 10px 30px rgba(239,68,68,.3);
+    display:flex; align-items:center; gap:12px;
+  }
+  .overlay .rec-dot { width:12px; height:12px; border-radius:99px; background:#ef4444; box-shadow:0 0 12px rgba(239,68,68,.8); animation:pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 50% { transform:scale(.7); opacity:.6; } }
+  .overlay .label { font-size:10pt; color:#fca5a5; font-weight:600; letter-spacing:.5px; }
+  .overlay .meta { font-size:8.5pt; color:#94a3b8; margin-top:1px; }
+  .overlay .waveform { display:flex; gap:2px; align-items:flex-end; height:24px; margin-left:auto; }
+  .overlay .waveform .bar { width:3px; background:#f87171; border-radius:2px; }
+
+  /* Settings window (small, in corner) */
+  .settings {
+    position:absolute; bottom:80px; right:36px;
+    width:300px; padding:16px;
+    background:rgba(15,23,42,.95); backdrop-filter: blur(8px);
+    border-radius:10px; border:1px solid rgba(255,255,255,.08);
+  }
+  .settings-title { font-size:10pt; color:#cbd5e1; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+  .settings-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:9px; font-size:9pt; }
+  .settings-row .k { color:#94a3b8; }
+  .settings-row .v { color:#2dd4bf; font-family:'Cascadia Code','Consolas',monospace; font-size:8.5pt; }
+  .badge-gpu { display:inline-block; font-size:7.5pt; padding:2px 6px; border-radius:4px; background:rgba(45,212,191,.15); color:#2dd4bf; margin-left:6px; }
+
+  /* System tray */
+  .taskbar { position:absolute; bottom:0; left:0; right:0; height:42px; background:rgba(20,27,45,.95); border-top:1px solid rgba(255,255,255,.06); display:flex; align-items:center; padding:0 14px; gap:8px; }
+  .start { width:32px; height:32px; border-radius:6px; background:rgba(45,212,191,.2); display:flex; align-items:center; justify-content:center; color:#2dd4bf; font-weight:700; font-size:11pt; }
+  .search { flex:0 0 220px; height:30px; background:rgba(255,255,255,.04); border-radius:6px; display:flex; align-items:center; padding:0 10px; font-size:9pt; color:#64748b; gap:8px; }
+  .tray { margin-left:auto; display:flex; gap:6px; align-items:center; }
+  .tray-icon { width:22px; height:22px; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:11pt; }
+  .tray-icon.active { color:#2dd4bf; background:rgba(45,212,191,.18); border-radius:5px; box-shadow:0 0 8px rgba(45,212,191,.4); }
+  .clock { font-size:9pt; color:#cbd5e1; padding-left:6px; }
+
+  /* Right column: model / pipeline */
+  .panel { display:flex; flex-direction:column; gap:14px; }
+  .card { background:rgba(15,23,42,.72); border:1px solid rgba(255,255,255,.07); border-radius:12px; padding:18px; }
+  .card h3 { font-size:10.5pt; color:#f1f5f9; margin-bottom:12px; font-weight:600; }
+  .kv { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px dashed rgba(255,255,255,.05); font-size:9pt; }
+  .kv:last-child { border:0; }
+  .kv .k { color:#94a3b8; }
+  .kv .v { color:#cbd5e1; font-family:'Cascadia Code','Consolas',monospace; }
+  .pill { display:inline-block; font-size:7.5pt; padding:2px 8px; border-radius:99px; }
+  .pill.live { background:rgba(34,197,94,.15); color:#4ade80; }
+  .pill.gpu { background:rgba(45,212,191,.15); color:#2dd4bf; }
+  .pipe { display:flex; align-items:center; gap:6px; padding:6px 0; font-size:8.5pt; }
+  .pipe .step { padding:5px 10px; border-radius:6px; background:rgba(45,212,191,.08); color:#5eead4; border:1px solid rgba(45,212,191,.2); }
+  .pipe .arrow { color:#475569; font-size:10pt; }
+</style>
+</head>
+<body>
+  <div class="badge">Windows · v0.1.0 · Multi-Backend</div>
+  <div class="title">WhisperClip — Push-to-Talk Transcription</div>
+  <div class="subtitle">Local Whisper inference · CUDA / DirectML / CPU · Tray-driven UX · Zero cloud dependency</div>
+
+  <div class="stage">
+    <div class="desktop">
+      <!-- Fake Notepad with dictated text -->
+      <div class="notepad">
+        <div class="notepad-title">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="name">Untitled — Notepad</span>
+        </div>
+        <div class="notepad-body">
+          Quarterly planning meeting notes.<br><br>
+          Action items: ship the new intake flow before the 22nd, finalize vendor pricing matrix, and confirm the contract with the legal team.<span class="cursor"></span>
+        </div>
+      </div>
+
+      <!-- Recording overlay -->
+      <div class="overlay">
+        <div>
+          <div class="label">RECORDING</div>
+          <div class="meta">small · uk · 0:12</div>
+        </div>
+        <div class="waveform">
+          <div class="bar" style="height:14px"></div>
+          <div class="bar" style="height:20px"></div>
+          <div class="bar" style="height:9px"></div>
+          <div class="bar" style="height:18px"></div>
+          <div class="bar" style="height:22px"></div>
+          <div class="bar" style="height:12px"></div>
+          <div class="bar" style="height:17px"></div>
+          <div class="bar" style="height:24px"></div>
+          <div class="bar" style="height:14px"></div>
+        </div>
+      </div>
+
+      <!-- Settings window -->
+      <div class="settings">
+        <div class="settings-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          WhisperClip · Settings
+        </div>
+        <div class="settings-row"><span class="k">Hotkey</span><span class="v">Ctrl + Alt + Space</span></div>
+        <div class="settings-row"><span class="k">Model</span><span class="v">small</span></div>
+        <div class="settings-row"><span class="k">Language</span><span class="v">uk</span></div>
+        <div class="settings-row"><span class="k">Device</span><span class="v">auto<span class="badge-gpu">CUDA</span></span></div>
+        <div class="settings-row"><span class="k">VAD</span><span class="v" style="color:#4ade80">●</span></div>
+      </div>
+
+      <!-- Windows taskbar with tray icon -->
+      <div class="taskbar">
+        <div class="start">⊞</div>
+        <div class="search">🔍 Search</div>
+        <div class="tray">
+          <div class="tray-icon" title="Network">📶</div>
+          <div class="tray-icon" title="Volume">🔊</div>
+          <div class="tray-icon active" title="WhisperClip — recording">🎙</div>
+          <div class="clock">22:14 · 2026-07-13</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right panel -->
+    <div class="panel">
+      <div class="card">
+        <h3>Runtime <span class="pill live">● Live</span></h3>
+        <div class="kv"><span class="k">Backend</span><span class="v">faster-whisper · CUDA</span></div>
+        <div class="kv"><span class="k">Model</span><span class="v">small · 244M params</span></div>
+        <div class="kv"><span class="k">Latency</span><span class="v">312 ms / 1s audio</span></div>
+        <div class="kv"><span class="k">Memory</span><span class="v">812 MB resident</span></div>
+        <div class="kv"><span class="k">GPU</span><span class="v">RTX 3060 · 6 GB</span></div>
+        <div class="kv"><span class="k">Cost</span><span class="v" style="color:#4ade80">$0.00 / ∞</span></div>
+      </div>
+
+      <div class="card">
+        <h3>Pipeline</h3>
+        <div class="pipe"><span class="step">Ctrl+Alt+Space</span><span class="arrow">→</span><span class="step">mic capture</span></div>
+        <div class="pipe"><span class="step">VAD filter</span><span class="arrow">→</span><span class="step">Whisper decode</span></div>
+        <div class="pipe"><span class="step">replacement rules</span><span class="arrow">→</span><span class="step">clipboard</span></div>
+        <div class="pipe"><span class="step">Ctrl+V</span><span class="arrow">→</span><span class="step">focused window</span></div>
+      </div>
+
+      <div class="card">
+        <h3>Architecture (9 services)</h3>
+        <div class="kv"><span class="k">state_machine.py</span><span class="v">orchestration</span></div>
+        <div class="kv"><span class="k">audio_capture.py</span><span class="v">mic + VAD</span></div>
+        <div class="kv"><span class="k">inference_backends.py</span><span class="v">CUDA · DirectML · CPU</span></div>
+        <div class="kv"><span class="k">model_manager.py</span><span class="v">download · cache</span></div>
+        <div class="kv"><span class="k">focus_and_paste.py</span><span class="v">clipboard · Ctrl+V</span></div>
+        <div class="kv"><span class="k">hotkey.py</span><span class="v">global keybind</span></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

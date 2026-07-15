@@ -758,6 +758,198 @@ a { color: inherit; text-decoration: none; cursor: none; }
   filter: saturate(0.7) brightness(0.6);
 }
 
+/* Real screenshot preview (preferred over gradient when available) */
+.project-preview-screenshot {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  filter: saturate(0.85) brightness(0.92);
+  transition: transform .35s var(--ease, ease), filter .35s ease;
+}
+.project-card:hover .project-preview-screenshot {
+  transform: scale(1.03);
+  filter: saturate(1) brightness(1);
+}
+
+/* AI Portfolio Assistant card — futuristic 🤖 orbit animation.
+   Used when a project has no screenshot but the user wants a hero element
+   instead of a plain emoji fallback. Pure CSS + the existing 🤖 glyph. */
+.project-preview-ai {
+  --ai-bg: radial-gradient(ellipse at 30% 20%, #1d0e3d 0%, #0a0420 55%, #050111 100%);
+  width: 100%; height: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ai-bg);
+  filter: saturate(1) brightness(1);
+}
+.project-preview-ai::before {
+  content: "";
+  position: absolute; inset: -20%;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(0, 229, 255, 0.18), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(255, 0, 200, 0.16), transparent 45%),
+    radial-gradient(circle at 50% 100%, rgba(120, 90, 255, 0.14), transparent 55%);
+  filter: blur(18px);
+  animation: aiNebula 14s var(--ease, ease) infinite alternate;
+}
+@keyframes aiNebula {
+  0%   { transform: translate3d(0, 0, 0) scale(1);   opacity: 0.85; }
+  50%  { transform: translate3d(-3%, 2%, 0) scale(1.05); opacity: 1; }
+  100% { transform: translate3d(2%, -1%, 0) scale(1); opacity: 0.85; }
+}
+.project-preview-ai .grid-overlay {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 229, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 229, 255, 0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse at center, #000 50%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 50%, transparent 75%);
+  opacity: 0.55;
+}
+.project-preview-ai .scanline {
+  position: absolute; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.85), transparent);
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
+  animation: aiScan 4.5s linear infinite;
+  pointer-events: none;
+}
+@keyframes aiScan {
+  0%   { top: 0%;   opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+.project-preview-ai .stage {
+  position: relative;
+  width: 130px; height: 130px;
+  display: flex; align-items: center; justify-content: center;
+}
+.project-preview-ai .robot-core {
+  position: relative;
+  font-size: 3.2rem;
+  filter: drop-shadow(0 0 12px rgba(0, 229, 255, 0.55));
+  animation: aiBob 4s ease-in-out infinite, aiPulse 2.8s ease-in-out infinite;
+  z-index: 3;
+}
+@keyframes aiBob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+@keyframes aiPulse {
+  0%, 100% { filter: drop-shadow(0 0 12px rgba(0, 229, 255, 0.55)); }
+  50%      { filter: drop-shadow(0 0 24px rgba(160, 100, 255, 0.9)); }
+}
+.project-preview-ai .ring {
+  position: absolute;
+  border: 1px solid;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.project-preview-ai .ring-1 {
+  width: 110px; height: 110px;
+  border-color: rgba(0, 229, 255, 0.45);
+  box-shadow: 0 0 18px rgba(0, 229, 255, 0.25) inset;
+  animation: aiSpin 9s linear infinite;
+}
+.project-preview-ai .ring-2 {
+  width: 150px; height: 150px;
+  border-color: rgba(255, 0, 200, 0.35);
+  border-style: dashed;
+  animation: aiSpin 14s linear infinite reverse;
+  animation-direction: reverse;
+}
+.project-preview-ai .ring-3 {
+  width: 190px; height: 190px;
+  border-color: rgba(120, 90, 255, 0.30);
+  animation: aiSpin 22s linear infinite;
+}
+@keyframes aiSpin {
+  to { transform: rotate(360deg); }
+}
+.project-preview-ai .satellite {
+  position: absolute;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 10px currentColor;
+}
+.project-preview-ai .satellite-1 { color: #00e5ff; top: -4px; left: 50%; transform: translateX(-50%); animation: aiOrbit1 9s linear infinite; }
+.project-preview-ai .satellite-2 { color: #ff00c8; top: 50%;  right: -4px; transform: translateY(-50%); animation: aiOrbit2 14s linear infinite; }
+.project-preview-ai .satellite-3 { color: #a78bff; bottom: -4px; left: 50%; transform: translateX(-50%); animation: aiOrbit3 22s linear infinite; }
+@keyframes aiOrbit1 {
+  from { transform: translate(-50%, 0) rotate(0deg)   translate(55px)  rotate(0deg); }
+  to   { transform: translate(-50%, 0) rotate(360deg) translate(55px)  rotate(-360deg); }
+}
+@keyframes aiOrbit2 {
+  from { transform: translate(0, -50%) rotate(0deg)    translate(75px)  rotate(0deg); }
+  to   { transform: translate(0, -50%) rotate(-360deg)  translate(75px)  rotate(360deg); }
+}
+@keyframes aiOrbit3 {
+  from { transform: translate(-50%, 0) rotate(0deg)    translate(95px)  rotate(0deg); }
+  to   { transform: translate(-50%, 0) rotate(360deg)   translate(95px)  rotate(-360deg); }
+}
+.project-preview-ai .ai-corners {
+  position: absolute; inset: 8px;
+  border: 1px solid rgba(0, 229, 255, 0.18);
+  border-radius: 6px;
+  pointer-events: none;
+}
+.project-preview-ai .ai-corners::before,
+.project-preview-ai .ai-corners::after {
+  content: "";
+  position: absolute;
+  width: 14px; height: 14px;
+  border: 2px solid #00e5ff;
+}
+.project-preview-ai .ai-corners::before {
+  top: -2px; left: -2px;
+  border-right: none; border-bottom: none;
+}
+.project-preview-ai .ai-corners::after {
+  bottom: -2px; right: -2px;
+  border-left: none; border-top: none;
+}
+.project-preview-ai .ai-cta-chip {
+  position: absolute;
+  bottom: 14px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(0, 229, 255, 0.95);
+  background: rgba(5, 5, 25, 0.55);
+  border: 1px solid rgba(0, 229, 255, 0.4);
+  padding: 6px 14px;
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: aiChip 3s ease-in-out infinite;
+}
+@keyframes aiChip {
+  0%, 100% { box-shadow: 0 0 10px rgba(0, 229, 255, 0.25); }
+  50%      { box-shadow: 0 0 20px rgba(255, 0, 200, 0.45); }
+}
+.project-card:hover .project-preview-ai .ring-1 { animation-duration: 4s; }
+.project-card:hover .project-preview-ai .ring-2 { animation-duration: 6s; }
+.project-card:hover .project-preview-ai .ring-3 { animation-duration: 9s; }
+.project-card:hover .project-preview-ai .scanline { animation-duration: 1.6s; }
+@media (prefers-reduced-motion: reduce) {
+  .project-preview-ai::before,
+  .project-preview-ai .scanline,
+  .project-preview-ai .robot-core,
+  .project-preview-ai .ring,
+  .project-preview-ai .satellite,
+  .project-preview-ai .ai-corners,
+  .project-preview-ai .ai-cta-chip { animation: none !important; }
+}
+
 .project-body {
   padding: var(--space-5) var(--space-5) var(--space-6);
 }
@@ -1586,6 +1778,7 @@ const PROJECTS = [
     id: 1,
     name: "case-04 — AI Discovery Platform",
     featured: true,
+    screenshot: "./assets/screenshots/case-04.webp",
     desc: "Multi-agent platform that turns a client intake form into a fully-structured Discovery → Workflow → Security → Architecture → Cost → Proposal pipeline. 7 specialist agents, 7 LLM providers (mock, OpenAI, Anthropic, Gemini, OpenRouter, Ollama, custom), Zod-validated outputs, full CRM-style Kanban and analytics.",
     tags: ["AI", "Multi-Agent", "SvelteKit", "Zod", "LLM", "Production"],
     gradient: "linear-gradient(135deg, #0a0e2a 0%, #1a1f4a 50%, #050a18 100%)",
@@ -1642,6 +1835,7 @@ runProposalEngine(caseId)       → Proposal (markdown)</code></pre>
     id: 2,
     name: "product-team — Multi-Service Reference Architecture",
     featured: true,
+    screenshot: "./assets/screenshots/ajaa.webp",
     desc: "Production-grade reference architecture for an AI product team. Monorepo with 3 apps (web · api · ai-composition) + 4 shared packages, full CI/CD, multi-LLM orchestration (Anthropic prod · Ollama dev · OpenAI fallback), 19-stage multi-agent workflow, 5 ADRs, Zod-shared contracts.",
     tags: ["Monorepo", "Multi-Agent", "TypeScript", "Zod", "AI", "Reference"],
     gradient: "linear-gradient(135deg, #0a1a2a 0%, #1a3050 50%, #050a18 100%)",
@@ -1678,6 +1872,7 @@ packages/
     id: 3,
     name: "AI Portfolio Assistant",
     featured: true,
+    preview: "ai",
     desc: "Interactive AI assistant trained on my projects, technical background and automation experience. Powered by an n8n workflow with a structured Q&A knowledge base, an LLM agent, and a custom lightweight chat widget embedded directly in this portfolio.",
     tags: ["AI", "n8n", "Automation", "RAG", "Workflow", "LLM", "Portfolio"],
     gradient: "linear-gradient(135deg, #1a0d3a 0%, #2d1b69 50%, #0f2027 100%)",
@@ -1727,6 +1922,7 @@ fetch response → chat panel UI</code></pre>
   {
     id: 4,
     name: "QuizPilot",
+    screenshot: "./assets/screenshots/quizpilot.webp",
     desc: "Conversion-focused waitlist landing page for a fictional EdTech startup that helps teachers generate quizzes from lesson content in seconds. Built with SvelteKit, TypeScript, Tailwind CSS, and Supabase, with a shared waitlist form, animated counter, duplicate protection, and lightweight scroll-reveal motion.",
     tags: ["SvelteKit", "TypeScript", "Tailwind", "Supabase"],
     gradient: "linear-gradient(135deg, #08131f 0%, #102b46 50%, #1b5f7a 100%)",
@@ -1736,6 +1932,7 @@ fetch response → chat panel UI</code></pre>
   {
     id: 5,
     name: "FORMA Scale",
+    screenshot: "./assets/screenshots/forma-scale.webp",
     desc: "High-converting Shopify-ready landing page for a smart fitness scale. Features scroll-triggered animations, parallax hero, interactive product showcase with tab switching, auto-play reviews carousel, FAQ accordion, and a sticky CTA bar — pixel-perfect premium UI, zero dependencies.",
     tags: ["HTML", "CSS", "JavaScript", "E-commerce", "Shopify"],
     gradient: "linear-gradient(135deg, #0a0a0f 0%, #111130 50%, #1a1040 100%)",
@@ -1745,6 +1942,7 @@ fetch response → chat panel UI</code></pre>
   {
     id: 6,
     name: "Shopify Dev KB",
+    screenshot: "./assets/screenshots/shopify-dev-kb.webp",
     desc: "Personal reference app for Shopify theme development. Browse and search categorized Liquid & JS snippets, built with Svelte + TypeScript and syntax-highlighted code blocks.",
     tags: ["Svelte", "TypeScript", "Tailwind", "Shopify"],
     gradient: "linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)",
@@ -1754,6 +1952,7 @@ fetch response → chat panel UI</code></pre>
   {
     id: 7,
     name: "Ascent Protein",
+    screenshot: "./assets/screenshots/ascentprotein.webp",
     desc: "Handled theme customization and UI work for a premium sports nutrition brand. Worked on product page layouts, custom sections, and storefront UI improvements focused on visual consistency and conversion flow.",
     tags: ["Shopify", "Liquid", "JavaScript", "SCSS"],
     gradient: "linear-gradient(135deg, #0a0f1a 0%, #0d1a2e 50%, #0a1520 100%)",
@@ -1763,6 +1962,7 @@ fetch response → chat panel UI</code></pre>
   {
     id: 8,
     name: "GU Energy",
+    screenshot: "./assets/screenshots/guenergy.webp",
     desc: "Worked on Shopify theme improvements for an established eCommerce brand. Handled UI tweaks, layout fixes, and responsive adjustments to keep the storefront consistent across devices.",
     tags: ["Shopify", "Liquid", "JavaScript", "SCSS"],
     gradient: "linear-gradient(135deg, #1a0a00 0%, #2e1500 50%, #3d2000 100%)",
@@ -1772,6 +1972,7 @@ fetch response → chat panel UI</code></pre>
   {
     id: 9,
     name: "Bunnies By The Bay",
+    screenshot: "./assets/screenshots/bunniesbythebay.webp",
     desc: "Contributed to Shopify theme work for a baby gifts and plush toys brand. Worked on custom sections, UI improvements, and storefront polish to keep the experience clean and easy to navigate.",
     tags: ["Shopify", "Liquid", "JavaScript", "SCSS"],
     gradient: "linear-gradient(135deg, #1a0a2e 0%, #2d1060 50%, #3d1a7a 100%)",
@@ -1781,6 +1982,7 @@ fetch response → chat panel UI</code></pre>
   {
     id: 10,
     name: "COOLA",
+    screenshot: "./assets/screenshots/coola.webp",
     desc: "Worked on product page structure and UX improvements for a Shopify skincare brand. Handled layout refinements, navigation adjustments, and visual consistency fixes across the storefront.",
     tags: ["Shopify", "Liquid", "JavaScript", "SCSS"],
     gradient: "linear-gradient(135deg, #002233 0%, #003d5c 50%, #005580 100%)",
@@ -1790,6 +1992,7 @@ fetch response → chat panel UI</code></pre>
   {
     id: 11,
     name: "White Claw UK",
+    screenshot: "./assets/screenshots/whiteclaw.webp",
     desc: "Contributed to Shopify theme development for a global beverage brand's UK market. Worked on UI updates, custom sections, and responsive adjustments specific to the regional storefront.",
     tags: ["Shopify", "Liquid", "JavaScript", "SCSS"],
     gradient: "linear-gradient(135deg, #061b30 0%, #0d3352 50%, #0a4a6e 100%)",
@@ -1799,15 +2002,17 @@ fetch response → chat panel UI</code></pre>
   {
     id: 12,
     name: "UI Snippets Library",
+    screenshot: "./assets/screenshots/ui-lab.webp",
     desc: "Component playground and microinteraction library built with pure HTML/CSS/JS. Browse buttons, cards, toggles, toasts, and inputs with live previews and copy-ready code snippets — no frameworks.",
     tags: ["HTML", "CSS", "JavaScript", "Microinteractions"],
     gradient: "linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)",
     emoji: "🧩",
-    link: "https://taras-polishchuk.github.io/ui-lab/"
+    link: "https://taras-polishchuk.github.io/UI-Snippets-Library-Microinteractions-Components/"
   },
   {
     id: 13,
     name: "Locus",
+    screenshot: "./assets/screenshots/locus.webp",
     desc: "Minimalist lofi pomodoro timer with ambient soundscapes, built with HTML, CSS, and JavaScript. Customizable sessions, progress visualization, and focus-enhancing features.",
     tags: ["HTML", "CSS", "JavaScript", "Web Audio API"],
     gradient: "linear-gradient(135deg, #1a1040 0%, #2d1b69 50%, #0f2027 100%)",
@@ -1817,6 +2022,7 @@ fetch response → chat panel UI</code></pre>
   {
     id: 14,
     name: "Cleanse",
+    screenshot: "./assets/screenshots/cleanse.webp",
     desc: "Landing page for a cleaning service startup. Features animated advantage cards, an interactive room-by-room cleaning guide with hotspot markers, scroll-triggered tab navigation, and a floating CTA button — fully responsive, pure HTML/CSS/JS.",
     tags: ["HTML", "CSS", "JavaScript", "Responsive"],
     gradient: "linear-gradient(135deg, #0d0d1a 0%, #1a0d33 50%, #2d1560 100%)",
@@ -1826,6 +2032,7 @@ fetch response → chat panel UI</code></pre>
   {
     id: 15,
     name: "Habit Tracker",
+    screenshot: "./assets/screenshots/habit-tracker.webp",
     desc: "Minimalist daily habit tracker built with React. Add custom habits, mark them done each day, and visualize your consistency with a streak and completion grid.",
     tags: ["React", "JavaScript", "Vite"],
     gradient: "linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1a2332 100%)",
@@ -1835,6 +2042,7 @@ fetch response → chat panel UI</code></pre>
   {
     id: 16,
     name: "Ubuntu Cheatsheet",
+    screenshot: "./assets/screenshots/ubuntu-cheatsheet.webp",
     desc: "Interactive Ubuntu CLI reference with 15+ categorized sections — file system, networking, APT, systemd, cron, and more. Sidebar navigation, instant search, and one-click copy. Pure HTML/CSS/JS, no dependencies.",
     tags: ["Ubuntu", "Linux", "CLI", "Cheatsheet"],
     gradient: "linear-gradient(135deg, #200122 0%, #6f0000 50%, #200122 100%)",
@@ -1844,6 +2052,7 @@ fetch response → chat panel UI</code></pre>
   {
     id: 17,
     name: "Shopify Theme Dev Roadmap",
+    screenshot: "./assets/screenshots/shopify-roadmap.webp",
     desc: "Interactive skill tree for becoming a Shopify Theme Developer — from HTML basics to publishing a premium theme. 31 nodes across 7 stages, XP leveling system, locked/unlocked mechanics, Reality Mode tasks, and dark mode. Built with Svelte 5.",
     tags: ["Svelte", "TypeScript", "Gamification", "Shopify"],
     gradient: "linear-gradient(135deg, #0d0520 0%, #1a0940 50%, #0a1830 100%)",
@@ -1853,6 +2062,7 @@ fetch response → chat panel UI</code></pre>
   {
     id: 18,
     name: "Superfit",
+    screenshot: "./assets/screenshots/superfit.webp",
     desc: "Responsive landing page for a modern gym in Kyiv. Features a dark hero section, about & advantages two-column layouts with decorative image framing, a full-bleed CTA banner, a 4-card features grid, and a footer with an embedded Google Maps. Pure HTML/CSS, no frameworks.",
     tags: ["HTML", "CSS", "Responsive", "Landing Page"],
     gradient: "linear-gradient(135deg, #080c18 0%, #0e1a30 50%, #1e3a5f 100%)",
@@ -1862,11 +2072,22 @@ fetch response → chat panel UI</code></pre>
   {
     id: 19,
     name: "Грім та Грім",
+    screenshot: "./assets/screenshots/grim-ta-grim.webp",
     desc: "Responsive landing page for a Ukrainian rock band. Features a fullscreen concert hero with dark overlay, glassmorphism concerts table with ticket booking modal, band members grid, story section, contact form with validation, and an embedded map. Pure HTML/CSS/JS, no frameworks.",
     tags: ["HTML", "CSS", "JavaScript", "Landing Page"],
     gradient: "linear-gradient(135deg, #0b0b0f 0%, #111118 50%, #1a0a2e 100%)",
     emoji: "🎸",
     link: "https://taras-polishchuk.github.io/grim-ta-grim/"
+  },
+  {
+    id: 20,
+    name: "WhisperClip — Push-to-Talk Transcription",
+    screenshot: "./assets/screenshots/whisper-clip.webp",
+    desc: "Windows tray app for push-to-talk transcription with local faster-whisper inference. Multi-backend (NVIDIA CUDA, AMD/Intel DirectML, CPU fallback), state-machine driven, Ctrl+Alt+Space hotkey, focused-window autopaste, settings UI, model auto-download — zero cloud dependency, shipped with a Windows installer.",
+    tags: ["Python", "Whisper", "CUDA", "DirectML", "Windows", "Desktop AI"],
+    gradient: "linear-gradient(135deg, #0f172a 0%, #134e4a 50%, #0f172a 100%)",
+    emoji: "🎙",
+    link: "https://github.com/taras-polishchuk/whisper-clip-win"
   },
 ];
 
@@ -2410,9 +2631,24 @@ function buildProjectCards() {
 
     card.innerHTML = `
       <div class="project-preview">
-        <div class="project-preview-placeholder" style="background:${p.gradient}">
-          <span style="font-size:3rem">${p.emoji}</span>
-        </div>
+        ${p.preview === 'ai'
+          ? `<div class="project-preview-ai" role="img" aria-label="${p.name} preview">
+              <div class="grid-overlay"></div>
+              <div class="scanline"></div>
+              <div class="ai-corners"></div>
+              <div class="stage">
+                <div class="ring ring-1"><span class="satellite satellite-1"></span></div>
+                <div class="ring ring-2"><span class="satellite satellite-2"></span></div>
+                <div class="ring ring-3"><span class="satellite satellite-3"></span></div>
+                <span class="robot-core" aria-hidden="true">${p.emoji}</span>
+              </div>
+              <span class="ai-cta-chip">Ask me anything</span>
+            </div>`
+          : p.screenshot
+          ? `<img class="project-preview-screenshot" src="${p.screenshot}" alt="${p.name} preview" loading="lazy" onerror="this.parentElement.classList.add('project-preview-fallback'); this.replaceWith(Object.assign(document.createElement('div'),{className:'project-preview-placeholder',innerHTML:'<span style=&quot;font-size:3rem&quot;>'+p.emoji+'</span>',style:'background:'+p.gradient})); this.remove();">`
+          : `<div class="project-preview-placeholder" style="background:${p.gradient}">
+              <span style="font-size:3rem">${p.emoji}</span>
+            </div>`}
         <div class="project-preview-gradient"></div>
       </div>
       <div class="project-body">

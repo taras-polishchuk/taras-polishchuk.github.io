@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How I Designed 6 Specialist Agent Contracts (and Why Generic Agents Don't Compose) — Taras Polishchuk</title>
+<meta name="description" content="A practical guide to designing specialist agent contracts with explicit handoff rules, YAML frontmatter, and success signals. Why narrow contracts beat generic agents for real workflows, with code and patterns.">
+<link rel="canonical" href="https://taras-polishchuk.github.io/blog/specialist-agent-contracts-design.html">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://taras-polishchuk.github.io/blog/specialist-agent-contracts-design.html">
+<meta property="og:title" content="How I Designed 6 Specialist Agent Contracts (and Why Generic Agents Don't Compose)">
+<meta property="og:description" content="A practical guide to designing specialist agent contracts with explicit handoff rules, YAML frontmatter, and success signals. Why narrow contracts beat generic agents for real workflows, with code and patterns.">
+<meta property="og:image" content="https://taras-polishchuk.github.io/assets/Taras-Polishchuk.jpg">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-07-13">
+<meta property="article:author" content="Taras Polishchuk">
+<meta property="article:tag" content="Multi-Agent Systems">
+<meta property="article:tag" content="AI Architecture">
+<meta property="article:tag" content="Agent Orchestration">
+<meta property="article:tag" content="LLM Engineering">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How I Designed 6 Specialist Agent Contracts">
+<meta name="twitter:description" content="Why narrow specialist agents with explicit handoff rules compose better than generic agents — with a concrete YAML contract pattern you can copy.">
+<meta name="twitter:image" content="https://taras-polishchuk.github.io/assets/Taras-Polishchuk.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,700,800,900&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "How I Designed 6 Specialist Agent Contracts (and Why Generic Agents Don't Compose)",
+  "description": "A practical guide to designing specialist agent contracts with explicit handoff rules, YAML frontmatter, and success signals. Why narrow contracts beat generic agents for real workflows, with code and patterns.",
+  "image": "https://taras-polishchuk.github.io/assets/Taras-Polishchuk.jpg",
+  "url": "https://taras-polishchuk.github.io/blog/specialist-agent-contracts-design.html",
+  "datePublished": "2026-07-13",
+  "dateModified": "2026-07-13",
+  "inLanguage": "en-US",
+  "author": {"@type": "Person", "name": "Taras Polishchuk", "url": "https://taras-polishchuk.github.io/"},
+  "publisher": {"@type": "Person", "name": "Taras Polishchuk", "url": "https://taras-polishchuk.github.io/"},
+  "keywords": ["multi-agent architecture", "agent contracts", "specialist agents", "agent orchestration", "multi-agent system design", "agent handoff rules", "LLM agents", "AI engineering"]
+}
+</script>
+<style>
+:root {
+  --text-xs:clamp(.75rem,.7rem + .25vw,.875rem);--text-sm:clamp(.875rem,.8rem + .35vw,1rem);--text-base:clamp(1rem,.95rem + .25vw,1.125rem);--text-lg:clamp(1.125rem,1rem + .75vw,1.5rem);--text-xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);--text-2xl:clamp(2rem,1.2rem + 2.5vw,3.5rem);
+  --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;--space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;--space-12:3rem;--space-16:4rem;--space-20:5rem;
+  --radius-sm:.375rem;--radius-md:.5rem;--radius-lg:.75rem;--radius-xl:1rem;--radius-2xl:1.5rem;--radius-full:9999px;
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --color-bg:#0a0a0b;--color-surface:#111113;--color-border:rgba(255,255,255,.07);--color-divider:rgba(255,255,255,.04);
+  --color-text:#e8e8f0;--color-text-muted:rgba(232,232,240,.5);--color-text-faint:rgba(232,232,240,.25);
+  --color-primary:#7c6fff;--color-accent:#4eecc8;
+  --font-display:'Cabinet Grotesk','Inter',sans-serif;--font-body:'Inter',sans-serif;--font-mono:'JetBrains Mono','Fira Code',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{min-height:100dvh;font-family:var(--font-body);font-size:var(--text-base);color:var(--color-text);background-color:var(--color-bg);overflow-x:hidden;line-height:1.75}
+a{color:inherit;text-decoration:none}
+::selection{background:rgba(124,111,255,.3);color:var(--color-text)}
+:focus-visible{outline:2px solid var(--color-primary);outline-offset:3px;border-radius:var(--radius-sm)}
+article{max-width:740px;margin:0 auto;padding:var(--space-16) var(--space-6) var(--space-20)}
+nav.crumbs{font-size:var(--text-xs);color:var(--color-text-faint);margin-bottom:var(--space-6)}
+nav.crumbs a{color:var(--color-text-muted)}
+nav.crumbs a:hover{color:var(--color-accent)}
+header.hero{margin-bottom:var(--space-12);padding-bottom:var(--space-8);border-bottom:1px solid var(--color-border)}
+.eyebrow{display:inline-block;font-size:var(--text-xs);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--color-accent);margin-bottom:var(--space-4)}
+h1.title{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:700;letter-spacing:-.03em;line-height:1.1;color:var(--color-text);margin-bottom:var(--space-4)}
+p.lede{font-size:var(--text-lg);color:var(--color-text-muted);line-height:1.6;margin-bottom:var(--space-6)}
+.meta{display:flex;flex-wrap:wrap;gap:var(--space-4);font-size:var(--text-sm);color:var(--color-text-faint)}
+.meta span{display:inline-flex;align-items:center;gap:.4rem}
+h2{font-family:var(--font-display);font-size:var(--text-xl);font-weight:700;letter-spacing:-.02em;color:var(--color-text);margin:var(--space-12) 0 var(--space-4);line-height:1.2}
+h3{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;color:var(--color-text);margin:var(--space-8) 0 var(--space-3)}
+p{margin-bottom:var(--space-4);color:var(--color-text)}
+strong{color:var(--color-text);font-weight:600}
+em{color:var(--color-text-muted);font-style:italic}
+ul,ol{margin:var(--space-4) 0 var(--space-6);padding-left:var(--space-6)}
+li{margin-bottom:var(--space-2);color:var(--color-text)}
+li::marker{color:var(--color-primary)}
+pre{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:var(--space-4) var(--space-5);overflow-x:auto;margin:var(--space-4) 0;font-family:var(--font-mono);font-size:.875rem;line-height:1.7;color:var(--color-text)}
+code{font-family:var(--font-mono);font-size:.9em;color:var(--color-accent);background:rgba(78,236,200,.08);padding:.1em .4em;border-radius:4px}
+pre code{background:none;padding:0;color:var(--color-text);font-size:inherit}
+blockquote{border-left:3px solid var(--color-primary);padding-left:var(--space-5);margin:var(--space-6) 0;color:var(--color-text-muted);font-style:italic}
+.callout{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-5) var(--space-6);margin:var(--space-6) 0}
+.callout-label{font-size:var(--text-xs);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--color-accent);margin-bottom:var(--space-2)}
+table{width:100%;border-collapse:collapse;margin:var(--space-4) 0;font-size:var(--text-sm)}
+th{text-align:left;padding:var(--space-3);border-bottom:1px solid var(--color-border);color:var(--color-text-muted);font-weight:600;font-size:var(--text-xs);letter-spacing:.04em;text-transform:uppercase}
+td{padding:var(--space-3);border-bottom:1px solid var(--color-divider);color:var(--color-text)}
+tr:last-child td{border-bottom:none}
+a.read-more{color:var(--color-accent);text-decoration:underline;text-decoration-color:rgba(78,236,200,.4);text-underline-offset:3px}
+a.read-more:hover{text-decoration-color:var(--color-accent)}
+footer.related{margin-top:var(--space-16);padding-top:var(--space-8);border-top:1px solid var(--color-border)}
+footer.related h3{margin-top:0}
+footer.related ul{list-style:none;padding:0}
+footer.related li{padding:var(--space-3) 0;border-bottom:1px solid var(--color-divider)}
+footer.related li::marker{content:""}
+footer.related a{color:var(--color-text);display:flex;justify-content:space-between;align-items:center;gap:var(--space-4)}
+footer.related a:hover{color:var(--color-accent)}
+footer.related .arrow{color:var(--color-text-faint);font-family:var(--font-mono)}
+</style>
+</head>
+<body>
+<article>
+  <nav class="crumbs"><a href="../">Home</a> · <a href="./">Blog</a> · Specialist Agent Contracts</nav>
+
+  <header class="hero">
+    <span class="eyebrow">AI Engineering · Multi-Agent Systems</span>
+    <h1 class="title">How I Designed 6 Specialist Agent Contracts (and Why Generic Agents Don't Compose)</h1>
+    <p class="lede">When I built my first multi-agent system I made the classic mistake: one powerful general-purpose agent that handled every task. It produced confident hallucinations, mixed contexts, and broke the moment two goals competed. The fix wasn't a bigger model — it was narrower agents with explicit contracts. Here's the pattern I landed on.</p>
+    <div class="meta">
+      <span>📅 July 13, 2026</span>
+      <span>⏱️ 9 min read</span>
+      <span>🏷️ AI Architecture · Multi-Agent · LLM Engineering</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>The problem with "one agent to rule them all"</h2>
+    <p>Single-agent setups feel productive in week one. You give the model a system prompt that lists every tool, every persona, every constraint. It looks like it works. Then you hit the wall:</p>
+    <ul>
+      <li>The agent confuses which role it should be playing when the user prompt is ambiguous.</li>
+      <li>Tool selection becomes a guessing game — the model picks whatever the prompt weight leans toward, not what the task actually needs.</li>
+      <li>You can't reason about failures. "Why did the model pick that tool?" has no inspectable answer because the prompt is 4,000 tokens of competing instructions.</li>
+      <li>Two specialists' tasks collide inside one context window. The researcher "remembers" the security review and rewrites it.</li>
+    </ul>
+    <p>This is not a model problem. It is a contract problem. The agent has no defined boundary, so the model fills the void with whatever seems plausible. You end up with a system whose behaviour is emergent in the worst sense — undocumented, untestable, and impossible to harden.</p>
+
+    <blockquote>The shape of a multi-agent system is decided by its contracts, not its prompts.</blockquote>
+  </section>
+
+  <section>
+    <h2>The principle: narrow agents, explicit handoffs</h2>
+    <p>Instead of one agent that does everything, design a small roster of specialist agents. Each one owns a narrow responsibility, has a fixed set of tools, and follows a documented handoff protocol when it needs to delegate. The orchestrator routes tasks to specialists. Specialists return structured outputs. Nothing else.</p>
+    <p>The benefits show up fast:</p>
+    <ul>
+      <li><strong>Inspectability.</strong> Each specialist has a measurable contract. You can eval it independently.</li>
+      <li><strong>Failure isolation.</strong> One specialist failing doesn't poison the rest of the run.</li>
+      <li><strong>Context hygiene.</strong> Specialists keep their own working memory; they don't see each other's scratchpads.</li>
+      <li><strong>Composable.</strong> You can swap one specialist without rewriting the others, as long as the contract holds.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>The contract shape I landed on</h2>
+    <p>Each specialist agent is a single markdown file with YAML frontmatter. The frontmatter is the machine-readable contract. The body is the human-readable system prompt. Same shape for every agent — only the contents change.</p>
+    <pre><code>---
+id: solution-architect
+type: specialist
+use_when: |
+  The task requires choosing between architectural options, or
+  producing a component diagram, or evaluating trade-offs in a
+  proposed design.
+primary_sources:
+  - project-context/architecture.md
+  - project-context/tech-stack.md
+  - project-context/decisions.md
+delegates_to:
+  - security-analyst    (when trade-offs touch auth or trust boundaries)
+  - cost-estimator      (when trade-offs have billing impact)
+collaborates_with:
+  - workflow-analyst
+  - discovery-analyst
+success_signals:
+  - decision_rationale_documented
+  - rejected_alternatives_listed
+  - adr_referenced_or_proposed
+budget:
+  max_tool_calls: 12
+  max_tokens: 6000
+---
+
+# Solution Architect — System Prompt
+
+You are the Solution Architect for a small AI product team.
+You do not write code. You do not run tests. You produce
+architectural decisions and the ADRs that justify them.
+
+When the orchestrator routes an architectural question to you:
+1. Read the relevant primary_sources files first.
+2. If trade-offs touch security or cost, delegate to the
+   matching specialist before answering.
+3. Always return a Decision with: context, choice, rationale,
+   and rejected alternatives.
+4. If the choice warrants a permanent ADR, draft one in
+   `project-context/decisions.md` and reference it in your output.
+</code></pre>
+    <p>Notice what the contract forces: a fixed list of primary sources, an explicit allowlist of who this agent can delegate to, and a measurable success signal. None of these are prompt-engineering tricks — they are constraints that make the agent's behaviour inspectable.</p>
+  </section>
+
+  <section>
+    <h2>The 6 specialists in my current roster</h2>
+    <p>I run six specialists in my daily multi-agent workspace. They are not theoretical — each one is consumed by the orchestrator every week.</p>
+    <table>
+      <thead><tr><th>Specialist</th><th>Owns</th><th>Delegates to</th></tr></thead>
+      <tbody>
+        <tr><td><strong>orchestrator</strong></td><td>Routing, planning, summarisation</td><td>any specialist</td></tr>
+        <tr><td><strong>chief-of-staff</strong></td><td>Prioritisation, roadmap execution</td><td>learning-coach, automation-engineer</td></tr>
+        <tr><td><strong>learning-coach</strong></td><td>Explanations, study plans, exercises</td><td>solution-architect (for tech choices)</td></tr>
+        <tr><td><strong>solution-architect</strong></td><td>Architecture, trade-offs, ADRs</td><td>security-analyst, cost-estimator</td></tr>
+        <tr><td><strong>automation-engineer</strong></td><td>n8n workflows, integrations, implementation</td><td>personal-brand (for visible artifacts)</td></tr>
+        <tr><td><strong>personal-brand</strong></td><td>GitHub, LinkedIn, portfolio, positioning</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <p>Each contract lives in its own file under <code>ai/agents/&lt;name&gt;/agent.md</code>. The orchestrator reads the directory at boot, validates the YAML, and keeps the roster in memory. Adding a new specialist means adding one file — no central registry to edit.</p>
+  </section>
+
+  <section>
+    <h2>Handoff rules: the part most multi-agent posts skip</h2>
+    <p>The contract above includes a <code>delegates_to</code> field. That field is enforced by the orchestrator, not trusted from the agent's prompt. The orchestrator keeps a graph of allowed delegations and rejects any handoff that isn't on the list.</p>
+    <p>Why this matters: when a general-purpose agent "decides" to call a tool, you are trusting the model's judgement about whether that tool is appropriate. With an explicit delegation graph, the model can only delegate to agents that the system has approved. This is the same idea as capability-based security — agents get capabilities, not "whatever the prompt suggests".</p>
+    <pre><code># orchestrator guard (pseudocode)
+def delegate(from_agent, to_agent, payload):
+    if to_agent not in from_agent.delegates_to:
+        raise HandoffNotAllowed(
+            f"{from_agent.id} cannot delegate to {to_agent.id}"
+        )
+    if not payload.matches(to_agent.use_when):
+        raise HandoffOffTopic(
+            f"payload does not match {to_agent.id}.use_when"
+        )
+    return to_agent.run(payload)</code></pre>
+    <p>Two checks: structural (is this delegation allowed at all?) and topical (does the payload actually match the target's domain?). Both fail loudly. Both are testable. Neither depends on the model being honest.</p>
+  </section>
+
+  <section>
+    <h2>Success signals: making the contract measurable</h2>
+    <p>The <code>success_signals</code> field is where the contract meets reality. These are not vibes. They are checks that can run after the specialist returns. If the signal is not present, the orchestrator retries, escalates, or rejects.</p>
+    <p>Examples I've used in production:</p>
+    <ul>
+      <li><code>decision_rationale_documented</code> — the solution architect's output must contain a "rationale" field that is at least 80 characters and references at least one ADR.</li>
+      <li><code>tool_calls_within_budget</code> — the automation engineer must complete the task in fewer than 12 tool calls; otherwise the orchestrator escalates to a higher-budget specialist.</li>
+      <li><code>handoff_payload_schema_valid</code> — every payload leaving a specialist must validate against the receiving agent's input schema. Zod handles this.</li>
+      <li><code>no_duplicate_citations</code> — the research analyst must not repeat a citation within the same response.</li>
+    </ul>
+    <p>You do not need all of these on day one. Pick the failure mode that hurt you last week and turn it into a signal. Add one signal per iteration.</p>
+  </section>
+
+  <section>
+    <h2>What this gives you</h2>
+    <p>After two months of running this pattern, the differences from the "one prompt to rule them all" approach are stark:</p>
+    <ul>
+      <li><strong>Eval is now possible.</strong> Each specialist has a regression suite of 30–50 cases. I can change one prompt and immediately see if quality regressed on the narrow task it owns.</li>
+      <li><strong>Failures are legible.</strong> When something breaks, the orchestrator log shows exactly which agent failed, which contract was violated, and which input triggered it. No detective work.</li>
+      <li><strong>Onboarding is shorter.</strong> A new contributor reads one specialist contract and learns one slice of the system in 15 minutes.</li>
+      <li><strong>Specialists get better over time.</strong> I can rewrite the security analyst's prompt without touching the cost estimator. The blast radius of a change is one agent.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>When this pattern is wrong</h2>
+    <p>Specialist contracts are not free. The overhead shows up when:</p>
+    <ul>
+      <li>The task is genuinely atomic and short. A one-shot prompt does not need a roster of six specialists and an orchestrator. Use a plain function call.</li>
+      <li>The specialists need to share large context constantly. If two agents are reading the same 200 KB of source code, the contract overhead will dominate the run.</li>
+      <li>You don't have a stable vocabulary for the specialists. If "what counts as a discovery question" keeps changing, the contracts will rot weekly.</li>
+    </ul>
+    <p>For one-off scripts and prototypes, a single agent is fine. The contract pattern earns its cost when you have repeated workflows, audit requirements, or a team that has to share the system.</p>
+  </section>
+
+  <section>
+    <h2>The template you can copy</h2>
+    <p>Here is a minimal contract for a new specialist. Drop it into <code>ai/agents/&lt;name&gt;/agent.md</code>:</p>
+    <pre><code>---
+id: &lt;kebab-name&gt;
+type: specialist
+use_when: |
+  &lt;2-4 sentences describing the kind of task this agent owns&gt;
+primary_sources:
+  - &lt;files this agent should always consult first&gt;
+delegates_to:
+  - &lt;other specialist ids this agent may hand off to&gt;
+collaborates_with:
+  - &lt;specialist ids that may co-work without delegating&gt;
+success_signals:
+  - &lt;observable markers that the agent's output is correct&gt;
+budget:
+  max_tool_calls: &lt;number&gt;
+  max_tokens: &lt;number&gt;
+---
+
+# &lt;Name&gt; — System Prompt
+
+You are the &lt;Name&gt; for &lt;team / product&gt;. You do not &lt;out-of-scope thing&gt;.
+You do &lt;in-scope thing&gt;.
+
+When the orchestrator routes a &lt;type&gt; task to you:
+1. Read the relevant primary_sources files.
+2. If &lt;condition&gt;, delegate to &lt;specialist&gt;.
+3. Return &lt;structured output shape&gt;.
+4. If &lt;escalation condition&gt;, escalate back to the orchestrator with context.</code></pre>
+    <p>Fill in the brackets. Validate the YAML. Add the file. The orchestrator picks it up on the next boot. That is the entire integration story.</p>
+  </section>
+
+  <section>
+    <h2>Closing thought</h2>
+    <p>The hard part of multi-agent systems is not the models. It is the contracts. If you cannot draw the boundary between two agents on a whiteboard, the orchestrator cannot enforce it at runtime — and the model will quietly cross it every chance it gets.</p>
+    <p>Write the contract first. Then write the prompt. Then write the eval. In that order. The order is the lesson.</p>
+  </section>
+
+  <footer class="related">
+    <h3>Related on this site</h3>
+    <ul>
+      <li><a href="../case-study-portfolio-agent.html">Three-layer prompt injection defense <span class="arrow">→</span></a></li>
+      <li><a href="./claude-code-review-workflow.html">How I use Claude for code review <span class="arrow">→</span></a></li>
+      <li><a href="./ai-assisted-frontend-development-workflow.html">AI-assisted frontend development workflow <span class="arrow">→</span></a></li>
+      <li><a href="../">See the projects this pattern powers <span class="arrow">→</span></a></li>
+    </ul>
+  </footer>
+</article>
+</body>
+</html>
