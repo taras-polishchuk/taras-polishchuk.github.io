@@ -1094,6 +1094,14 @@ button.project-link-ai:focus-visible {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.25s var(--ease-out);
+  /* Center the dialog and let the modal itself scroll only when the
+     dialog still can't fit (very long content on short viewports). */
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 .project-desc-modal.active {
   opacity: 1;
@@ -1110,7 +1118,7 @@ button.project-link-ai:focus-visible {
   position: relative;
   max-width: 680px;
   width: calc(100% - var(--space-10));
-  margin: min(12vh, 100px) auto 0;
+  margin: min(12vh, 100px) auto min(8vh, 80px);
   background: linear-gradient(135deg, rgba(22,22,26,0.96) 0%, rgba(16,16,20,0.98) 100%);
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: var(--radius-2xl);
@@ -1118,6 +1126,20 @@ button.project-link-ai:focus-visible {
   padding: var(--space-8) var(--space-8) var(--space-6);
   transform: translateY(10px) scale(0.98);
   transition: transform 0.25s var(--ease-out);
+  /* Long content scrolls INSIDE the dialog. Without this, prose overflows
+     the viewport and the bottom (Architecture / Outcome sections) becomes
+     unreachable. max-height leaves breathing room top + bottom. */
+  max-height: calc(100vh - min(12vh, 100px) - min(8vh, 80px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+@media (max-height: 640px) {
+  .project-desc-modal-dialog {
+    margin-top: var(--space-4);
+    margin-bottom: var(--space-4);
+    max-height: calc(100vh - var(--space-8));
+  }
 }
 .project-desc-modal.active .project-desc-modal-dialog {
   transform: translateY(0) scale(1);
