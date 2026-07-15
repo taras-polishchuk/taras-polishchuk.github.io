@@ -685,6 +685,25 @@ a { color: inherit; text-decoration: none; cursor: none; }
 }
 
 /* Projects grid */
+.projects-section-header {
+  grid-column: 1 / -1;
+  padding: var(--space-6) 0 var(--space-3);
+  margin-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+.projects-section-header:first-child {
+  border-top: none;
+  margin-top: 0;
+  padding-top: var(--space-3);
+}
+.projects-section-header h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+  margin: 0;
+}
 .projects-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(340px,100%), 1fr));
@@ -1776,6 +1795,7 @@ window.ANALYTICS_CONFIG = Object.assign({
 const PROJECTS = [
   {
     id: 1,
+    section: "AI & Automation",
     name: "case-04 — AI Discovery Platform",
     featured: true,
     screenshot: "./assets/screenshots/case-04.webp",
@@ -1833,6 +1853,7 @@ runProposalEngine(caseId)       → Proposal (markdown)</code></pre>
   },
   {
     id: 2,
+    section: "AI & Automation",
     name: "product-team — Multi-Service Reference Architecture",
     featured: true,
     screenshot: "./assets/screenshots/ajaa.webp",
@@ -1870,6 +1891,7 @@ packages/
   },
   {
     id: 3,
+    section: "AI & Automation",
     name: "AI Portfolio Assistant",
     featured: true,
     preview: "ai",
@@ -1921,6 +1943,7 @@ fetch response → chat panel UI</code></pre>
   },
   {
     id: 4,
+    section: "AI & Automation",
     name: "OperatorOS — Personal Operating System Methodology",
     featured: true,
     screenshot: "./assets/screenshots/operatoros-framework.webp",
@@ -1977,168 +2000,9 @@ fetch response → chat panel UI</code></pre>
 
 <p><strong>Methodology site:</strong> <a href="https://taras-polishchuk.github.io/operatoros-framework/" target="_blank" rel="noopener noreferrer">taras-polishchuk.github.io/operatoros-framework</a> · <strong>Repo:</strong> <a href="https://github.com/taras-polishchuk/operatoros-framework" target="_blank" rel="noopener noreferrer">github.com/taras-polishchuk/operatoros-framework</a></p>`
   },
-    {
+  {
     id: 5,
-    name: "QuizPilot",
-    screenshot: "./assets/screenshots/quizpilot.webp",
-    desc: "Conversion-focused waitlist landing page for a fictional EdTech startup that helps teachers generate quizzes from lesson content in seconds. Built with SvelteKit, TypeScript, Tailwind CSS, and Supabase, with a shared waitlist form, animated counter, duplicate protection, and lightweight scroll-reveal motion.",
-    tags: ["SvelteKit", "TypeScript", "Tailwind", "Supabase"],
-    gradient: "linear-gradient(135deg, #08131f 0%, #102b46 50%, #1b5f7a 100%)",
-    emoji: "🧠",
-    link: "https://quizpilot-a.vercel.app/"
-  },
-  {
-    id: 6,
-    name: "FORMA Scale",
-    screenshot: "./assets/screenshots/forma-scale.webp",
-    desc: "High-converting Shopify-ready landing page for a smart fitness scale. Features scroll-triggered animations, parallax hero, interactive product showcase with tab switching, auto-play reviews carousel, FAQ accordion, and a sticky CTA bar — pixel-perfect premium UI, zero dependencies.",
-    tags: ["HTML", "CSS", "JavaScript", "E-commerce", "Shopify"],
-    gradient: "linear-gradient(135deg, #0a0a0f 0%, #111130 50%, #1a1040 100%)",
-    emoji: "⚖️",
-    link: "https://taras-polishchuk.github.io/forma-scale-landing/"
-  },
-  {
-    id: 7,
-    name: "Shopify Dev KB",
-    screenshot: "./assets/screenshots/shopify-dev-kb.webp",
-    desc: "Personal reference app for Shopify theme development. Browse and search categorized Liquid & JS snippets, built with Svelte + TypeScript and syntax-highlighted code blocks.",
-    tags: ["Svelte", "TypeScript", "Tailwind", "Shopify"],
-    gradient: "linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)",
-    emoji: "📚",
-    link: "https://taras-polishchuk.github.io/shopify-dev-kb/"
-  },
-  {
-    id: 8,
-    name: "Ascent Protein",
-    screenshot: "./assets/screenshots/ascentprotein.webp",
-    desc: "Handled theme customization and UI work for a premium sports nutrition brand. Worked on product page layouts, custom sections, and storefront UI improvements focused on visual consistency and conversion flow.",
-    tags: ["Shopify", "Liquid", "JavaScript", "SCSS"],
-    gradient: "linear-gradient(135deg, #0a0f1a 0%, #0d1a2e 50%, #0a1520 100%)",
-    emoji: "💪",
-    link: "https://www.ascentprotein.com/"
-  },
-  {
-    id: 9,
-    name: "GU Energy",
-    screenshot: "./assets/screenshots/guenergy.webp",
-    desc: "Worked on Shopify theme improvements for an established eCommerce brand. Handled UI tweaks, layout fixes, and responsive adjustments to keep the storefront consistent across devices.",
-    tags: ["Shopify", "Liquid", "JavaScript", "SCSS"],
-    gradient: "linear-gradient(135deg, #1a0a00 0%, #2e1500 50%, #3d2000 100%)",
-    emoji: "⚡",
-    link: "https://guenergy.com/"
-  },
-  {
-    id: 10,
-    name: "Bunnies By The Bay",
-    screenshot: "./assets/screenshots/bunniesbythebay.webp",
-    desc: "Contributed to Shopify theme work for a baby gifts and plush toys brand. Worked on custom sections, UI improvements, and storefront polish to keep the experience clean and easy to navigate.",
-    tags: ["Shopify", "Liquid", "JavaScript", "SCSS"],
-    gradient: "linear-gradient(135deg, #1a0a2e 0%, #2d1060 50%, #3d1a7a 100%)",
-    emoji: "🐰",
-    link: "https://bunniesbythebay.com/"
-  },
-  {
-    id: 11,
-    name: "COOLA",
-    screenshot: "./assets/screenshots/coola.webp",
-    desc: "Worked on product page structure and UX improvements for a Shopify skincare brand. Handled layout refinements, navigation adjustments, and visual consistency fixes across the storefront.",
-    tags: ["Shopify", "Liquid", "JavaScript", "SCSS"],
-    gradient: "linear-gradient(135deg, #002233 0%, #003d5c 50%, #005580 100%)",
-    emoji: "☀️",
-    link: "https://coola.com/"
-  },
-  {
-    id: 12,
-    name: "White Claw UK",
-    screenshot: "./assets/screenshots/whiteclaw.webp",
-    desc: "Contributed to Shopify theme development for a global beverage brand's UK market. Worked on UI updates, custom sections, and responsive adjustments specific to the regional storefront.",
-    tags: ["Shopify", "Liquid", "JavaScript", "SCSS"],
-    gradient: "linear-gradient(135deg, #061b30 0%, #0d3352 50%, #0a4a6e 100%)",
-    emoji: "🌊",
-    link: "https://uk.whiteclaw.com/"
-  },
-  {
-    id: 13,
-    name: "UI Snippets Library",
-    screenshot: "./assets/screenshots/ui-lab.webp",
-    desc: "Component playground and microinteraction library built with pure HTML/CSS/JS. Browse buttons, cards, toggles, toasts, and inputs with live previews and copy-ready code snippets — no frameworks.",
-    tags: ["HTML", "CSS", "JavaScript", "Microinteractions"],
-    gradient: "linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)",
-    emoji: "🧩",
-    link: "https://taras-polishchuk.github.io/UI-Snippets-Library-Microinteractions-Components/"
-  },
-  {
-    id: 14,
-    name: "Locus",
-    screenshot: "./assets/screenshots/locus.webp",
-    desc: "Minimalist lofi pomodoro timer with ambient soundscapes, built with HTML, CSS, and JavaScript. Customizable sessions, progress visualization, and focus-enhancing features.",
-    tags: ["HTML", "CSS", "JavaScript", "Web Audio API"],
-    gradient: "linear-gradient(135deg, #1a1040 0%, #2d1b69 50%, #0f2027 100%)",
-    emoji: "⏲️",
-    link: "https://taras-polishchuk.github.io/locus/"
-  },
-  {
-    id: 15,
-    name: "Cleanse",
-    screenshot: "./assets/screenshots/cleanse.webp",
-    desc: "Landing page for a cleaning service startup. Features animated advantage cards, an interactive room-by-room cleaning guide with hotspot markers, scroll-triggered tab navigation, and a floating CTA button — fully responsive, pure HTML/CSS/JS.",
-    tags: ["HTML", "CSS", "JavaScript", "Responsive"],
-    gradient: "linear-gradient(135deg, #0d0d1a 0%, #1a0d33 50%, #2d1560 100%)",
-    emoji: "🧹",
-    link: "https://taras-polishchuk.github.io/cleanse/"
-  },
-  {
-    id: 16,
-    name: "Habit Tracker",
-    screenshot: "./assets/screenshots/habit-tracker.webp",
-    desc: "Minimalist daily habit tracker built with React. Add custom habits, mark them done each day, and visualize your consistency with a streak and completion grid.",
-    tags: ["React", "JavaScript", "Vite"],
-    gradient: "linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1a2332 100%)",
-    emoji: "✅",
-    link: "https://taras-polishchuk.github.io/habit-tracker/"
-  },
-  {
-    id: 17,
-    name: "Ubuntu Cheatsheet",
-    screenshot: "./assets/screenshots/ubuntu-cheatsheet.webp",
-    desc: "Interactive Ubuntu CLI reference with 15+ categorized sections — file system, networking, APT, systemd, cron, and more. Sidebar navigation, instant search, and one-click copy. Pure HTML/CSS/JS, no dependencies.",
-    tags: ["Ubuntu", "Linux", "CLI", "Cheatsheet"],
-    gradient: "linear-gradient(135deg, #200122 0%, #6f0000 50%, #200122 100%)",
-    emoji: "🐧",
-    link: "https://taras-polishchuk.github.io/ubuntu-cheatsheet/"
-  },
-  {
-    id: 18,
-    name: "Shopify Theme Dev Roadmap",
-    screenshot: "./assets/screenshots/shopify-roadmap.webp",
-    desc: "Interactive skill tree for becoming a Shopify Theme Developer — from HTML basics to publishing a premium theme. 31 nodes across 7 stages, XP leveling system, locked/unlocked mechanics, Reality Mode tasks, and dark mode. Built with Svelte 5.",
-    tags: ["Svelte", "TypeScript", "Gamification", "Shopify"],
-    gradient: "linear-gradient(135deg, #0d0520 0%, #1a0940 50%, #0a1830 100%)",
-    emoji: "🛍️",
-    link: "https://taras-polishchuk.github.io/interactive-shopify-theme-dev-roadmap/"
-  },
-  {
-    id: 19,
-    name: "Superfit",
-    screenshot: "./assets/screenshots/superfit.webp",
-    desc: "Responsive landing page for a modern gym in Kyiv. Features a dark hero section, about & advantages two-column layouts with decorative image framing, a full-bleed CTA banner, a 4-card features grid, and a footer with an embedded Google Maps. Pure HTML/CSS, no frameworks.",
-    tags: ["HTML", "CSS", "Responsive", "Landing Page"],
-    gradient: "linear-gradient(135deg, #080c18 0%, #0e1a30 50%, #1e3a5f 100%)",
-    emoji: "🏋️",
-    link: "https://taras-polishchuk.github.io/superfit/"
-  },
-  {
-    id: 20,
-    name: "Грім та Грім",
-    screenshot: "./assets/screenshots/grim-ta-grim.webp",
-    desc: "Responsive landing page for a Ukrainian rock band. Features a fullscreen concert hero with dark overlay, glassmorphism concerts table with ticket booking modal, band members grid, story section, contact form with validation, and an embedded map. Pure HTML/CSS/JS, no frameworks.",
-    tags: ["HTML", "CSS", "JavaScript", "Landing Page"],
-    gradient: "linear-gradient(135deg, #0b0b0f 0%, #111118 50%, #1a0a2e 100%)",
-    emoji: "🎸",
-    link: "https://taras-polishchuk.github.io/grim-ta-grim/"
-  },
-  {
-    id: 21,
+    section: "AI & Automation",
     name: "WhisperClip — Push-to-Talk Transcription",
     screenshot: "./assets/screenshots/whisper-clip.webp",
     desc: "Windows tray app for push-to-talk transcription with local faster-whisper inference. Multi-backend (NVIDIA CUDA, AMD/Intel DirectML, CPU fallback), state-machine driven, Ctrl+Alt+Space hotkey, focused-window autopaste, settings UI, model auto-download — zero cloud dependency, shipped with a Windows installer.",
@@ -2148,7 +2012,8 @@ fetch response → chat panel UI</code></pre>
     link: "https://github.com/taras-polishchuk/whisper-clip-win"
   },
   {
-    id: 22,
+    id: 6,
+    section: "AI & Automation",
     name: "Wispr Flow Trial Bypass — RE Case Study",
     featured: true,
     screenshot: null,
@@ -2182,6 +2047,182 @@ fetch response → chat panel UI</code></pre>
 <p><strong>Full walkthrough:</strong> <a href="./blog/wispr-flow-reverse-engineering.html" target="_blank" rel="noopener noreferrer">technical deep dive</a></p>
 <p><strong>Source:</strong> <a href="https://github.com/taras-polishchuk/wispr-flow-trial-bypass" target="_blank" rel="noopener noreferrer">github.com/taras-polishchuk/wispr-flow-trial-bypass</a></p>
 <p><strong>Case study:</strong> <a href="./case-study-wispr-flow-bypass.html" target="_blank" rel="noopener noreferrer">narrative version</a></p>`
+  },
+  {
+    id: 7,
+    section: "Shopify Theme Development",
+    name: "FORMA Scale",
+    screenshot: "./assets/screenshots/forma-scale.webp",
+    desc: "High-converting Shopify-ready landing page for a smart fitness scale. Features scroll-triggered animations, parallax hero, interactive product showcase with tab switching, auto-play reviews carousel, FAQ accordion, and a sticky CTA bar — pixel-perfect premium UI, zero dependencies.",
+    tags: ["HTML", "CSS", "JavaScript", "E-commerce", "Shopify"],
+    gradient: "linear-gradient(135deg, #0a0a0f 0%, #111130 50%, #1a1040 100%)",
+    emoji: "⚖️",
+    link: "https://taras-polishchuk.github.io/forma-scale-landing/"
+  },
+  {
+    id: 8,
+    section: "Shopify Theme Development",
+    name: "Shopify Dev KB",
+    screenshot: "./assets/screenshots/shopify-dev-kb.webp",
+    desc: "Personal reference app for Shopify theme development. Browse and search categorized Liquid & JS snippets, built with Svelte + TypeScript and syntax-highlighted code blocks.",
+    tags: ["Svelte", "TypeScript", "Tailwind", "Shopify"],
+    gradient: "linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)",
+    emoji: "📚",
+    link: "https://taras-polishchuk.github.io/shopify-dev-kb/"
+  },
+  {
+    id: 9,
+    section: "Shopify Theme Development",
+    name: "Ascent Protein",
+    screenshot: "./assets/screenshots/ascentprotein.webp",
+    desc: "Handled theme customization and UI work for a premium sports nutrition brand. Worked on product page layouts, custom sections, and storefront UI improvements focused on visual consistency and conversion flow.",
+    tags: ["Shopify", "Liquid", "JavaScript", "SCSS"],
+    gradient: "linear-gradient(135deg, #0a0f1a 0%, #0d1a2e 50%, #0a1520 100%)",
+    emoji: "💪",
+    link: "https://www.ascentprotein.com/"
+  },
+  {
+    id: 10,
+    section: "Shopify Theme Development",
+    name: "GU Energy",
+    screenshot: "./assets/screenshots/guenergy.webp",
+    desc: "Worked on Shopify theme improvements for an established eCommerce brand. Handled UI tweaks, layout fixes, and responsive adjustments to keep the storefront consistent across devices.",
+    tags: ["Shopify", "Liquid", "JavaScript", "SCSS"],
+    gradient: "linear-gradient(135deg, #1a0a00 0%, #2e1500 50%, #3d2000 100%)",
+    emoji: "⚡",
+    link: "https://guenergy.com/"
+  },
+  {
+    id: 11,
+    section: "Shopify Theme Development",
+    name: "Bunnies By The Bay",
+    screenshot: "./assets/screenshots/bunniesbythebay.webp",
+    desc: "Contributed to Shopify theme work for a baby gifts and plush toys brand. Worked on custom sections, UI improvements, and storefront polish to keep the experience clean and easy to navigate.",
+    tags: ["Shopify", "Liquid", "JavaScript", "SCSS"],
+    gradient: "linear-gradient(135deg, #1a0a2e 0%, #2d1060 50%, #3d1a7a 100%)",
+    emoji: "🐰",
+    link: "https://bunniesbythebay.com/"
+  },
+  {
+    id: 12,
+    section: "Shopify Theme Development",
+    name: "COOLA",
+    screenshot: "./assets/screenshots/coola.webp",
+    desc: "Worked on product page structure and UX improvements for a Shopify skincare brand. Handled layout refinements, navigation adjustments, and visual consistency fixes across the storefront.",
+    tags: ["Shopify", "Liquid", "JavaScript", "SCSS"],
+    gradient: "linear-gradient(135deg, #002233 0%, #003d5c 50%, #005580 100%)",
+    emoji: "☀️",
+    link: "https://coola.com/"
+  },
+  {
+    id: 13,
+    section: "Shopify Theme Development",
+    name: "White Claw UK",
+    screenshot: "./assets/screenshots/whiteclaw.webp",
+    desc: "Contributed to Shopify theme development for a global beverage brand's UK market. Worked on UI updates, custom sections, and responsive adjustments specific to the regional storefront.",
+    tags: ["Shopify", "Liquid", "JavaScript", "SCSS"],
+    gradient: "linear-gradient(135deg, #061b30 0%, #0d3352 50%, #0a4a6e 100%)",
+    emoji: "🌊",
+    link: "https://uk.whiteclaw.com/"
+  },
+  {
+    id: 14,
+    section: "Shopify Theme Development",
+    name: "Shopify Theme Dev Roadmap",
+    screenshot: "./assets/screenshots/shopify-roadmap.webp",
+    desc: "Interactive skill tree for becoming a Shopify Theme Developer — from HTML basics to publishing a premium theme. 31 nodes across 7 stages, XP leveling system, locked/unlocked mechanics, Reality Mode tasks, and dark mode. Built with Svelte 5.",
+    tags: ["Svelte", "TypeScript", "Gamification", "Shopify"],
+    gradient: "linear-gradient(135deg, #0d0520 0%, #1a0940 50%, #0a1830 100%)",
+    emoji: "🛍️",
+    link: "https://taras-polishchuk.github.io/interactive-shopify-theme-dev-roadmap/"
+  },
+  {
+    id: 15,
+    section: "Frontend Engineering",
+    name: "QuizPilot",
+    screenshot: "./assets/screenshots/quizpilot.webp",
+    desc: "Conversion-focused waitlist landing page for a fictional EdTech startup that helps teachers generate quizzes from lesson content in seconds. Built with SvelteKit, TypeScript, Tailwind CSS, and Supabase, with a shared waitlist form, animated counter, duplicate protection, and lightweight scroll-reveal motion.",
+    tags: ["SvelteKit", "TypeScript", "Tailwind", "Supabase"],
+    gradient: "linear-gradient(135deg, #08131f 0%, #102b46 50%, #1b5f7a 100%)",
+    emoji: "🧠",
+    link: "https://quizpilot-a.vercel.app/"
+  },
+  {
+    id: 16,
+    section: "Frontend Engineering",
+    name: "UI Snippets Library",
+    screenshot: "./assets/screenshots/ui-lab.webp",
+    desc: "Component playground and microinteraction library built with pure HTML/CSS/JS. Browse buttons, cards, toggles, toasts, and inputs with live previews and copy-ready code snippets — no frameworks.",
+    tags: ["HTML", "CSS", "JavaScript", "Microinteractions"],
+    gradient: "linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)",
+    emoji: "🧩",
+    link: "https://taras-polishchuk.github.io/UI-Snippets-Library-Microinteractions-Components/"
+  },
+  {
+    id: 17,
+    section: "Frontend Engineering",
+    name: "Locus",
+    screenshot: "./assets/screenshots/locus.webp",
+    desc: "Minimalist lofi pomodoro timer with ambient soundscapes, built with HTML, CSS, and JavaScript. Customizable sessions, progress visualization, and focus-enhancing features.",
+    tags: ["HTML", "CSS", "JavaScript", "Web Audio API"],
+    gradient: "linear-gradient(135deg, #1a1040 0%, #2d1b69 50%, #0f2027 100%)",
+    emoji: "⏲️",
+    link: "https://taras-polishchuk.github.io/locus/"
+  },
+  {
+    id: 18,
+    section: "Frontend Engineering",
+    name: "Cleanse",
+    screenshot: "./assets/screenshots/cleanse.webp",
+    desc: "Landing page for a cleaning service startup. Features animated advantage cards, an interactive room-by-room cleaning guide with hotspot markers, scroll-triggered tab navigation, and a floating CTA button — fully responsive, pure HTML/CSS/JS.",
+    tags: ["HTML", "CSS", "JavaScript", "Responsive"],
+    gradient: "linear-gradient(135deg, #0d0d1a 0%, #1a0d33 50%, #2d1560 100%)",
+    emoji: "🧹",
+    link: "https://taras-polishchuk.github.io/cleanse/"
+  },
+  {
+    id: 19,
+    section: "Frontend Engineering",
+    name: "Habit Tracker",
+    screenshot: "./assets/screenshots/habit-tracker.webp",
+    desc: "Minimalist daily habit tracker built with React. Add custom habits, mark them done each day, and visualize your consistency with a streak and completion grid.",
+    tags: ["React", "JavaScript", "Vite"],
+    gradient: "linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1a2332 100%)",
+    emoji: "✅",
+    link: "https://taras-polishchuk.github.io/habit-tracker/"
+  },
+  {
+    id: 20,
+    section: "Frontend Engineering",
+    name: "Ubuntu Cheatsheet",
+    screenshot: "./assets/screenshots/ubuntu-cheatsheet.webp",
+    desc: "Interactive Ubuntu CLI reference with 15+ categorized sections — file system, networking, APT, systemd, cron, and more. Sidebar navigation, instant search, and one-click copy. Pure HTML/CSS/JS, no dependencies.",
+    tags: ["Ubuntu", "Linux", "CLI", "Cheatsheet"],
+    gradient: "linear-gradient(135deg, #200122 0%, #6f0000 50%, #200122 100%)",
+    emoji: "🐧",
+    link: "https://taras-polishchuk.github.io/ubuntu-cheatsheet/"
+  },
+  {
+    id: 21,
+    section: "Frontend Engineering",
+    name: "Superfit",
+    screenshot: "./assets/screenshots/superfit.webp",
+    desc: "Responsive landing page for a modern gym in Kyiv. Features a dark hero section, about & advantages two-column layouts with decorative image framing, a full-bleed CTA banner, a 4-card features grid, and a footer with an embedded Google Maps. Pure HTML/CSS, no frameworks.",
+    tags: ["HTML", "CSS", "Responsive", "Landing Page"],
+    gradient: "linear-gradient(135deg, #080c18 0%, #0e1a30 50%, #1e3a5f 100%)",
+    emoji: "🏋️",
+    link: "https://taras-polishchuk.github.io/superfit/"
+  },
+  {
+    id: 22,
+    section: "Frontend Engineering",
+    name: "Грім та Грім",
+    screenshot: "./assets/screenshots/grim-ta-grim.webp",
+    desc: "Responsive landing page for a Ukrainian rock band. Features a fullscreen concert hero with dark overlay, glassmorphism concerts table with ticket booking modal, band members grid, story section, contact form with validation, and an embedded map. Pure HTML/CSS/JS, no frameworks.",
+    tags: ["HTML", "CSS", "JavaScript", "Landing Page"],
+    gradient: "linear-gradient(135deg, #0b0b0f 0%, #111118 50%, #1a0a2e 100%)",
+    emoji: "🎸",
+    link: "https://taras-polishchuk.github.io/grim-ta-grim/"
   },
 ];
 
@@ -2696,6 +2737,10 @@ window.addEventListener('load', () => {
 function buildProjectCards() {
   const grid = document.getElementById('projectsGrid');
   grid.innerHTML = '';
+  // Variant A: section headers — track last emitted section so we render a
+  // header before the first card of each new section. p.section is added
+  // to each project; if absent, this stays a silent no-op.
+  let lastSection = null;
 
   PROJECTS.forEach((p, i) => {
     const card = document.createElement('article');
@@ -2758,6 +2803,13 @@ function buildProjectCards() {
       </div>
     `;
 
+    if (p.section && p.section !== lastSection) {
+      const header = document.createElement('div');
+      header.className = 'projects-section-header';
+      header.innerHTML = '<h3>' + p.section + '</h3>';
+      grid.appendChild(header);
+      lastSection = p.section;
+    }
     grid.appendChild(card);
 
     // Add cursor hover effect
