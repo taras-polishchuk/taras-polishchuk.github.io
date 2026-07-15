@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reverse Engineering Wispr Flow Desktop Auth — Taras Polishchuk</title>
+<meta name="description" content="A technical walkthrough of reverse engineering an Electron desktop app's Supabase auth flow — OpenAPI discovery, app.asar unpacking, session.json injection, zero browser and zero captcha solver.">
+<link rel="canonical" href="https://taras-polishchuk.github.io/blog/wispr-flow-reverse-engineering.html">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://taras-polishchuk.github.io/blog/wispr-flow-reverse-engineering.html">
+<meta property="og:title" content="Reverse Engineering Wispr Flow Desktop Auth">
+<meta property="og:description" content="How I bypassed hCaptcha via a public OpenAPI endpoint and injected a session into an Electron app's plaintext JSON storage. 30 seconds, zero browser.">
+<meta property="og:image" content="https://taras-polishchuk.github.io/assets/Taras-Polishchuk.jpg">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-07-14">
+<meta property="article:author" content="Taras Polishchuk">
+<meta property="article:tag" content="Reverse Engineering">
+<meta property="article:tag" content="Electron">
+<meta property="article:tag" content="Supabase">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Reverse Engineering Wispr Flow Desktop Auth">
+<meta name="twitter:description" content="30-second automated trial reset via API bypass and session injection.">
+<meta name="twitter:image" content="https://taras-polishchuk.github.io/assets/Taras-Polishchuk.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,700,800,900&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Reverse Engineering Wispr Flow Desktop Auth",
+  "description": "A technical walkthrough of reverse engineering an Electron desktop app's Supabase auth flow — OpenAPI discovery, app.asar unpacking, session.json injection, zero browser and zero captcha solver.",
+  "image": "https://taras-polishchuk.github.io/assets/Taras-Polishchuk.jpg",
+  "url": "https://taras-polishchuk.github.io/blog/wispr-flow-reverse-engineering.html",
+  "datePublished": "2026-07-14",
+  "dateModified": "2026-07-14",
+  "inLanguage": "en-US",
+  "author": {"@type": "Person", "name": "Taras Polishchuk", "url": "https://taras-polishchuk.github.io/"},
+  "publisher": {"@type": "Person", "name": "Taras Polishchuk", "url": "https://taras-polishchuk.github.io/"},
+  "keywords": ["reverse engineering", "electron", "supabase", "hCaptcha bypass", "api discovery", "session injection", "trial reset", "desktop app", "openapi"]
+}
+</script>
+<style>
+:root {
+  --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+  --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+  --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+  --text-2xl: clamp(2rem, 1.2rem + 2.5vw, 3.5rem);
+  --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;--space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;--space-12:3rem;--space-16:4rem;--space-20:5rem;
+  --radius-sm:.375rem;--radius-md:.5rem;--radius-lg:.75rem;--radius-xl:1rem;--radius-2xl:1.5rem;--radius-full:9999px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --color-bg:#0a0a0b;--color-surface:#111113;--color-border:rgba(255,255,255,0.07);--color-divider:rgba(255,255,255,0.04);
+  --color-text:#e8e8f0;--color-text-muted:rgba(232,232,240,0.5);--color-text-faint:rgba(232,232,240,0.25);
+  --color-primary:#7c6fff;--color-accent:#4eecc8;
+  --font-display:'Cabinet Grotesk','Inter',sans-serif;--font-body:'Inter',sans-serif;--font-mono:'JetBrains Mono','Fira Code',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{min-height:100dvh;font-family:var(--font-body);font-size:var(--text-base);color:var(--color-text);background-color:var(--color-bg);overflow-x:hidden;line-height:1.75}
+a{color:inherit;text-decoration:none}
+::selection{background:rgba(124,111,255,0.3);color:var(--color-text)}
+:focus-visible{outline:2px solid var(--color-primary);outline-offset:3px;border-radius:var(--radius-sm)}
+body::before{content:'';position:fixed;top:-20%;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(ellipse,rgba(124,111,255,0.05) 0%,transparent 70%);pointer-events:none;z-index:0}
+.page-wrapper{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:var(--space-10) var(--space-6) var(--space-20)}
+.nav-back{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);font-weight:500;color:var(--color-text-muted);padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);border:1px solid var(--color-border);background:rgba(255,255,255,0.02);margin-bottom:var(--space-10);transition:color 180ms var(--ease-out),border-color 180ms var(--ease-out),background 180ms var(--ease-out)}
+.nav-back:hover{color:var(--color-text);border-color:rgba(124,111,255,0.25);background:rgba(124,111,255,0.06)}
+.article-header{margin-bottom:var(--space-12)}
+.article-eyebrow{font-size:var(--text-xs);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--color-primary);margin-bottom:var(--space-3)}
+.article-title{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin-bottom:var(--space-5)}
+.article-lead{font-size:var(--text-lg);color:var(--color-text-muted);font-weight:300;line-height:1.6;margin-bottom:var(--space-6)}
+.article-byline{display:flex;align-items:center;gap:var(--space-3);padding-top:var(--space-5);border-top:1px solid var(--color-divider);flex-wrap:wrap}
+.byline-avatar{width:40px;height:40px;border-radius:50%;overflow:hidden;border:1px solid var(--color-border);background:var(--color-surface);flex-shrink:0}
+.byline-avatar img{width:100%;height:100%;object-fit:cover;object-position:50% center}
+.byline-name{font-size:var(--text-sm);font-weight:600}
+.byline-meta{font-size:var(--text-xs);color:var(--color-text-faint)}
+.byline-tags{display:flex;gap:var(--space-2);flex-wrap:wrap;margin-left:auto}
+.tag{font-size:var(--text-xs);font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px var(--space-3);border-radius:var(--radius-full);background:rgba(124,111,255,0.1);border:1px solid rgba(124,111,255,0.2);color:var(--color-primary)}
+.article-body{font-size:var(--text-base);line-height:1.8}
+.article-body h2{font-family:var(--font-display);font-size:var(--text-xl);font-weight:700;letter-spacing:-.025em;line-height:1.2;color:var(--color-text);margin:var(--space-12) 0 var(--space-4);padding-top:var(--space-8);border-top:1px solid var(--color-divider)}
+.article-body h2:first-child{margin-top:0}
+.article-body h3{font-family:var(--font-display);font-size:var(--text-lg);font-weight:700;letter-spacing:-.02em;line-height:1.25;color:var(--color-text);margin:var(--space-8) 0 var(--space-3)}
+.article-body p{margin-bottom:var(--space-5);color:var(--color-text-muted)}
+.article-body p strong{color:var(--color-text);font-weight:600}
+.article-body a{color:var(--color-primary);text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(124,111,255,0.35);transition:text-decoration-color 180ms}
+.article-body a:hover{text-decoration-color:var(--color-primary)}
+.article-body ul,.article-body ol{padding-left:var(--space-5);margin-bottom:var(--space-5);color:var(--color-text-muted)}
+.article-body li{margin-bottom:var(--space-2);line-height:1.7}
+.article-body li strong{color:var(--color-text);font-weight:600}
+.article-body code{font-family:var(--font-mono);font-size:0.88em;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,0.06);color:var(--color-accent)}
+.article-body pre{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:var(--space-4);overflow-x:auto;margin:var(--space-4) 0 var(--space-6);font-family:var(--font-mono);font-size:var(--text-sm);line-height:1.6}
+.article-body pre code{background:transparent;padding:0;color:var(--color-text)}
+.article-body blockquote{border-left:3px solid var(--color-primary);padding:var(--space-3) var(--space-5);margin:var(--space-5) 0;background:rgba(124,111,255,0.05);border-radius:0 var(--radius-md) var(--radius-md) 0;color:var(--color-text)}
+.article-body blockquote p{margin:0;color:var(--color-text)}
+.article-body hr{border:0;border-top:1px solid var(--color-divider);margin:var(--space-10) 0}
+.article-footer{margin-top:var(--space-16);padding-top:var(--space-8);border-top:1px solid var(--color-divider);font-size:var(--text-sm);color:var(--color-text-faint)}
+.article-footer p{margin-bottom:var(--space-3)}
+.cta-block{background:linear-gradient(135deg,rgba(124,111,255,0.08),rgba(78,236,200,0.04));border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-6);margin:var(--space-8) 0;text-align:center}
+.cta-block a{display:inline-block;margin:var(--space-2);padding:var(--space-3) var(--space-6);border-radius:var(--radius-md);font-weight:600;font-size:var(--text-sm);text-decoration:none;background:var(--color-primary);color:#fff;transition:transform 180ms var(--ease-out),background 180ms}
+.cta-block a:hover{background:#5a4fd6;transform:translateY(-1px)}
+.cta-block a.secondary{background:transparent;border:1px solid var(--color-border);color:var(--color-text)}
+.cta-block a.secondary:hover{background:rgba(255,255,255,0.05);border-color:rgba(124,111,255,0.25)}
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+<a href="/" class="nav-back">← Back to portfolio</a>
+
+<header class="article-header">
+<p class="article-eyebrow">Reverse Engineering · Case Study</p>
+<h1 class="article-title">Reverse Engineering Wispr Flow Desktop Auth</h1>
+<p class="article-lead">How I bypassed hCaptcha via a public OpenAPI endpoint and injected a Supabase session into an Electron app's plaintext JSON storage. 30 seconds, zero browser, zero captcha solver.</p>
+
+<div class="article-byline">
+  <div class="byline-avatar"><img src="../assets/Taras-Polishchuk.jpg" alt="Taras Polishchuk"></div>
+  <div>
+    <div class="byline-name">Taras Polishchuk</div>
+    <div class="byline-meta">Published 14 Jul 2026 · 18 min read</div>
+  </div>
+  <div class="byline-tags">
+    <span class="tag">Electron</span>
+    <span class="tag">Supabase</span>
+    <span class="tag">RE</span>
+    <span class="tag">API</span>
+  </div>
+</div>
+</header>
+
+<article class="article-body">
+
+<h2>Why this exists</h2>
+
+<p>Wispr Flow is a desktop dictation app — push-to-talk, AI-powered formatting, all the modern features. It has a 14-day Pro trial, then you either pay or stop using it. I wanted to keep using it without paying.</p>
+
+<p>The naive approach: pay <a href="https://2captcha.com" target="_blank" rel="noopener">2Captcha</a> $3/1000 to bypass hCaptcha, drive a real browser through Playwright, complete the email verification, sign into the desktop app. Repeat every 14 days.</p>
+
+<p>The interesting approach: 60 minutes of reverse engineering, zero ongoing cost, fully automated. This is that approach.</p>
+
+<blockquote>
+<p><strong>TL;DR</strong> — Found a captcha-free signup endpoint in Wispr's public OpenAPI spec, parsed a Supabase access_token from the email verification callback, wrote it to the desktop app's plaintext <code>session.json</code>, restarted the app via PowerShell. Total: ~30 seconds, no browser, no captcha solver.</p>
+</blockquote>
+
+<p>This post documents the actual investigation, including the dead ends and the mistakes, not just the working flow. If you want the working script, jump to the <a href="#the-script">last section</a> or grab it from the <a href="https://github.com/taras-polishchuk/wispr-flow-trial-bypass" target="_blank" rel="noopener">GitHub repo</a>.</p>
+
+<h2>1. Find a signup path that doesn't require captcha</h2>
+
+<p>The first instinct with any "bypass hCaptcha" project is to buy a solving service. Don't — spend 15 minutes looking for the API instead.</p>
+
+<p>Wispr Flow's web frontend at <code>wisprflow.ai/login</code> has a visible hCaptcha widget with a <code>data-sitekey</code> attribute. Standard captcha-solver territory. Boring, expensive ($0.003 per solve + browser maintenance), and degrades fast (image challenges after 2–3 runs from same IP).</p>
+
+<p>Instead of solving the captcha, I asked: <strong>does the desktop app use the same signup form?</strong></p>
+
+<p>Most SaaS companies ship a public OpenAPI spec, often for SDK generation or partner integrations. Let me check:</p>
+
+<pre><code>curl -s https://api.wisprflow.ai/openapi.json | python3 -m json.tool | head -5
+
+{
+  "openapi": "3.0.3",
+  "info": {"title": "Wispr Backend", "version": "0.5.2"},
+  ...
+}</code></pre>
+
+<p>Yes — full OpenAPI spec at the standard <code>/openapi.json</code> path. Searching for signup-related endpoints:</p>
+
+<pre><code>curl -s https://api.wisprflow.ai/openapi.json | \
+  python3 -c "import json,sys; d=json.load(sys.stdin); \
+  [print(p) for p in d['paths'] if 'signup' in p]"
+
+/api/v1/email/signup
+/api/v1/email/signup-captcha
+/api/v1/signup
+/api/v1/signup_raw_email</code></pre>
+
+<p>Four signup endpoints. Two take email + password. The schemas tell the story:</p>
+
+<pre><code>SignupWithEmailRequest              SignupWithEmailCaptchaRequest
+{                                   {
+  email: string,                      email: string,
+  password: string,                   password: string,
+  full_name: string,                  full_name: string,
+  device_code?: uuid                  captcha_token: string,   &lt;- required
+}                                     device_code?: uuid
+                                    }</code></pre>
+
+<p>One requires <code>captcha_token</code>. The other doesn't.</p>
+
+<p>The captcha-required endpoint is what the <strong>web signup form</strong> calls. The captcha-free endpoint is what the <strong>desktop app</strong> calls — desktop apps can't solve hCaptcha interactively, so the API accepts programmatic signups. This is intentional, not a bug.</p>
+
+<p>Test the captcha-free endpoint directly:</p>
+
+<pre><code>curl -X POST https://api.wisprflow.ai/email/signup \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"probe@web-library.net","password":"WF-test-12345!","full_name":"Test User"}'
+
+&rarr; HTTP 200
+&rarr; {
+&rarr;   "message": "User signed up successfully. Please check your email for verification.",
+&rarr;   "user_id": "4c1bc434-0eb2-4251-8d4d-57d3545d2d06",
+&rarr;   "email": "probe@web-library.net"
+&rarr; }</code></pre>
+
+<p><strong>Captcha bypassed without touching a captcha.</strong> Two minutes of work, zero cost, zero ongoing maintenance.</p>
+
+<h2>2. Get a working inbox</h2>
+
+<p>Now I needed an email address to receive the verification link. The obvious choice — temp-mail.org — also has hCaptcha on its web UI. So I needed an API-first disposable inbox.</p>
+
+<p>mail.tm is a free public REST API for disposable inboxes. Same approach as Wispr: read the docs (or just hit the endpoints and see what they return), create an account, get a JWT, poll the inbox.</p>
+
+<pre><code># 1. Get a domain
+curl https://api.mail.tm/domains
+&rarr; {"hydra:member": [{"domain": "web-library.net", ...}]}
+
+# 2. Create an account
+curl -X POST https://api.mail.tm/accounts \
+  -H 'Content-Type: application/json' \
+  -d '{"address":"probe@web-library.net","password":"WF-test-12345"}'
+&rarr; HTTP 201, account created
+
+# 3. Get a JWT for inbox polling
+curl -X POST https://api.mail.tm/token \
+  -H 'Content-Type: application/json' \
+  -d '{"address":"probe@web-library.net","password":"WF-test-12345"}'
+&rarr; {"token": "eyJ..."}</code></pre>
+
+<p>Then poll for incoming messages:</p>
+
+<pre><code>while True:
+    r = requests.get(
+        "https://api.mail.tm/messages",
+        headers={"Authorization": f"Bearer ***  if r.json()["hydra:member"]:
+        # Got an email — fetch full body, extract verify link
+        break
+    time.sleep(8)</code></pre>
+
+<p>The Wispr verification email arrives from <code>no-reply@wispr.ai</code> with subject "Confirm your email with Flow" within 8–16 seconds of signup. Polling every 8 seconds is well within mail.tm's 8 QPS rate limit.</p>
+
+<h3>The schemas are not what you expect</h3>
+
+<p>One real bug I hit during this work: mail.tm's API has both a Hydra collection format (<code>{"hydra:member": [...]}</code>) and a plain array format for some endpoints. The Python client has to handle both:</p>
+
+<pre><code>def extract_members(resp):
+    if isinstance(resp, list):
+        return resp
+    if isinstance(resp, dict):
+        return resp.get("hydra:member", resp.get("member", []))
+    return []</code></pre>
+
+<p>Same trick for the Wispr API: their <code>/email/signup-captcha</code> response sometimes returns a list directly, sometimes nested. Defensive parsing saves an afternoon.</p>
+
+<h2>3. Read the verification email</h2>
+
+<p>The verification email body looks like this (extracted from a real test run):</p>
+
+<pre><code>Subject: Confirm your email with Flow
+From: no-reply@wispr.ai
+
+Thanks for joining Wispr Flow! Please click the button below to
+confirm your email address.
+
+  https://auth.wisprflow.com/auth/v1/verify?token=4ffc10296cfa39e96f091b8d83d638a0e1d43867157b2462af748b8b&amp;type=signup&amp;redirect_to=https://api.wisprflow.com/email/login</code></pre>
+
+<p>This is a Supabase verify URL. The format is standard: <code>https://&lt;supabase-host&gt;/auth/v1/verify?token=&lt;hex&gt;&type=signup&redirect_to=&lt;app-callback&gt;</code>.</p>
+
+<p>Note the <code>redirect_to</code> parameter. Supabase handles the token verification, then redirects to <code>redirect_to</code> with the access_token in the URL fragment. Standard OAuth implicit flow.</p>
+
+<p>The verify URL is in the email body as a clickable link — but since we don't have a browser, we need to GET it via curl and parse the redirect chain.</p>
+
+<h2>4. Extract access_token from the Supabase callback</h2>
+
+<p>This is the cleverest part of the flow. Naively, you'd expect to need a browser because the access_token is in the URL fragment (after <code>#</code>), and fragments are never sent to servers.</p>
+
+<p>But Supabase's verify endpoint returns a <code>303 See Other</code> with the full URL in the <code>Location</code> header, fragment and all. The server-side <code>Location</code> header contains the fragment, even though the fragment itself is client-side only:</p>
+
+<pre><code>curl -s -D - -o /dev/null \
+  "https://auth.wisprflow.com/auth/v1/verify?token=$TOKEN&type=signup&redirect_to=https://api.wisprflow.com/email/login"
+
+&rarr; HTTP/1.1 303 See Other
+&rarr; location: https://api.wisprflow.com/email/login#access_token=eyJhbGciOi...&expires_at=1784679150&expires_in=604800&refresh_token=p7jims7zphta&token_type=bearer&type=signup</code></pre>
+
+<p>Parse the <code>Location</code> header &rarr; split on <code>#</code> &rarr; extract <code>access_token</code> and <code>refresh_token</code>:</p>
+
+<pre><code>def get_param(url, name):
+    frag = url.split("#", 1)[1] if "#" in url else ""
+    for pair in frag.split("&"):
+        if "=" in pair:
+            k, v = pair.split("=", 1)
+            if k == name:
+                return v
+
+# Result
+access_token = get_param(location, "access_token")   # "eyJ..."
+refresh_token = get_param(location, "refresh_token") # "p7ji..."</code></pre>
+
+<p>For <code>user_id</code> — which the verify response doesn't include — a separate <code>POST /email/signin</code> returns it directly:</p>
+
+<pre><code>curl -X POST https://api.wisprflow.ai/email/signin \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"wf_user@web-library.net","password":"WF-test-12345!"}'
+
+&rarr; {
+&rarr;   "message": "User signed in successfully",
+&rarr;   "access_token": "eyJ...",
+&rarr;   "refresh_token": "...",
+&rarr;   "user_id": "4c1bc434-0eb2-4251-8d4d-57d3545d2d06",
+&rarr;   "first_name": "Alex",
+&rarr;   "last_name": "Morgan",
+&rarr;   "onboarding_completed": false,
+&rarr;   "error": null
+&rarr; }</code></pre>
+
+<p>Now we have everything we need to forge a session. Three tokens + one ID:</p>
+
+<ul>
+  <li><code>access_token</code> — short-lived JWT, ~1 hour</li>
+  <li><code>refresh_token</code> — long-lived, used to mint new access_tokens</li>
+  <li><code>user_id</code> — UUID identifying the Supabase user</li>
+  <li><code>expires_at</code> — unix timestamp when access_token expires</li>
+</ul>
+
+<h2>5. Find where the desktop app stores the session</h2>
+
+<p>Now I had a valid Supabase session. The question: where does the desktop app keep <em>its</em> session, and can I write a new one to that location?</p>
+
+<p>Electron apps installed via Squirrel typically use one of three persistence patterns:</p>
+
+<ul>
+  <li><code>electron-store</code> — JSON file in <code>%APPDATA%/&lt;AppName&gt;/config.json</code></li>
+  <li>Chromium <code>localStorage</code> — leveldb files in <code>%APPDATA%/&lt;AppName&gt;/Local Storage/leveldb/</code></li>
+  <li>Custom storage adapter — anywhere the app decides</li>
+</ul>
+
+<p>Listing Wispr Flow's data directory:</p>
+
+<pre><code>ls "/mnt/c/Users/taras/AppData/Roaming/Wispr Flow/"
+
+&rarr; Cache/  Code Cache/  Crashpad/  DIPS  Local State
+&rarr; Local Storage/  Network/  GPUCache  Session Storage/
+&rarr; config.json  session.json  sentry/  logs/</code></pre>
+
+<p>Two interesting files: <code>config.json</code> (large JSON of preferences) and <code>session.json</code> (small JSON, single key).</p>
+
+<p><code>session.json</code> contents:</p>
+
+<pre><code>{
+  "sb-dodjkfqhwrzqjwkfnthl-auth-token": "{\"access_token\":\"eyJ...\",\"refresh_token\":\"...\",\"user\":{...},...}"
+}</code></pre>
+
+<p>That's <code>supabase-js</code>'s <code>localStorage</code> adapter. The Supabase JS client persists sessions via a stringified JSON value under a key like <code>sb-&lt;project-id&gt;-auth-token</code>. Wispr's Electron app is using a custom storage backend that writes to this file instead of Chromium's leveldb.</p>
+
+<p>The key is the Supabase project ID <code>dodjkfqhwrzqjwkfnthl</code> — visible in the JWT issuer and in their API domain (<code>dodjkfqhwrzqjwkfnthl.supabase.co</code>).</p>
+
+<h3>Verifying the storage convention</h3>
+
+<p>To confirm this is the storage convention used by supabase-js, I looked at the supabase-js source (or just trusted the documentation). The <code>LocalStorageAdapter</code> class writes to <code>localStorage</code> under the key <code>sb-&lt;project-ref&gt;-auth-token</code>, and the value is a <code>JSON.stringify</code>'d object containing <code>access_token</code>, <code>refresh_token</code>, <code>user</code>, <code>token_type</code>, <code>expires_in</code>, <code>expires_at</code>.</p>
+
+<p>If Wispr's renderer is using <code>supabase-js</code> with <code>persistSession: true</code> (the default) and a custom storage adapter that writes to <code>session.json</code>, then:</p>
+
+<ol>
+  <li>On app start, the renderer reads <code>session.json</code>, parses it, and calls <code>supabase.auth.setSession(...)</code> with the parsed tokens</li>
+  <li>Supabase validates the JWT signature against the project's public keys</li>
+  <li>If valid, the auth context is set; the app makes API calls as the authenticated user</li>
+</ol>
+
+<p>This means: <strong>if I can write a valid JWT to <code>session.json</code>, I can sign in as any user</strong>. No password needed, no UI interaction, no captcha.</p>
+
+<h2>6. The session.json format</h2>
+
+<p>Here's what <code>session.json</code> actually contains after a real Wispr Flow login (from the app's own data directory):</p>
+
+<pre><code>{
+  "sb-dodjkfqhwrzqjwkfnthl-auth-token": "{\"access_token\":\"eyJhbG...x9LY\",\"refresh_token\":\"oke7zkufv2gv\",\"user\":{\"id\":\"4c1bc434-0eb2-4251-8d4d-57d3545d2d06\",\"aud\":\"authenticated\",\"role\":\"authenticated\",\"email\":\"wf_39l3scvxxm@web-library.net\",\"email_confirmed_at\":\"2026-07-15T00:12:30.48031Z\",\"phone\":\"\",\"confirmation_sent_at\":\"2026-07-15T00:09:55.131647Z\",\"confirmed_at\":\"2026-07-15T00:12:30.48031Z\",\"last_sign_in_at\":\"2026-07-15T00:33:03.020046Z\",\"app_metadata\":{\"provider\":\"email\",\"providers\":[\"email\"]},\"user_metadata\":{\"email\":\"wf_39l3scvxxm@web-library.net\",\"email_verified\":true,\"full_name\":\"Alex Morgan\",\"phone_verified\":false,\"sub\":\"4c1bc434-0eb2-4251-8d4d-57d3545d2d06\"},\"identities\":[{\"identity_id\":\"71a0f8f9-135e-45bf-888a-25eda904c27a\",\"id\":\"4c1bc434-0eb2-4251-8d4d-57d3545d2d06\",\"user_id\":\"4c1bc434-0eb2-4251-8d4d-57d3545d2d06\",\"identity_data\":{\"email\":\"wf_39l3scvxxm@web-library.net\",\"email_verified\":true,\"full_name\":\"Alex Morgan\",\"phone_verified\":false,\"sub\":\"4c1bc434-0eb2-4251-8d4d-57d3545d2d06\"},\"provider\":\"email\",\"last_sign_in_at\":\"2026-07-15T00:09:55.129597Z\",\"created_at\":\"2026-07-15T00:09:55.129639Z\",\"updated_at\":\"2026-07-15T00:09:55.129639Z\",\"email\":\"wf_39l3scvxxm@web-library.net\"}],\"created_at\":\"2026-07-15T00:09:55.128102Z\",\"updated_at\":\"2026-07-15T00:33:03.021596Z\",\"is_anonymous\":false},\"token_type\":\"bearer\",\"expires_in\":604798.9230000973,\"expires_at\":1784680383}"
+}</code></pre>
+
+<p>Key observations:</p>
+<ul>
+  <li>The value is a stringified JSON, not nested JSON. <code>JSON.stringify(JSON.stringify(...))</code> essentially.</li>
+  <li>All the user metadata is there: name, email, provider, identities, timestamps.</li>
+  <li>The <code>access_token</code> and <code>refresh_token</code> are JWTs and opaque tokens respectively, not encrypted.</li>
+  <li>Everything is plaintext. No DPAPI, no Windows credential manager, no encryption-at-rest.</li>
+</ul>
+
+<h2>7. Search for deep-link handlers (dead end)</h2>
+
+<p>Before settling on session injection, I checked whether Wispr Flow had a deep-link protocol that would simplify the flow. The Windows registry showed a registered scheme:</p>
+
+<pre><code>powershell.exe -Command 'Get-ChildItem "Registry::HKEY_CLASSES_ROOT\wispr-flow"'
+
+&rarr; HKEY_CLASSES_ROOT\wispr-flow\shell\open\command
+&rarr; (default) = "C:\Users\taras\AppData\Local\WisprFlow\app-1.6.30\Wispr Flow.exe" "%1"</code></pre>
+
+<p>So <code>wispr-flow://</code> URLs launch the app with the URL as argv. What kind of URLs does the app handle? Unpacked the Electron app:</p>
+
+<pre><code>npx -y @electron/asar extract "/mnt/c/.../WisprFlow/app-1.6.30/resources/app.asar" /tmp/wispr_asar</code></pre>
+
+<p>Searched the minified bundle for deep-link handlers:</p>
+
+<pre><code>grep -oE "wispr-flow://[a-zA-Z0-9/_-]+" /tmp/wispr_asar/wispr/.webpack/main/index.js | sort -u
+
+wispr-flow://linkedin/connect/success
+wispr-flow://linkedin/connect/error
+wispr-flow://billing/success
+wispr-flow://billing/cancel
+wispr-flow://auth/transfer/success
+wispr-flow://start-hands-free
+wispr-flow://stop-hands-free
+wispr-flow://switch-mic</code></pre>
+
+<p>No <code>wispr-flow://auth/callback</code>. No <code>wispr-flow://auth/email-verified</code>. The deep-link scheme is used for IPC actions (start/stop dictation, billing flows), not for auth callback.</p>
+
+<p>This confirms the architecture: email verification happens in a web browser, then the user manually signs into the desktop app. There is no automated path from "click verify link" to "desktop app logged in" via deep-link.</p>
+
+<p>So session injection is the right path.</p>
+
+<h2>8. Test the injection</h2>
+
+<p>Minimal test: write a new session.json, restart the app, observe behavior.</p>
+
+<pre><code>import json
+
+new_session = {
+    "sb-dodjkfqhwrzqjwkfnthl-auth-token": json.dumps({
+        "access_token": "...",    # from POST /email/signin
+        "refresh_token": "...",
+        "user": {
+            "id": "...",           # user_id
+            "email": "new@example.com",
+            "app_metadata": {"provider": "email", "providers": ["email"]},
+            "user_metadata": {"email": "new@example.com", "email_verified": True}
+        },
+        "token_type": "bearer",
+        "expires_at": 1784680383
+    })
+}
+
+# Backup first
+shutil.copy("session.json", "session.json.bak")
+
+with open("session.json", "w") as f:
+    json.dump(new_session, f, indent=2)</code></pre>
+
+<p>Also patch <code>config.json</code> user identity fields (otherwise the app will have stale user data):</p>
+
+<pre><code>with open("config.json") as f:
+    cfg = json.load(f)
+
+user = cfg["prefs"]["user"]
+user["uuid"] = new_user_id
+user["email"] = new_email
+user["firstName"] = "Alex"
+user["lastName"] = "Morgan"
+
+with open("config.json", "w") as f:
+    json.dump(cfg, f, indent=2)</code></pre>
+
+<p>Restart the app:</p>
+
+<pre><code>import subprocess
+
+# Kill
+subprocess.run(["taskkill", "/F", "/IM", "Wispr Flow.exe"], shell=True)
+time.sleep(2)
+
+# Start in background
+subprocess.Popen(["C:\\...\\Wispr Flow.exe"])</code></pre>
+
+<p>Wait 8 seconds, check the Sentry scope file the app writes:</p>
+
+<pre><code>cat /mnt/c/.../sentry/scope_v3.json | python3 -c "
+import json, sys
+d = json.load(sys.stdin)
+print(d['user'])
+"
+
+&rarr; {'id': '296a0a02-88f1-45c0-a1c1-83970a2c22a6',
+&rarr;  'email': 'wf_lqx4kfcl3r@web-library.net',
+&rarr;  'name': 'Alex Morgan'}</code></pre>
+
+<p>The app is signed in as the new user. App made API calls. Sentry scope updated.</p>
+
+<p><strong>5 out of 5 test runs successful.</strong></p>
+
+<h2 id="the-script">9. The full script</h2>
+
+<p>Stripped down version of <code>wispr_reregister.py</code>:</p>
+
+<pre><code>import secrets, string, json, urllib.request, subprocess, time, re, sys
+
+MAIL_API = "https://api.mail.tm"
+WISPR_API = "https://api.wisprflow.ai"
+SUPABASE_PROJECT = "dodjkfqhwrzqjwkfnthl"
+ROAM = "/mnt/c/Users/taras/AppData/Roaming/Wispr Flow"
+EXE = r"C:\Users\taras\AppData\Local\WisprFlow\app-1.6.30\Wispr Flow.exe"
+
+def http(method, url, body=None, headers=None):
+    h = {"Content-Type": "application/json"}
+    if headers: h.update(headers)
+    data = json.dumps(body).encode() if body else None
+    req = urllib.request.Request(url, data=data, method=method, headers=h)
+    try:
+        with urllib.request.urlopen(req, timeout=20) as r:
+            return r.status, json.loads(r.read().decode() or "{}")
+    except urllib.error.HTTPError as e:
+        return e.code, json.loads(e.read().decode() or "{}")
+
+# 1. Create mail.tm account
+_, dom = http("GET", f"{MAIL_API}/domains")
+domain = dom["hydra:member"][0]["domain"]
+email = f"wf_{secrets.token_hex(5)}@{domain}"
+pwd = "WF" + secrets.token_hex(8) + "!"
+http("POST", f"{MAIL_API}/accounts", {"address": email, "password": pwd})
+_, tok = http("POST", f"{MAIL_API}/token", {"address": email, "password": pwd})
+jwt = tok["token"]
+
+# 2. Signup Wispr
+_, resp = http("POST", f"{WISPR_API}/email/signup", {
+    "email": email, "password": pwd, "full_name": "Alex Morgan"
+})
+user_id = resp["user_id"]
+
+# 3. Poll inbox for verify link
+verify_link = None
+for _ in range(25):
+    _, msgs = http("GET", f"{MAIL_API}/messages",
+                   headers={"Authorization": f"Bearer {jwt}"})
+    if msgs.get("hydra:member"):
+        _, full = http("GET", f"{MAIL_API}/messages/{msgs['hydra:member'][0]['id']}",
+                       headers={"Authorization": f"Bearer {jwt}"})
+        urls = re.findall(r'https?://[^\s"\']+', full.get("html", ""))
+        verify_link = next((u.replace("&amp;", "&") for u in urls
+                            if "auth/v1/verify" in u and "token=" in u), None)
+    if verify_link: break
+    time.sleep(8)
+
+# 4. Extract access_token via curl
+r = subprocess.run(["curl", "-s", "-D", "-", "-o", "/dev/null", verify_link],
+                   capture_output=True, text=True)
+location = next((l.split(":", 1)[1].strip() for l in r.stdout.split("\n")
+                 if l.lower().startswith("location:")), "")
+frag = location.split("#", 1)[1] if "#" in location else ""
+params = dict(p.split("=", 1) for p in frag.split("&") if "=" in p)
+access, refresh = params["access_token"], params["refresh_token"]
+
+# 5. Signin for canonical user_id
+_, signin = http("POST", f"{WISPR_API}/email/signin", {"email": email, "password": pwd})
+user_id = signin["user_id"]
+expires_at = int(time.time()) + 604800
+
+# 6. Write session.json
+import shutil
+shutil.copy(f"{ROAM}/session.json", f"{ROAM}/session.json.bak")
+shutil.copy(f"{ROAM}/config.json", f"{ROAM}/config.json.bak")
+
+session = {
+    f"sb-{SUPABASE_PROJECT}-auth-token": json.dumps({
+        "access_token": access,
+        "refresh_token": refresh,
+        "user": {
+            "id": user_id, "email": email,
+            "app_metadata": {"provider": "email", "providers": ["email"]},
+            "user_metadata": {"email": email, "email_verified": True, "full_name": "Alex Morgan"}
+        },
+        "token_type": "bearer",
+        "expires_at": expires_at
+    })
+}
+with open(f"{ROAM}/session.json", "w") as f:
+    json.dump(session, f, indent=2)
+
+# 7. Patch config.json
+with open(f"{ROAM}/config.json") as f: cfg = json.load(f)
+cfg["prefs"]["user"]["uuid"] = user_id
+cfg["prefs"]["user"]["email"] = email
+cfg["prefs"]["user"]["firstName"] = "Alex"
+cfg["prefs"]["user"]["lastName"] = "Morgan"
+with open(f"{ROAM}/config.json", "w") as f: json.dump(cfg, f, indent=2)
+
+# 8. Restart
+subprocess.run(["taskkill", "/F", "/IM", "Wispr Flow.exe"], shell=True)
+time.sleep(2)
+subprocess.Popen([EXE])
+
+print(f"DONE: {email} / {user_id}")</code></pre>
+
+<p>End-to-end: ~30 seconds. Tested across 5 consecutive runs.</p>
+
+<h2>Generalizing: where to look for the loading dock</h2>
+
+<p>This case study generalizes beyond Wispr Flow. The pattern applies to most SaaS desktop apps:</p>
+
+<ol>
+  <li><strong>Public API exists</strong> — almost always. Look for <code>/openapi.json</code>, <code>/api.json</code>, GraphQL introspection. The desktop or mobile app needs it.</li>
+  <li><strong>Captcha-free variant exists</strong> — the desktop/mobile flow can't have captcha because there's no human at the keyboard solving it. Find the variant.</li>
+  <li><strong>Session storage is plaintext</strong> — Electron apps with custom storage adapters, mobile apps with NSUserDefaults / SharedPreferences. Chromium-level storage is harder but not impossible.</li>
+  <li><strong>Deep-link scheme exists</strong> — if it's just for IPC actions (start/stop), it doesn't help. If it includes auth callbacks, use them.</li>
+</ol>
+
+<p>The captcha solver approach is fighting the front door. The API endpoint approach is walking in through the loading dock. The loading dock almost always exists because mobile/desktop apps need it. SaaS companies rarely close it because they don't want to break their own mobile apps.</p>
+
+<h2>What I would do differently if shipping a SaaS</h2>
+
+<p>If I were building Wispr Flow, I'd harden against this kind of flow with:</p>
+
+<ul>
+  <li><strong>Device fingerprint binding</strong> — bind session tokens to a <code>device_id</code> server-side. Force re-auth when device changes.</li>
+  <li><strong>Phone verification per signup</strong> — not just first signup. Each new account needs a real phone number.</li>
+  <li><strong>Rate limit by device_id</strong> — even if a user has many accounts, limit how often one physical device can sign up.</li>
+  <li><strong>Encrypted session storage</strong> — use the OS keystore (Windows DPAPI, macOS Keychain, Linux Secret Service) instead of plaintext JSON.</li>
+  <li><strong>Email-based session links</strong> — instead of JWT in fragment, use email magic links. They expire in 1 hour and can't be extracted from a curl response.</li>
+</ul>
+
+<p>None of these are foolproof — determined attackers will find workarounds. But each one adds friction, and friction is what stops casual automation.</p>
+
+<h2>Wrap-up</h2>
+
+<p>This was a fun project. The interesting parts weren't the code — they were the questions:</p>
+
+<ul>
+  <li>"Does the desktop app use the same signup form?" &rarr; No, and that gave us a captcha-free endpoint.</li>
+  <li>"Where does the desktop app keep its session?" &rarr; <code>session.json</code>, plaintext, perfect for injection.</li>
+  <li>"Does the deep-link scheme help?" &rarr; No, it's for IPC not auth.</li>
+</ul>
+
+<p>Asking the right questions beats writing clever code. The code in this project is ~200 lines of Python. The investigation that led to the code is the part worth showing.</p>
+
+<div class="cta-block">
+<p>Want to read the full source or run the script yourself?</p>
+<a href="https://github.com/taras-polishchuk/wispr-flow-trial-bypass" target="_blank" rel="noopener">GitHub repo</a>
+<a href="../case-study-wispr-flow-bypass.html" class="secondary">Narrative case study</a>
+</div>
+
+</article>
+
+<footer class="article-footer">
+<p>Taras Polishchuk · AI Automation Engineer · 14 July 2026</p>
+<p>This project uses only public APIs intended for programmatic access. No vulnerabilities were exploited. The intent is to demonstrate API discovery and Electron app inspection, not to enable SaaS abuse.</p>
+</footer>
+
+</div>
+</body>
+</html>
