@@ -1921,6 +1921,64 @@ fetch response → chat panel UI</code></pre>
   },
   {
     id: 4,
+    name: "OperatorOS — Personal Operating System Methodology",
+    featured: true,
+    screenshot: "./assets/screenshots/operatoros-framework.webp",
+    desc: "Engineering methodology + 13-command CLI for building declarative, reproducible, AI-ready personal operating systems. Six constitutional principles (Single Authority, Everything Replaceable, Typed Substrate, Composable, Evidence-Based, Local-First), JSON-Schema-validated workspace, and a bootstrap protocol any AI agent can read on entry. MIT-licensed, v0.7.0, public methodology site served from this GitHub Pages repo.",
+    tags: ["Methodology", "CLI", "TypeScript", "JSON-Schema", "AI", "Open Source"],
+    gradient: "linear-gradient(135deg, #050a14 0%, #0a1830 50%, #050814 100%)",
+    emoji: "🧭",
+    link: "https://taras-polishchuk.github.io/operatoros-framework/",
+    longDescription: `<p><strong>OperatorOS</strong> is an engineering methodology for engineers, developers, and technical founders who want their work environment to behave the way their code does — typed, version-controlled, replaceable, and inspectable. Distilled from 4 months of daily practice into 6 constitutional principles, a JSON-Schema-validated workspace, and a 13-command CLI. MIT-licensed, v0.7.0.</p>
+
+<h4>What it is</h4>
+<p>Not an operating system you install. A <em>seed</em> you grow into one. A workspace scaffold + six documents + a small CLI + a bootstrap protocol an AI agent reads on first entry. The CLI ships no bundled modules — you assemble your own from <code>operatoros add &lt;path&gt;</code> and the methodology decides what to keep.</p>
+
+<h4>The six constitutional principles</h4>
+<ul>
+  <li><strong>Single Authority.</strong> Every concept has exactly one canonical location. Duplicates are drift.</li>
+  <li><strong>Everything Replaceable.</strong> Any component can be removed without breaking the others. No tight coupling.</li>
+  <li><strong>Typed Substrate.</strong> Configuration is validated against JSON-Schema before it is accepted. Invalid states cannot exist.</li>
+  <li><strong>Composable.</strong> A workspace is a set of named modules with explicit dependencies and declared lifecycles.</li>
+  <li><strong>Evidence-Based.</strong> Every change has a reason; every reason has a record. Speculation is rejected by convention.</li>
+  <li><strong>Local-First.</strong> The Core never reaches the network. Enforced by <code>__tests__/local-first.test.ts</code>.</li>
+</ul>
+
+<h4>What it is NOT</h4>
+<ul>
+  <li>Not an AI-native runtime — the constitutional principle is now Local-First (replaced the abandoned "AI-Native" principle in v0.5.2)</li>
+  <li>Not a SaaS, cloud service, or sync engine — everything runs locally</li>
+  <li>Not a multi-agent orchestration framework — gives agents a structured environment to read; doesn't run them</li>
+  <li>Not a replacement for Claude Code / Aider / Hermes — those are agent runtimes; OperatorOS is the workspace they work in</li>
+  <li>Not a universal second brain — assumes comfort with terminal, git, and JSON-Schema</li>
+  <li>Not a paid product — MIT-licensed, no premium tier, no account</li>
+</ul>
+
+<h4>Architecture</h4>
+<pre><code>operatoros-workspace/
+├── .config/
+│   ├── bootstrap.md          # AI agent reads this on entry
+│   └── operatoros.yaml       # workspace manifest (JSON-Schema-validated)
+├── infrastructure/           # nix/ terraform/ — declared infrastructure
+├── agents/                   # agent role definitions
+│   ├── system.md             # identity + mission
+│   └── coder.md              # specialised agent
+├── modules/                  # composable units you add via 'operatoros add'
+└── methodology/              # the 6 documents (read once, internalise forever)</code></pre>
+
+<h4>The bootstrap protocol</h4>
+<p>When you scaffold a workspace, the CLI emits a <code>bootstrap.md</code>. This is what an AI agent reads on first entry — 4 must-read files, conditional reads, ignore-list, and a 5-question onboarding interview that learns what you actually do, what you care about, and what the workspace should optimize for. The agent is <em>AI-usable without being AI-dependent</em>: any of Claude, GPT, Hermes, or Aider can read it and behave correctly. None are required.</p>
+
+<h4>The CLI (v0.7.0)</h4>
+<p>13 commands: <code>init</code>, <code>validate</code>, <code>add</code>, <code>apply</code>, <code>run</code>, <code>export</code>, <code>version</code>, plus the v0.7.0 Workspace Catalog: <code>index</code>, <code>doctor</code>, <code>stats</code>, <code>stale</code>, <code>prune</code>. Single binary, ~787 KB, quietly stays out of your way.</p>
+
+<h4>Outcome</h4>
+<p>Published as a public methodology site (<a href="https://taras-polishchuk.github.io/operatoros-framework/" target="_blank" rel="noopener noreferrer">taras-polishchuk.github.io/operatoros-framework</a>) + open-source repo (<a href="https://github.com/taras-polishchuk/operatoros-framework" target="_blank" rel="noopener noreferrer">github.com/taras-polishchuk/operatoros-framework</a>, MIT). Realistic audience: 5–50 engineers like Taras — not 100K users, no community OS, BDFL governance. The methodology is one person's. Contributions are welcome but the constitution is mine.</p>
+
+<p><strong>Methodology site:</strong> <a href="https://taras-polishchuk.github.io/operatoros-framework/" target="_blank" rel="noopener noreferrer">taras-polishchuk.github.io/operatoros-framework</a> · <strong>Repo:</strong> <a href="https://github.com/taras-polishchuk/operatoros-framework" target="_blank" rel="noopener noreferrer">github.com/taras-polishchuk/operatoros-framework</a></p>`
+  },
+    {
+    id: 5,
     name: "QuizPilot",
     screenshot: "./assets/screenshots/quizpilot.webp",
     desc: "Conversion-focused waitlist landing page for a fictional EdTech startup that helps teachers generate quizzes from lesson content in seconds. Built with SvelteKit, TypeScript, Tailwind CSS, and Supabase, with a shared waitlist form, animated counter, duplicate protection, and lightweight scroll-reveal motion.",
@@ -1930,7 +1988,7 @@ fetch response → chat panel UI</code></pre>
     link: "https://quizpilot-a.vercel.app/"
   },
   {
-    id: 5,
+    id: 6,
     name: "FORMA Scale",
     screenshot: "./assets/screenshots/forma-scale.webp",
     desc: "High-converting Shopify-ready landing page for a smart fitness scale. Features scroll-triggered animations, parallax hero, interactive product showcase with tab switching, auto-play reviews carousel, FAQ accordion, and a sticky CTA bar — pixel-perfect premium UI, zero dependencies.",
@@ -1940,7 +1998,7 @@ fetch response → chat panel UI</code></pre>
     link: "https://taras-polishchuk.github.io/forma-scale-landing/"
   },
   {
-    id: 6,
+    id: 7,
     name: "Shopify Dev KB",
     screenshot: "./assets/screenshots/shopify-dev-kb.webp",
     desc: "Personal reference app for Shopify theme development. Browse and search categorized Liquid & JS snippets, built with Svelte + TypeScript and syntax-highlighted code blocks.",
@@ -1950,7 +2008,7 @@ fetch response → chat panel UI</code></pre>
     link: "https://taras-polishchuk.github.io/shopify-dev-kb/"
   },
   {
-    id: 7,
+    id: 8,
     name: "Ascent Protein",
     screenshot: "./assets/screenshots/ascentprotein.webp",
     desc: "Handled theme customization and UI work for a premium sports nutrition brand. Worked on product page layouts, custom sections, and storefront UI improvements focused on visual consistency and conversion flow.",
@@ -1960,7 +2018,7 @@ fetch response → chat panel UI</code></pre>
     link: "https://www.ascentprotein.com/"
   },
   {
-    id: 8,
+    id: 9,
     name: "GU Energy",
     screenshot: "./assets/screenshots/guenergy.webp",
     desc: "Worked on Shopify theme improvements for an established eCommerce brand. Handled UI tweaks, layout fixes, and responsive adjustments to keep the storefront consistent across devices.",
@@ -1970,7 +2028,7 @@ fetch response → chat panel UI</code></pre>
     link: "https://guenergy.com/"
   },
   {
-    id: 9,
+    id: 10,
     name: "Bunnies By The Bay",
     screenshot: "./assets/screenshots/bunniesbythebay.webp",
     desc: "Contributed to Shopify theme work for a baby gifts and plush toys brand. Worked on custom sections, UI improvements, and storefront polish to keep the experience clean and easy to navigate.",
@@ -1980,7 +2038,7 @@ fetch response → chat panel UI</code></pre>
     link: "https://bunniesbythebay.com/"
   },
   {
-    id: 10,
+    id: 11,
     name: "COOLA",
     screenshot: "./assets/screenshots/coola.webp",
     desc: "Worked on product page structure and UX improvements for a Shopify skincare brand. Handled layout refinements, navigation adjustments, and visual consistency fixes across the storefront.",
@@ -1990,7 +2048,7 @@ fetch response → chat panel UI</code></pre>
     link: "https://coola.com/"
   },
   {
-    id: 11,
+    id: 12,
     name: "White Claw UK",
     screenshot: "./assets/screenshots/whiteclaw.webp",
     desc: "Contributed to Shopify theme development for a global beverage brand's UK market. Worked on UI updates, custom sections, and responsive adjustments specific to the regional storefront.",
@@ -2000,7 +2058,7 @@ fetch response → chat panel UI</code></pre>
     link: "https://uk.whiteclaw.com/"
   },
   {
-    id: 12,
+    id: 13,
     name: "UI Snippets Library",
     screenshot: "./assets/screenshots/ui-lab.webp",
     desc: "Component playground and microinteraction library built with pure HTML/CSS/JS. Browse buttons, cards, toggles, toasts, and inputs with live previews and copy-ready code snippets — no frameworks.",
@@ -2010,7 +2068,7 @@ fetch response → chat panel UI</code></pre>
     link: "https://taras-polishchuk.github.io/UI-Snippets-Library-Microinteractions-Components/"
   },
   {
-    id: 13,
+    id: 14,
     name: "Locus",
     screenshot: "./assets/screenshots/locus.webp",
     desc: "Minimalist lofi pomodoro timer with ambient soundscapes, built with HTML, CSS, and JavaScript. Customizable sessions, progress visualization, and focus-enhancing features.",
@@ -2020,7 +2078,7 @@ fetch response → chat panel UI</code></pre>
     link: "https://taras-polishchuk.github.io/locus/"
   },
   {
-    id: 14,
+    id: 15,
     name: "Cleanse",
     screenshot: "./assets/screenshots/cleanse.webp",
     desc: "Landing page for a cleaning service startup. Features animated advantage cards, an interactive room-by-room cleaning guide with hotspot markers, scroll-triggered tab navigation, and a floating CTA button — fully responsive, pure HTML/CSS/JS.",
@@ -2030,7 +2088,7 @@ fetch response → chat panel UI</code></pre>
     link: "https://taras-polishchuk.github.io/cleanse/"
   },
   {
-    id: 15,
+    id: 16,
     name: "Habit Tracker",
     screenshot: "./assets/screenshots/habit-tracker.webp",
     desc: "Minimalist daily habit tracker built with React. Add custom habits, mark them done each day, and visualize your consistency with a streak and completion grid.",
@@ -2040,7 +2098,7 @@ fetch response → chat panel UI</code></pre>
     link: "https://taras-polishchuk.github.io/habit-tracker/"
   },
   {
-    id: 16,
+    id: 17,
     name: "Ubuntu Cheatsheet",
     screenshot: "./assets/screenshots/ubuntu-cheatsheet.webp",
     desc: "Interactive Ubuntu CLI reference with 15+ categorized sections — file system, networking, APT, systemd, cron, and more. Sidebar navigation, instant search, and one-click copy. Pure HTML/CSS/JS, no dependencies.",
@@ -2050,7 +2108,7 @@ fetch response → chat panel UI</code></pre>
     link: "https://taras-polishchuk.github.io/ubuntu-cheatsheet/"
   },
   {
-    id: 17,
+    id: 18,
     name: "Shopify Theme Dev Roadmap",
     screenshot: "./assets/screenshots/shopify-roadmap.webp",
     desc: "Interactive skill tree for becoming a Shopify Theme Developer — from HTML basics to publishing a premium theme. 31 nodes across 7 stages, XP leveling system, locked/unlocked mechanics, Reality Mode tasks, and dark mode. Built with Svelte 5.",
@@ -2060,7 +2118,7 @@ fetch response → chat panel UI</code></pre>
     link: "https://taras-polishchuk.github.io/interactive-shopify-theme-dev-roadmap/"
   },
   {
-    id: 18,
+    id: 19,
     name: "Superfit",
     screenshot: "./assets/screenshots/superfit.webp",
     desc: "Responsive landing page for a modern gym in Kyiv. Features a dark hero section, about & advantages two-column layouts with decorative image framing, a full-bleed CTA banner, a 4-card features grid, and a footer with an embedded Google Maps. Pure HTML/CSS, no frameworks.",
@@ -2070,7 +2128,7 @@ fetch response → chat panel UI</code></pre>
     link: "https://taras-polishchuk.github.io/superfit/"
   },
   {
-    id: 19,
+    id: 20,
     name: "Грім та Грім",
     screenshot: "./assets/screenshots/grim-ta-grim.webp",
     desc: "Responsive landing page for a Ukrainian rock band. Features a fullscreen concert hero with dark overlay, glassmorphism concerts table with ticket booking modal, band members grid, story section, contact form with validation, and an embedded map. Pure HTML/CSS/JS, no frameworks.",
@@ -2080,7 +2138,7 @@ fetch response → chat panel UI</code></pre>
     link: "https://taras-polishchuk.github.io/grim-ta-grim/"
   },
   {
-    id: 20,
+    id: 21,
     name: "WhisperClip — Push-to-Talk Transcription",
     screenshot: "./assets/screenshots/whisper-clip.webp",
     desc: "Windows tray app for push-to-talk transcription with local faster-whisper inference. Multi-backend (NVIDIA CUDA, AMD/Intel DirectML, CPU fallback), state-machine driven, Ctrl+Alt+Space hotkey, focused-window autopaste, settings UI, model auto-download — zero cloud dependency, shipped with a Windows installer.",
@@ -2090,7 +2148,7 @@ fetch response → chat panel UI</code></pre>
     link: "https://github.com/taras-polishchuk/whisper-clip-win"
   },
   {
-    id: 21,
+    id: 22,
     name: "Wispr Flow Trial Bypass — RE Case Study",
     featured: true,
     screenshot: null,
