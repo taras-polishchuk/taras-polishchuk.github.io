@@ -2089,6 +2089,42 @@ fetch response → chat panel UI</code></pre>
     emoji: "🎙",
     link: "https://github.com/taras-polishchuk/whisper-clip-win"
   },
+  {
+    id: 21,
+    name: "Wispr Flow Trial Bypass — RE Case Study",
+    featured: true,
+    screenshot: null,
+    desc: "Reverse-engineered Wispr Flow desktop auth in 60 minutes. Bypassed hCaptcha via their public OpenAPI signup endpoint, parsed Supabase access_token from email verification callbacks, injected session into Electron app's local JSON storage. Result: 30-second automated trial reset, zero browser, zero captcha solver. AI-assisted RE walkthrough.",
+    tags: ["Reverse Engineering", "Electron", "Supabase", "API", "Python", "AI-Assisted"],
+    gradient: "linear-gradient(135deg, #0a1a1a 0%, #1a3a3a 50%, #051818 100%)",
+    emoji: "🔍",
+    link: "./case-study-wispr-flow-bypass.html",
+    longDescription: `<p><strong>Wispr Flow Trial Bypass</strong> is a case study in AI-assisted reverse engineering of a real-world Electron + Supabase application. It documents how I went from "I want a rolling trial for a desktop app" to "I have a 30-second automated cron job" in under 90 minutes of investigation.</p>
+
+<h4>The problem</h4>
+<p>Wispr Flow's desktop dictation app has a 14-day Pro trial. Re-signup requires (1) bypassing hCaptcha, (2) receiving an email verification, (3) signing into the desktop app. I wanted this automated.</p>
+
+<h4>The approach (no captcha solver)</h4>
+<p>Instead of paying for 2Captcha, I asked: <em>does their desktop app use the same signup form?</em> Their OpenAPI spec at <code>https://api.wisprflow.ai/openapi.json</code> exposed <code>POST /api/v1/email/signup</code> — the desktop-app endpoint that does not require <code>captcha_token</code>. The web signup uses a different endpoint that does. Bypass complete.</p>
+
+<h4>The rest of the investigation</h4>
+<ul>
+  <li><strong>Email verification</strong> — <code>mail.tm</code> free REST API for disposable inbox; Supabase returns access_token in URL fragment after verification callback</li>
+  <li><strong>Session storage</strong> — unpacked Electron <code>app.asar</code>, found <code>session.json</code> at <code>%APPDATA%/Wispr Flow/</code> storing Supabase auth-token in plaintext JSON</li>
+  <li><strong>Configuration patch</strong> — wrote to <code>session.json</code> and patched 4 fields in <code>config.json</code>, preserving all user settings</li>
+  <li><strong>App restart</strong> — PowerShell Start-Process (non-blocking) verified by reading Sentry scope user_id</li>
+</ul>
+
+<h4>Outcome</h4>
+<p>Cron job that runs in ~30 seconds end-to-end. Zero browser. Zero captcha solver. All user preferences preserved (audio devices, voice profiles, shortcuts, trial settings). 100% success rate across 5 consecutive runs.</p>
+
+<h4>What's worth showing</h4>
+<p>The interesting part of this project is the <strong>investigation</strong>, not the typing. OpenAPI discovery, Electron binary unpacking, Supabase auth flow analysis, Windows registry search for protocol handlers, Chromium session storage inspection. Standard tools (curl, grep, Python urllib) applied to a real production app.</p>
+
+<p><strong>Full walkthrough:</strong> <a href="./blog/wispr-flow-reverse-engineering.html" target="_blank" rel="noopener noreferrer">technical deep dive</a></p>
+<p><strong>Source:</strong> <a href="https://github.com/taras-polishchuk/wispr-flow-trial-bypass" target="_blank" rel="noopener noreferrer">github.com/taras-polishchuk/wispr-flow-trial-bypass</a></p>
+<p><strong>Case study:</strong> <a href="./case-study-wispr-flow-bypass.html" target="_blank" rel="noopener noreferrer">narrative version</a></p>`
+  },
 ];
 
 // Sync the AI Assistant hint to whatever id the AI Portfolio Assistant

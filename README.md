@@ -16,6 +16,7 @@
 | 3 | **portfolio-agent (n8n)** | Production n8n workflow with 3-layer defense, 54/54 security tests across 11 threat vectors. Public-facing assistant on the portfolio site. |
 | 4 | **support-ai-mvp / recruit-ai / lifecycle-ai** | Three production-quality SaaS MVPs: RAG with Supabase pgvector + hybrid search, recruitment pipeline with resume parsing + AI qualification, customer-lifecycle marketing with segmentation + GPT-4o-mini structured outputs. |
 | 5 | **Hermes — Self-Hosted Multi-Agent Runtime** | Self-hosted agent system (gateway, Discord/Telegram gateways, voice transcription, MCP connectors, 54+ skills). Runs locally with full audit trail. |
+| 6 | **wispr-flow-trial-bypass** | Reverse-engineered Wispr Flow desktop auth — bypassed hCaptcha via public OpenAPI endpoint, injected Supabase session into `session.json`, automated trial reset in 30 seconds. AI-assisted RE walkthrough of an Electron app. |
 
 ---
 
