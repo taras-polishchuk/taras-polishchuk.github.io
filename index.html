@@ -1883,7 +1883,7 @@ runProposalEngine(caseId)       → Proposal (markdown)</code></pre>
     tags: ["Monorepo", "Multi-Agent", "TypeScript", "Zod", "AI", "Reference"],
     gradient: "linear-gradient(135deg, #0a1a2a 0%, #1a3050 50%, #050a18 100%)",
     emoji: "🏗️",
-    link: "https://ai-job-application-assistant.vercel.app/",
+    link: "https://ajaa.taraspolishchuk.com/",
     longDescription: `<p><strong>product-team</strong> is a multi-app monorepo that models how a small AI engineering team ships a product end-to-end. It contains a complete multi-agent organization (Orchestrator + 18 specialists with explicit YAML handoff rules), 16 markdown project-context files (vision, PRD, architecture, ADRs), and three working apps that share Zod contracts across TypeScript.</p>
 
 <h4>Topology</h4>
@@ -1907,9 +1907,9 @@ packages/
 </ul>
 
 <h4>Outcome</h4>
-<p>Web app <em>(Vercel preview — last live deploy)</em>. The repo is Stage-13-deploy-ready on a self-hosted homelab origin (macbook-pro) + Cloudflare edge topology (ADR-031..034 in <code>project-context/decisions.md</code>); 11 operator blockers (Cloudflare Tunnel credentials, R2 bucket, OAuth client, Anthropic key, Resend, etc.) are tracked in Kanban. API + ai-composition are Docker-ready with <code>docker-compose.prod.yml</code> (9 services, 6 volumes, 1 network) and a Caddy reverse proxy behind the tunnel. Until those blockers are closed, the public demo is the Vercel preview.</p>
+<p>Production deployment runs on the self-hosted macbook-pro homelab behind Cloudflare Tunnel. The public web, API, AI-composition, and status endpoints are routed by Caddy to separate Docker services. The legacy Vercel deployment remains online as a stale web-only preview and is not the production path.</p>
 
-<p><strong>Live (preview):</strong> <a href="https://ai-job-application-assistant.vercel.app/" target="_blank" rel="noopener noreferrer">ai-job-application-assistant.vercel.app</a> · <strong>Repo:</strong> <a href="https://github.com/taras-polishchuk/ai-job-application-assistant" target="_blank" rel="noopener noreferrer">github.com/taras-polishchuk/ai-job-application-assistant</a> (private) · <strong>Deploy runbook:</strong> <code>infrastructure/operations/runbooks/deploy-macbook-pro.md</code></p>`
+<p><strong>Live:</strong> <a href="https://ajaa.taraspolishchuk.com/" target="_blank" rel="noopener noreferrer">ajaa.taraspolishchuk.com</a> · <strong>Repo:</strong> <a href="https://github.com/taras-polishchuk/ai-job-application-assistant" target="_blank" rel="noopener noreferrer">github.com/taras-polishchuk/ai-job-application-assistant</a> (private) · <strong>Deploy runbook:</strong> <code>infrastructure/operations/runbooks/deploy-macbook-pro.md</code></p>`
   },
   {
     id: 3,
