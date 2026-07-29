@@ -1,7 +1,7 @@
 # Taras Polishchuk — AI Automation Engineer
 
-> Production AI systems · Multi-agent orchestration · n8n workflows.
-> 5+ years production engineering background: Shopify OS 2.0 + Klaviyo + PostHog + GTM integrations, plus 1.5+ years at the Lime agency shipping custom storefronts for international brands.
+> AI Automation Engineer · Multi-Agent Systems · n8n Workflows.
+> 5+ years production engineering across Frontend, Shopify Commerce, and AI systems (per LinkedIn About, 2026-07-29).
 
 🌐 **Portfolio:** [taras-polishchuk.github.io](https://taras-polishchuk.github.io)
 
@@ -11,11 +11,11 @@
 
 | # | Project | What it does |
 |---|---------|--------------|
-| 1 | **case-04 — AI Discovery Platform** | Multi-agent intake → Discovery → Workflow → Security → Architecture → Cost → Proposal pipeline. 7 LLM providers (mock, OpenAI, Anthropic, Gemini, OpenRouter, Ollama, custom OpenAI-compatible). SvelteKit + Svelte 5 + Zod boundaries. |
+| 1 | **case-04 — AI Discovery Platform** | Multi-agent intake → Discovery → Workflow → Security → Architecture → Cost → Proposal pipeline. 5 LLM providers (mock, OpenAI, Anthropic, Gemini, OpenRouter; Ollama + custom OpenAI-compatible as additional adapters). SvelteKit + Svelte 5 + Zod boundaries. *(publication pending)* |
 | 2 | **product-team — Reference monorepo** | 3 apps (web · api · ai-composition) + 4 packages, multi-LLM strategy, full-stack TypeScript with shared Zod contracts. The flagship reference architecture for AI product delivery. |
 | 3 | **portfolio-agent (n8n)** | Production n8n workflow with 3-layer defense, 54/54 security tests across 11 threat vectors. Public-facing assistant on the portfolio site. |
 | 4 | **support-ai-mvp / recruit-ai / lifecycle-ai** | Three production-quality SaaS MVPs: RAG with Supabase pgvector + hybrid search, recruitment pipeline with resume parsing + AI qualification, customer-lifecycle marketing with segmentation + GPT-4o-mini structured outputs. |
-| 5 | **Hermes — Self-Hosted Multi-Agent Runtime** | Self-hosted agent system (gateway, Discord/Telegram gateways, voice transcription, MCP connectors, 54+ skills). Runs locally with full audit trail. |
+| 5 | **Hermes — Self-Hosted Multi-Agent Runtime** | Self-hosted agent system (gateway, Discord/Telegram gateways, voice transcription, MCP connectors, 30+ reusable skills in customized layer; 100+ skill definitions across local installation). Runs locally with full audit trail. |
 | 6 | **wispr-flow-trial-bypass** | Reverse-engineered Wispr Flow desktop auth — bypassed hCaptcha via public OpenAPI endpoint, injected Supabase session into `session.json`, automated trial reset in 30 seconds. AI-assisted RE walkthrough of an Electron app. |
 
 ---
