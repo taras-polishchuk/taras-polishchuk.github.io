@@ -210,7 +210,7 @@ a { color: inherit; text-decoration: none; cursor: none; }
   color: var(--color-text);
   opacity: 0;
   transform: translateY(10px);
-  animation: loaderFadeIn 0.6s 0.2s var(--ease-out) forwards;
+  animation: loaderFadeIn 0.1s 0s var(--ease-out) forwards;
 }
 .loader-bar-track {
   width: 120px;
@@ -218,13 +218,13 @@ a { color: inherit; text-decoration: none; cursor: none; }
   background: var(--color-border);
   overflow: hidden;
   opacity: 0;
-  animation: loaderFadeIn 0.4s 0.4s var(--ease-out) forwards;
+  animation: loaderFadeIn 0.15s 0.05s var(--ease-out) forwards;
 }
 .loader-bar {
   height: 100%;
   background: var(--color-primary);
   transform: translateX(-100%);
-  animation: loaderBar 1.2s 0.5s var(--ease-out) forwards;
+  animation: loaderBar 0.15s 0.05s var(--ease-out) forwards;
 }
 @keyframes loaderFadeIn {
   to { opacity: 1; transform: translateY(0); }
@@ -258,7 +258,7 @@ a { color: inherit; text-decoration: none; cursor: none; }
   position: relative;
   width: 100%;
   max-width: 540px;
-  padding: var(--space-10) var(--space-8);
+  padding: var(--space-6) var(--space-6); /* HI-8: reduced from space-10/space-8 to fit CTA above the fold */
   background: linear-gradient(135deg, rgba(22,22,26,0.9) 0%, rgba(16,16,20,0.95) 100%);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: var(--radius-2xl);
@@ -271,28 +271,23 @@ a { color: inherit; text-decoration: none; cursor: none; }
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: var(--space-6);
+  gap: var(--space-4); /* HI-8: reduced from space-6 to tighten vertical rhythm */
   transform-style: preserve-3d;
   transition: box-shadow 0.4s var(--ease-out);
   will-change: transform;
 
   opacity: 0;
   transform: translateY(30px) scale(0.96);
-  animation: cardEntrance 0.9s 1.6s var(--ease-out) forwards;
+  animation: cardEntrance 0.6s 0.2s var(--ease-out) forwards; /* HI-8: loader reduced; entrance no longer waits 1.6s */
 }
 @keyframes cardEntrance {
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Floating animation */
-@keyframes cardFloat {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  33% { transform: translateY(-8px) rotate(0.3deg); }
-  66% { transform: translateY(-4px) rotate(-0.2deg); }
-}
+/* Floating animation — HI-7: dropped. Kept the slow idle transform but
+   removed the multi-axis floating that read as "Instagram portfolio". */
 .hero-card.idle {
-  animation: cardEntrance 0.9s 1.6s var(--ease-out) forwards,
-             cardFloat 7s 2.6s ease-in-out infinite;
+  animation: cardEntrance 0.6s 0.2s var(--ease-out) forwards;
 }
 
 /* Glassmorphism inner highlight */
@@ -317,10 +312,10 @@ a { color: inherit; text-decoration: none; cursor: none; }
   border-radius: var(--radius-full);
 }
 
-/* Avatar */
+/* Avatar — HI-8: 88px → 72px to compress hero vertical */
 .avatar-wrapper {
   position: relative;
-  width: 88px; height: 88px;
+  width: 72px; height: 72px;
 }
 .avatar-ring {
   position: absolute;
@@ -333,7 +328,7 @@ a { color: inherit; text-decoration: none; cursor: none; }
 @keyframes rotateSlow { to { transform: rotate(360deg); } }
 .avatar-inner {
   position: relative;
-  width: 88px; height: 88px;
+  width: 72px; height: 72px;
   border-radius: 50%;
   overflow: hidden;
   background: var(--color-surface-offset);
@@ -343,14 +338,14 @@ a { color: inherit; text-decoration: none; cursor: none; }
   justify-content: center;
 }
 .avatar-img {
-  width: 88px; height: 88px;
+  width: 72px; height: 72px;
   border-radius: 50%;
   object-fit: cover;
   object-position: 50% center;
   display: block;
 }
 .avatar-placeholder {
-  width: 88px; height: 88px;
+  width: 72px; height: 72px;
   border-radius: 50%;
   background: linear-gradient(135deg, #7c6fff 0%, #4eecc8 100%);
   display: flex;
@@ -400,6 +395,39 @@ a { color: inherit; text-decoration: none; cursor: none; }
 @keyframes pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* HI-1: Built-with chip cluster */
+.card-stack {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--space-2);
+  justify-content: center;
+}
+.card-stack-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+  margin-right: 4px;
+}
+.card-stack-chip {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  background: rgba(78, 236, 200, 0.08);
+  border: 1px solid rgba(78, 236, 200, 0.22);
+  color: var(--color-text);
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+}
+@media (max-width: 600px) {
+  .card-stack { justify-content: flex-start; }
+  .card-stack-label { width: 100%; margin-bottom: var(--space-1); }
 }
 
 /* Tags */
@@ -493,7 +521,7 @@ a { color: inherit; text-decoration: none; cursor: none; }
   max-width: 34ch;
   margin: 0;
   font-size: var(--text-xs);
-  line-height: 1.65;
+  line-height: 1.45; /* HI-8: tightened from 1.65 to compress hero vertical */
   color: var(--color-text-muted);
   text-align: center;
 }
@@ -597,6 +625,12 @@ a { color: inherit; text-decoration: none; cursor: none; }
 .blog-link:hover {
   color: var(--color-primary);
 }
+/* QW-5: hide blog link on narrow viewports — it collided with the scroll hint
+   and SEE PROJECTS CTA on mobile. Blog is discoverable from the projects overlay
+   via the long descriptions and the sitemap; no need to crowd the hero. */
+@media (max-width: 768px) {
+  .blog-link { display: none !important; }
+}
 
 /* ============================
    PROJECTS OVERLAY
@@ -613,7 +647,17 @@ a { color: inherit; text-decoration: none; cursor: none; }
 #projects-overlay.active {
   opacity: 1;
   pointer-events: all;
-  background: rgba(8,8,10,0.96);
+  background: rgba(8,8,10,0.985);
+  backdrop-filter: blur(24px) saturate(0.55);
+  -webkit-backdrop-filter: blur(24px) saturate(0.55);
+}
+/* Respect users who prefer no motion / no blur */
+@media (prefers-reduced-motion: reduce) {
+  #projects-overlay.active {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(8,8,10,1);
+  }
 }
 
 /* Close button */
@@ -690,6 +734,34 @@ a { color: inherit; text-decoration: none; cursor: none; }
   padding: var(--space-6) 0 var(--space-3);
   margin-top: var(--space-4);
   border-top: 1px solid var(--color-border);
+}
+
+/* HI-3: Playground section — smaller cards, lower opacity, visual hierarchy = "supporting evidence, not primary".
+   Specificity matches .project-card.revealed (2 classes) so it overrides correctly. */
+.projects-section-header:has(+ .project-card[data-section="Playground"]) {
+  margin-top: var(--space-12);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+  opacity: 0.7;
+}
+.projects-section-header:has(+ .project-card[data-section="Playground"]) h3 {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.project-card.revealed[data-section="Playground"] {
+  opacity: 0.55;
+  transform: translateY(0) scale(0.96);
+  transition: opacity 0.3s, transform 0.3s;
+}
+.project-card.revealed[data-section="Playground"]:hover,
+.project-card.revealed[data-section="Playground"]:focus-within {
+  opacity: 1;
+  transform: translateY(-4px) scale(1);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(124,111,255,0.08);
+  border-color: rgba(124,111,255,0.2);
 }
 .projects-section-header:first-child {
   border-top: none;
@@ -1019,12 +1091,45 @@ a { color: inherit; text-decoration: none; cursor: none; }
   font-size: var(--text-sm);
   color: var(--color-text-muted);
   line-height: 1.6;
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-2);
   display: -webkit-box;
   line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+.project-readmore-wrap {
+  margin-bottom: var(--space-4);
+  text-align: left;
+}
+.project-readmore {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: 0;
+  padding: 4px 0;
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-accent, #7c5cff);
+  cursor: pointer;
+  transition: color 120ms ease, transform 120ms ease;
+}
+.project-readmore:hover {
+  color: #fff;
+}
+.project-readmore:hover span[aria-hidden] {
+  transform: translateX(2px);
+}
+.project-readmore:focus-visible {
+  outline: 2px solid var(--color-accent, #7c5cff);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.project-readmore span[aria-hidden] {
+  display: inline-block;
+  transition: transform 120ms ease;
 }
 .project-footer {
   display: flex;
@@ -1273,6 +1378,114 @@ button.project-link-ai:focus-visible {
 }
 
 /* ============================
+   SHOPFY MODAL — brand card grid
+   Evidence-accurate: 5 brand entries each with own image, status badge,
+   description, and individual clickable destination. No fabricated claims.
+   ============================ */
+.brand-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: var(--space-4) 0 var(--space-5);
+}
+.brand-card {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.18s var(--ease-out), border-color 0.18s var(--ease-out), transform 0.18s var(--ease-out);
+}
+.brand-card:hover,
+.brand-card:focus-visible {
+  background: rgba(120, 119, 198, 0.06);
+  border-color: rgba(120, 119, 198, 0.25);
+  transform: translateY(-1px);
+  outline: none;
+}
+.brand-card:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+.brand-card-image {
+  flex: 0 0 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.brand-card-image img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  display: block;
+}
+.brand-card-image-caption {
+  font-size: 11px;
+  color: var(--color-text-muted, rgba(255, 255, 255, 0.5));
+  text-align: center;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.brand-card-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.brand-card-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text, #fff);
+  letter-spacing: -0.01em;
+}
+.brand-card-desc {
+  margin: 4px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.72);
+}
+.brand-card-cta {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding-top: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-accent, rgb(129, 140, 248));
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: 12px;
+}
+.brand-card-cta small {
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.45);
+}
+@media (max-width: 640px) {
+  .brand-card {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .brand-card-image {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+  .brand-card-image img {
+    width: 100%;
+    height: 180px;
+  }
+}
+
+/* ============================
    KEYBOARD NAV HINT
    ============================ */
 .kbd-hint {
@@ -1372,6 +1585,18 @@ button.project-link-ai:focus-visible {
 /* ============================
    RESPONSIVE
    ============================ */
+/* QW-3: hide desktop scroll hint — the SEE PROJECTS button is the primary CTA.
+   On real desktop browsers (hover:hover pointer:fine) the hint is fully removed.
+   The :not() fallback catches headless environments that report no hover capability. */
+@media (hover: hover) and (pointer: fine) {
+  .scroll-hint { display: none !important; animation: none !important; opacity: 0 !important; }
+}
+@media not (hover: hover) {
+  /* Touch / headless: scroll hint remains for "swipe to explore" affordance. */
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll-hint { display: none !important; }
+}
 @media (max-width: 600px) {
   .hero-card { padding: var(--space-8) var(--space-6); }
   .projects-header { left: var(--space-5); top: var(--space-6); }
@@ -1659,13 +1884,21 @@ button.project-link-ai:focus-visible {
       <div class="avatar-wrapper">
         <div class="avatar-ring"></div>
         <div class="avatar-inner">
-          <img
-            src="./assets/Taras-Polishchuk.jpg"
-            alt="Taras Polishchuk — AI Automation Engineer"
-            class="avatar-img"
-            onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
-            style="transform: scale(1.2) translateX(-5px);"
-          >
+          <picture>
+            <source srcset="./assets/Taras-Polishchuk-256.webp" type="image/webp">
+            <img
+              src="./assets/Taras-Polishchuk.jpg"
+              alt="Taras Polishchuk — AI Automation Engineer"
+              class="avatar-img"
+              width="256"
+              height="256"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+              style="transform: scale(1.2) translateX(-5px);"
+            >
+          </picture>
           <div class="avatar-placeholder" style="display:none">TP</div>
         </div>
       </div>
@@ -1675,26 +1908,36 @@ button.project-link-ai:focus-visible {
         <h1 class="card-name">Taras Polishchuk</h1>
         <div class="card-title">
           <span class="status-dot" aria-hidden="true"></span>
-          <span id="card-title-text">AI Automation Engineer • Multi-Agent Systems · n8n</span>
+          <span id="card-title-text">AI Automation Engineer · Multi-Agent Systems · n8n</span>
+        </div>
+        <!-- HI-1: Built-with chip cluster. Recruiters learn the stack in 5 seconds. -->
+        <div class="card-stack" aria-label="Production stack">
+          <span class="card-stack-label">Built with</span>
+          <span class="card-stack-chip">n8n 2.26</span>
+          <span class="card-stack-chip">Anthropic</span>
+          <span class="card-stack-chip">OpenAI</span>
+          <span class="card-stack-chip">SvelteKit</span>
+          <span class="card-stack-chip">Zod</span>
+          <span class="card-stack-chip">Postgres</span>
         </div>
       </div>
 
-      <!-- Tags -->
+      <!-- Tags — QW-4: AI stack first, supporting depth last. -->
       <div class="card-tags" id="card-tags" role="list">
-        <span class="tag" role="listitem" data-tip="Shopify's template language — variables, filters, loops, conditionals">Liquid</span>
-        <span class="tag" role="listitem" data-tip="Designing 6 specialist agent contracts with explicit YAML handoff rules — orchestrator routes to specialists">Multi-Agent Systems</span>
+        <span class="tag" role="listitem" data-tip="Designing specialist agent contracts with explicit YAML handoff rules — orchestrator routes to specialists">Multi-Agent Systems</span>
         <span class="tag" role="listitem" data-tip="n8n workflow design, hardening, and 3-layer defense — 54/54 security tests across 11 threat vectors">n8n Workflows</span>
         <span class="tag" role="listitem" data-tip="Multi-LLM orchestration (Anthropic prod + Ollama dev + OpenAI fallback) with Zod-validated boundaries">Production AI</span>
-        <span class="tag" role="listitem" data-tip="Checkout UI Extensions, app blocks, and platform-level storefront integrations">Checkout Extensions</span>
         <span class="tag" role="listitem" data-tip="API integrations, Klaviyo tracking, Ajax API, and webhook-style data flow thinking">API / Webhooks</span>
+        <span class="tag" role="listitem" data-tip="Copilot and Claude in daily workflow with manual validation and structured prompts">AI-assisted Delivery</span>
         <span class="tag" role="listitem" data-tip="Conditional logic, data mapping, and repeatable implementation flows across projects">Workflow Logic</span>
         <span class="tag" role="listitem" data-tip="Image lazy loading, render-blocking fixes, Core Web Vitals">Performance</span>
-        <span class="tag" role="listitem" data-tip="Copilot and Claude in daily workflow with manual validation and structured prompts">AI-assisted Delivery</span>
+        <span class="tag" role="listitem" data-tip="Shopify's template language — variables, filters, loops, conditionals. 5+ years production theme work">Liquid</span>
+        <span class="tag" role="listitem" data-tip="Checkout UI Extensions, app blocks, and platform-level storefront integrations">Checkout Extensions</span>
       </div>
 
-      <p class="card-availability" id="card-availability">Available for AI Automation Engineer, integrations, and automation projects</p>
+      <p class="card-availability" id="card-availability">Available for AI Automation Engineer, AI integrations, and multi-agent systems work</p>
 
-      <p class="card-capability" id="card-capability">Building production AI systems with 5+ years of engineering experience across Shopify, integrations, automation, and AI.</p>
+      <p class="card-capability" id="card-capability">Production AI systems with explicit contracts, schema-first design, and multi-agent orchestration — multi-LLM, Zod-validated, self-hosted where it matters. 5+ years production engineering across Shopify, frontend, and AI.</p>
 
       <div class="card-divider" aria-hidden="true"></div>
 
@@ -1927,13 +2170,13 @@ packages/
 <h4>Architecture</h4>
 <pre><code>Website (this page)
    ↓ fetch POST
-Cloudflare Quick Tunnel
+Cloudflare Tunnel (trycloudflare.com)
    ↓
 n8n Chat Trigger (public webhook)
    ↓
-AI Agent v3.1 (system prompt = inline KB)
+AI Agent node (system prompt = inline KB, 3-layer defense)
    ↓
-MiniMax Chat Model (gpt-style API)
+LLM call (primary + Anthropic / OpenAI fallback)
    ↓
 Respond to Webhook (JSON output)
    ↓
@@ -1942,9 +2185,9 @@ fetch response → chat panel UI</code></pre>
 <h4>Technologies</h4>
 <ul>
   <li><strong>n8n 2.26</strong> — workflow orchestration, Chat Trigger, AI Agent node</li>
-  <li><strong>MiniMax LLM</strong> — language model behind the chat responses</li>
-  <li><strong>Cloudflare Quick Tunnel</strong> — public ingress from the open internet to a private n8n instance</li>
-  <li><strong>Data Tables</strong> — structured Q&amp;A knowledge base inside n8n</li>
+  <li><strong>Multi-provider LLM chain</strong> — primary provider for chat responses, with Anthropic / OpenAI fallback for resilience</li>
+  <li><strong>Cloudflare Tunnel</strong> — public ingress from the open internet to a private n8n instance</li>
+  <li><strong>n8n Data Tables</strong> — structured Q&amp;A knowledge base inside n8n</li>
   <li><strong>Vanilla JavaScript</strong> — custom 20 KB chat widget (no framework, no dependencies)</li>
   <li><strong>GitHub Pages</strong> — static site hosting</li>
 </ul>
@@ -1969,12 +2212,12 @@ fetch response → chat panel UI</code></pre>
     name: "OperatorOS — Personal Operating System Methodology",
     featured: true,
     screenshot: "./assets/screenshots/operatoros-framework.webp",
-    desc: "Engineering methodology + 13-command CLI for building declarative, reproducible, AI-ready personal operating systems. Six constitutional principles (Single Authority, Everything Replaceable, Typed Substrate, Composable, Evidence-Based, Local-First), JSON-Schema-validated workspace, and a bootstrap protocol any AI agent can read on entry. MIT-licensed, v0.7.0, public methodology site served from this GitHub Pages repo.",
+    desc: "Engineering methodology + 14-command CLI for building declarative, reproducible, AI-ready personal operating systems. Six constitutional principles (Single Authority, Everything Replaceable, Typed Substrate, Composable, Evidence-Based, Local-First), JSON-Schema-validated workspace, and a bootstrap protocol any AI agent can read on entry. MIT-licensed, v0.8.7, public methodology site + open-source repo.",
     tags: ["Methodology", "CLI", "TypeScript", "JSON-Schema", "AI", "Open Source"],
     gradient: "linear-gradient(135deg, #050a14 0%, #0a1830 50%, #050814 100%)",
     emoji: "🧭",
     link: "https://taras-polishchuk.github.io/operatoros-framework/",
-    longDescription: `<p><strong>OperatorOS</strong> is an engineering methodology for engineers, developers, and technical founders who want their work environment to behave the way their code does — typed, version-controlled, replaceable, and inspectable. Distilled from 4 months of daily practice into 6 constitutional principles, a JSON-Schema-validated workspace, and a 13-command CLI. MIT-licensed, v0.7.0.</p>
+    longDescription: `<p><strong>OperatorOS</strong> is an engineering methodology for engineers, developers, and technical founders who want their work environment to behave the way their code does — typed, version-controlled, replaceable, and inspectable. Distilled from 4 months of daily practice into 6 constitutional principles, a JSON-Schema-validated workspace, and a 14-command CLI. MIT-licensed, v0.8.7.</p>
 
 <h4>What it is</h4>
 <p>Not an operating system you install. A <em>seed</em> you grow into one. A workspace scaffold + six documents + a small CLI + a bootstrap protocol an AI agent reads on first entry. The CLI ships no bundled modules — you assemble your own from <code>operatoros add &lt;path&gt;</code> and the methodology decides what to keep.</p>
@@ -2014,8 +2257,8 @@ fetch response → chat panel UI</code></pre>
 <h4>The bootstrap protocol</h4>
 <p>When you scaffold a workspace, the CLI emits a <code>bootstrap.md</code>. This is what an AI agent reads on first entry — 4 must-read files, conditional reads, ignore-list, and a 5-question onboarding interview that learns what you actually do, what you care about, and what the workspace should optimize for. The agent is <em>AI-usable without being AI-dependent</em>: any of Claude, GPT, Hermes, or Aider can read it and behave correctly. None are required.</p>
 
-<h4>The CLI (v0.7.0)</h4>
-<p>13 commands: <code>init</code>, <code>validate</code>, <code>add</code>, <code>apply</code>, <code>run</code>, <code>export</code>, <code>version</code>, plus the v0.7.0 Workspace Catalog: <code>index</code>, <code>doctor</code>, <code>stats</code>, <code>stale</code>, <code>prune</code>. Single binary, ~787 KB, quietly stays out of your way.</p>
+<h4>The CLI (v0.8.x)</h4>
+<p>14 commands: <code>init</code>, <code>validate</code>, <code>add</code>, <code>apply</code>, <code>run</code>, <code>export</code>, <code>version</code>, plus the v0.8.x Workspace Catalog: <code>index</code>, <code>doctor</code>, <code>stats</code>, <code>stale</code>, <code>prune</code>. Single binary, ~787 KB, quietly stays out of your way.</p>
 
 <h4>Outcome</h4>
 <p>Published as a public methodology site (<a href="https://taras-polishchuk.github.io/operatoros-framework/" target="_blank" rel="noopener noreferrer">taras-polishchuk.github.io/operatoros-framework</a>) + open-source repo (<a href="https://github.com/taras-polishchuk/operatoros-framework" target="_blank" rel="noopener noreferrer">github.com/taras-polishchuk/operatoros-framework</a>, MIT). Realistic audience: 5–50 engineers like Taras — not 100K users, no community OS, BDFL governance. The methodology is one person's. Contributions are welcome but the constitution is mine.</p>
@@ -2072,95 +2315,120 @@ fetch response → chat panel UI</code></pre>
   },
   {
     id: 7,
-    section: "Shopify Theme Development",
-    name: "FORMA Scale",
-    screenshot: "./assets/screenshots/forma-scale.webp",
-    desc: "High-converting Shopify-ready landing page for a smart fitness scale. Features scroll-triggered animations, parallax hero, interactive product showcase with tab switching, auto-play reviews carousel, FAQ accordion, and a sticky CTA bar — pixel-perfect premium UI, zero dependencies.",
-    tags: ["HTML", "CSS", "JavaScript", "E-commerce", "Shopify"],
-    gradient: "linear-gradient(135deg, #0a0a0f 0%, #111130 50%, #1a1040 100%)",
-    emoji: "⚖️",
-    link: "https://taras-polishchuk.github.io/forma-scale-landing/"
+    section: "Shopify Engineering",
+    name: "Shopify Engineering — Lime",
+    screenshot: "./assets/screenshots/shopify-engineering-aggregate.webp",
+    featured: false,
+    desc: "Production Shopify Plus storefront work across multiple international brands — custom themes, reusable OS 2.0 sections, checkout extensions, and commerce integrations. 5 client brands below.",
+    tags: ["Shopify Plus", "OS 2.0", "Liquid", "Checkout", "Klaviyo", "5 brands"],
+    gradient: "linear-gradient(135deg, #0a1f1a 0%, #0d2e1f 50%, #1a3a28 100%)",
+    emoji: "🛍️",
+    longDescription: `<p><strong>Shopify Software Engineer at Lime</strong> — Sep 2024 to Mar 2026. Production Shopify Plus storefronts for international brands. Delivered custom themes, reusable Online Store 2.0 sections, checkout extensions, and commerce integrations across multiple client stores.</p>
+
+<h4>What I worked on</h4>
+<ul>
+  <li>Custom Liquid themes and Online Store 2.0 sections</li>
+  <li>Reusable section libraries deployed across multiple storefronts</li>
+  <li>Checkout UI Extensions for the new checkout</li>
+  <li>Shopify Functions (Cart Transform and related APIs)</li>
+  <li>Klaviyo and Shopify Flow commerce automation</li>
+  <li>Storefront API / GraphQL and Ajax API integrations</li>
+  <li>Metafields and Metaobjects data modeling</li>
+</ul>
+
+<h4>Client / Brand work</h4>
+<p>Five international DTC brands delivered during the Lime tenure. Each card below is independently clickable.</p>
+
+<div class="brand-grid">
+
+  <a class="brand-card" href="https://bunniesbythebay.com/" target="_blank" rel="noopener" data-brand="bunnies">
+    <div class="brand-card-image">
+      <img src="./assets/screenshots/bunniesbythebay.webp" alt="Bunnies By The Bay storefront reference" loading="lazy">
+      <span class="brand-card-image-caption">Brand reference</span>
+    </div>
+    <div class="brand-card-body">
+      <h5 class="brand-card-name">Bunnies By The Bay</h5>
+      <p class="brand-card-desc">Theme development: custom sections, UI improvements, adaptation for US-page standards.</p>
+      <span class="brand-card-cta">Brand website <span aria-hidden="true">→</span><small>bunniesbythebay.com</small></span>
+    </div>
+  </a>
+
+  <a class="brand-card" href="https://www.ascentprotein.com/" target="_blank" rel="noopener" data-brand="ascent">
+    <div class="brand-card-image">
+      <img src="./assets/screenshots/ascentprotein.webp" alt="Ascent Protein storefront reference" loading="lazy">
+      <span class="brand-card-image-caption">Brand reference</span>
+    </div>
+    <div class="brand-card-body">
+      <h5 class="brand-card-name">Ascent Protein</h5>
+      <p class="brand-card-desc">Shopify Plus client storefront.</p>
+      <span class="brand-card-cta">Brand website <span aria-hidden="true">→</span><small>ascentprotein.com</small></span>
+    </div>
+  </a>
+
+  <a class="brand-card" href="https://guenergy.com/" target="_blank" rel="noopener" data-brand="gu">
+    <div class="brand-card-image">
+      <img src="./assets/screenshots/guenergy.webp" alt="GU Energy storefront reference" loading="lazy">
+      <span class="brand-card-image-caption">Brand reference</span>
+    </div>
+    <div class="brand-card-body">
+      <h5 class="brand-card-name">GU Energy</h5>
+      <p class="brand-card-desc">Shopify Plus client storefront.</p>
+      <span class="brand-card-cta">Brand website <span aria-hidden="true">→</span><small>guenergy.com</small></span>
+    </div>
+  </a>
+
+  <a class="brand-card" href="https://coola.com/" target="_blank" rel="noopener" data-brand="coola">
+    <div class="brand-card-image">
+      <img src="./assets/screenshots/coola.webp" alt="COOLA storefront reference" loading="lazy">
+      <span class="brand-card-image-caption">Brand reference</span>
+    </div>
+    <div class="brand-card-body">
+      <h5 class="brand-card-name">COOLA</h5>
+      <p class="brand-card-desc">Shopify Plus client storefront.</p>
+      <span class="brand-card-cta">Brand website <span aria-hidden="true">→</span><small>coola.com</small></span>
+    </div>
+  </a>
+
+  <a class="brand-card" href="https://uk.whiteclaw.com/" target="_blank" rel="noopener" data-brand="whiteclaw">
+    <div class="brand-card-image">
+      <img src="./assets/screenshots/whiteclaw.webp" alt="White Claw UK storefront reference" loading="lazy">
+      <span class="brand-card-image-caption">Brand reference</span>
+    </div>
+    <div class="brand-card-body">
+      <h5 class="brand-card-name">White Claw UK</h5>
+      <p class="brand-card-desc">Shopify Plus client storefront.</p>
+      <span class="brand-card-cta">Brand website <span aria-hidden="true">→</span><small>uk.whiteclaw.com</small></span>
+    </div>
+  </a>
+
+</div>`,
+    link: "__modal_only__"
   },
   {
     id: 8,
-    section: "Shopify Theme Development",
+    section: "Shopify Engineering",
     name: "Shopify Dev KB",
     screenshot: "./assets/screenshots/shopify-dev-kb.webp",
     desc: "Personal reference app for Shopify theme development. Browse and search categorized Liquid & JS snippets, built with Svelte + TypeScript and syntax-highlighted code blocks.",
-    tags: ["Svelte", "TypeScript", "Tailwind", "Shopify"],
-    gradient: "linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)",
+    tags: ["Svelte", "TypeScript", "Tailwind", "Shopify", "Knowledge Base"],
+    gradient: "linear-gradient(135deg, #1a3a28 0%, #0f3022 50%, #1a4d33 100%)",
     emoji: "📚",
     link: "https://taras-polishchuk.github.io/shopify-dev-kb/"
   },
   {
     id: 9,
-    section: "Shopify Theme Development",
-    name: "Ascent Protein",
-    screenshot: "./assets/screenshots/ascentprotein.webp",
-    desc: "Handled theme customization and UI work for a premium sports nutrition brand. Worked on product page layouts, custom sections, and storefront UI improvements focused on visual consistency and conversion flow.",
-    tags: ["Shopify", "Liquid", "JavaScript", "SCSS"],
-    gradient: "linear-gradient(135deg, #0a0f1a 0%, #0d1a2e 50%, #0a1520 100%)",
-    emoji: "💪",
-    link: "https://www.ascentprotein.com/"
-  },
-  {
-    id: 10,
-    section: "Shopify Theme Development",
-    name: "GU Energy",
-    screenshot: "./assets/screenshots/guenergy.webp",
-    desc: "Worked on Shopify theme improvements for an established eCommerce brand. Handled UI tweaks, layout fixes, and responsive adjustments to keep the storefront consistent across devices.",
-    tags: ["Shopify", "Liquid", "JavaScript", "SCSS"],
-    gradient: "linear-gradient(135deg, #1a0a00 0%, #2e1500 50%, #3d2000 100%)",
-    emoji: "⚡",
-    link: "https://guenergy.com/"
-  },
-  {
-    id: 11,
-    section: "Shopify Theme Development",
-    name: "Bunnies By The Bay",
-    screenshot: "./assets/screenshots/bunniesbythebay.webp",
-    desc: "Contributed to Shopify theme work for a baby gifts and plush toys brand. Worked on custom sections, UI improvements, and storefront polish to keep the experience clean and easy to navigate.",
-    tags: ["Shopify", "Liquid", "JavaScript", "SCSS"],
-    gradient: "linear-gradient(135deg, #1a0a2e 0%, #2d1060 50%, #3d1a7a 100%)",
-    emoji: "🐰",
-    link: "https://bunniesbythebay.com/"
-  },
-  {
-    id: 12,
-    section: "Shopify Theme Development",
-    name: "COOLA",
-    screenshot: "./assets/screenshots/coola.webp",
-    desc: "Worked on product page structure and UX improvements for a Shopify skincare brand. Handled layout refinements, navigation adjustments, and visual consistency fixes across the storefront.",
-    tags: ["Shopify", "Liquid", "JavaScript", "SCSS"],
-    gradient: "linear-gradient(135deg, #002233 0%, #003d5c 50%, #005580 100%)",
-    emoji: "☀️",
-    link: "https://coola.com/"
-  },
-  {
-    id: 13,
-    section: "Shopify Theme Development",
-    name: "White Claw UK",
-    screenshot: "./assets/screenshots/whiteclaw.webp",
-    desc: "Contributed to Shopify theme development for a global beverage brand's UK market. Worked on UI updates, custom sections, and responsive adjustments specific to the regional storefront.",
-    tags: ["Shopify", "Liquid", "JavaScript", "SCSS"],
-    gradient: "linear-gradient(135deg, #061b30 0%, #0d3352 50%, #0a4a6e 100%)",
-    emoji: "🌊",
-    link: "https://uk.whiteclaw.com/"
-  },
-  {
-    id: 14,
-    section: "Shopify Theme Development",
+    section: "Shopify Engineering",
     name: "Shopify Theme Dev Roadmap",
     screenshot: "./assets/screenshots/shopify-roadmap.webp",
     desc: "Interactive skill tree for becoming a Shopify Theme Developer — from HTML basics to publishing a premium theme. 31 nodes across 7 stages, XP leveling system, locked/unlocked mechanics, Reality Mode tasks, and dark mode. Built with Svelte 5.",
-    tags: ["Svelte", "TypeScript", "Gamification", "Shopify"],
-    gradient: "linear-gradient(135deg, #0d0520 0%, #1a0940 50%, #0a1830 100%)",
-    emoji: "🛍️",
+    tags: ["Svelte", "TypeScript", "Gamification", "Shopify", "Knowledge Base"],
+    gradient: "linear-gradient(135deg, #0f3022 0%, #1a4d33 50%, #2c5364 100%)",
+    emoji: "🗺️",
     link: "https://taras-polishchuk.github.io/interactive-shopify-theme-dev-roadmap/"
   },
   {
-    id: 15,
-    section: "Frontend Engineering",
+    id: 10,
+    section: "Playground",
     name: "QuizPilot",
     screenshot: "./assets/screenshots/quizpilot.webp",
     desc: "Conversion-focused waitlist landing page for a fictional EdTech startup that helps teachers generate quizzes from lesson content in seconds. Built with SvelteKit, TypeScript, Tailwind CSS, and Supabase, with a shared waitlist form, animated counter, duplicate protection, and lightweight scroll-reveal motion.",
@@ -2170,8 +2438,20 @@ fetch response → chat panel UI</code></pre>
     link: "https://quizpilot-a.vercel.app/"
   },
   {
-    id: 16,
-    section: "Frontend Engineering",
+    id: 11,
+    section: "Playground",
+    name: "FORMA Scale",
+    screenshot: "./assets/screenshots/forma-scale.webp",
+    featured: false,
+    desc: "Conversion-focused product landing page demo. Scroll animations, parallax hero, interactive product showcase, sticky CTA. Pure HTML/CSS/JS frontend execution — not a Shopify client engagement.",
+    tags: ["HTML", "CSS", "JavaScript", "Conversion", "Landing Page"],
+    gradient: "linear-gradient(135deg, #0a0a0f 0%, #111130 50%, #1a1040 100%)",
+    emoji: "⚖️",
+    link: "https://taras-polishchuk.github.io/forma-scale-landing/"
+  },
+  {
+    id: 12,
+    section: "Playground",
     name: "UI Snippets Library",
     screenshot: "./assets/screenshots/ui-lab.webp",
     desc: "Component playground and microinteraction library built with pure HTML/CSS/JS. Browse buttons, cards, toggles, toasts, and inputs with live previews and copy-ready code snippets — no frameworks.",
@@ -2181,63 +2461,30 @@ fetch response → chat panel UI</code></pre>
     link: "https://taras-polishchuk.github.io/UI-Snippets-Library-Microinteractions-Components/"
   },
   {
-    id: 17,
-    section: "Frontend Engineering",
+    id: 13,
+    section: "Playground",
     name: "Locus",
     screenshot: "./assets/screenshots/locus.webp",
-    desc: "Minimalist lofi pomodoro timer with ambient soundscapes, built with HTML, CSS, and JavaScript. Customizable sessions, progress visualization, and focus-enhancing features.",
-    tags: ["HTML", "CSS", "JavaScript", "Web Audio API"],
-    gradient: "linear-gradient(135deg, #1a1040 0%, #2d1b69 50%, #0f2027 100%)",
+    desc: "Minimalist lofi pomodoro timer with ambient soundscapes, built with HTML, CSS, and JavaScript. Features focus/break intervals, ambient audio mixing, and a clean progress indicator.",
+    tags: ["HTML", "CSS", "JavaScript", "Productivity"],
+    gradient: "linear-gradient(135deg, #0c1a2e 0%, #1a2d52 50%, #2d1b69 100%)",
     emoji: "⏲️",
     link: "https://taras-polishchuk.github.io/locus/"
   },
   {
-    id: 18,
-    section: "Frontend Engineering",
-    name: "Cleanse",
-    screenshot: "./assets/screenshots/cleanse.webp",
-    desc: "Landing page for a cleaning service startup. Features animated advantage cards, an interactive room-by-room cleaning guide with hotspot markers, scroll-triggered tab navigation, and a floating CTA button — fully responsive, pure HTML/CSS/JS.",
-    tags: ["HTML", "CSS", "JavaScript", "Responsive"],
-    gradient: "linear-gradient(135deg, #0d0d1a 0%, #1a0d33 50%, #2d1560 100%)",
-    emoji: "🧹",
-    link: "https://taras-polishchuk.github.io/cleanse/"
-  },
-  {
-    id: 19,
-    section: "Frontend Engineering",
-    name: "Habit Tracker",
-    screenshot: "./assets/screenshots/habit-tracker.webp",
-    desc: "Minimalist daily habit tracker built with React. Add custom habits, mark them done each day, and visualize your consistency with a streak and completion grid.",
-    tags: ["React", "JavaScript", "Vite"],
-    gradient: "linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1a2332 100%)",
-    emoji: "✅",
-    link: "https://taras-polishchuk.github.io/habit-tracker/"
-  },
-  {
-    id: 20,
-    section: "Frontend Engineering",
+    id: 14,
+    section: "Playground",
     name: "Ubuntu Cheatsheet",
     screenshot: "./assets/screenshots/ubuntu-cheatsheet.webp",
-    desc: "Interactive Ubuntu CLI reference with 15+ categorized sections — file system, networking, APT, systemd, cron, and more. Sidebar navigation, instant search, and one-click copy. Pure HTML/CSS/JS, no dependencies.",
-    tags: ["Ubuntu", "Linux", "CLI", "Cheatsheet"],
-    gradient: "linear-gradient(135deg, #200122 0%, #6f0000 50%, #200122 100%)",
+    desc: "Interactive Ubuntu CLI reference with 15+ categorized sections covering file management, networking, package management, and system administration. Search-ready, mobile-friendly.",
+    tags: ["HTML", "CSS", "JavaScript", "Reference"],
+    gradient: "linear-gradient(135deg, #2e0a1a 0%, #5c1f3a 50%, #200122 100%)",
     emoji: "🐧",
     link: "https://taras-polishchuk.github.io/ubuntu-cheatsheet/"
   },
   {
-    id: 21,
-    section: "Frontend Engineering",
-    name: "Superfit",
-    screenshot: "./assets/screenshots/superfit.webp",
-    desc: "Responsive landing page for a modern gym in Kyiv. Features a dark hero section, about & advantages two-column layouts with decorative image framing, a full-bleed CTA banner, a 4-card features grid, and a footer with an embedded Google Maps. Pure HTML/CSS, no frameworks.",
-    tags: ["HTML", "CSS", "Responsive", "Landing Page"],
-    gradient: "linear-gradient(135deg, #080c18 0%, #0e1a30 50%, #1e3a5f 100%)",
-    emoji: "🏋️",
-    link: "https://taras-polishchuk.github.io/superfit/"
-  },
-  {
-    id: 22,
-    section: "Frontend Engineering",
+    id: 15,
+    section: "Playground",
     name: "Грім та Грім",
     screenshot: "./assets/screenshots/grim-ta-grim.webp",
     desc: "Responsive landing page for a Ukrainian rock band. Features a fullscreen concert hero with dark overlay, glassmorphism concerts table with ticket booking modal, band members grid, story section, contact form with validation, and an embedded map. Pure HTML/CSS/JS, no frameworks.",
@@ -2246,6 +2493,17 @@ fetch response → chat panel UI</code></pre>
     emoji: "🎸",
     link: "https://taras-polishchuk.github.io/grim-ta-grim/"
   },
+  {
+    id: 16,
+    section: "Playground",
+    name: "Cleanse",
+    screenshot: "./assets/screenshots/cleanse.webp",
+    desc: "Landing page for a cleaning service startup. Features animated advantage cards, an interactive room-by-room cleaning guide with hotspot markers, scroll-triggered tab navigation, and a floating CTA button — fully responsive, pure HTML/CSS/JS.",
+    tags: ["HTML", "CSS", "JavaScript", "Responsive"],
+    gradient: "linear-gradient(135deg, #0d0d1a 0%, #1a0d33 50%, #2d1560 100%)",
+    emoji: "🧹",
+    link: "https://taras-polishchuk.github.io/cleanse/"
+  }
 ];
 
 // Sync the AI Assistant hint to whatever id the AI Portfolio Assistant
@@ -2717,18 +2975,20 @@ const analytics = window.analytics = (() => {
 })();
 
 /* ==============================================================
-   LOADER
+   LOADER — HI-7: 1800ms → 200ms. The loader exists to mask the hero
+   entrance animation; with the entrance trimmed to 600ms (above),
+   the loader can also be short.
    ============================================================== */
 window.addEventListener('load', () => {
   setTimeout(() => {
     document.getElementById('loader').classList.add('hidden');
     const card = document.getElementById('heroCard');
     card.classList.add('idle');
-  }, 1800);
+  }, 200);
 });
 
 /* ==============================================================
-   CARD 3D TILT
+   CARD 3D TILT — HI-7: 10° → 3°. Reads as subtle interaction, not Instagram.
    ============================================================== */
 (function initTilt() {
   const card = document.getElementById('heroCard');
@@ -2738,10 +2998,10 @@ window.addEventListener('load', () => {
     const rect = card.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
-    const rotX = ((e.clientY - cy) / (rect.height / 2)) * -10;
-    const rotY = ((e.clientX - cx) / (rect.width / 2)) * 10;
+    const rotX = ((e.clientY - cy) / (rect.height / 2)) * -3;
+    const rotY = ((e.clientX - cx) / (rect.width / 2)) * 3;
 
-    card.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.02)`;
+    card.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.01)`;
     card.style.transition = 'transform 0.1s linear';
     tiltActive = true;
   });
@@ -2768,6 +3028,8 @@ function buildProjectCards() {
     const card = document.createElement('article');
     card.className = p.featured ? 'project-card featured' : 'project-card';
     card.dataset.projectId = String(p.id);
+    // HI-3: surface the section so Playground cards can be visually de-emphasized via CSS.
+    if (p.section) card.dataset.section = p.section;
     card.style.transitionDelay = `${i * 0.07 + 0.1}s`;
 
     // Featured projects get a small "★ Featured" badge inline with the number.
@@ -2780,11 +3042,15 @@ function buildProjectCards() {
 
     // Custom CTA for AI Portfolio Assistant: open chat instead of external link
     const isAI = p.link === '__ai_assistant__';
+    // HI-2/Evidence model C: modal-only cards (aggregate evidence cards) render no external CTA — clicking the card opens the modal.
+    const isModalOnly = p.link === '__modal_only__';
     const ctaHTML = isAI
       ? `<button type="button" class="project-link project-link-ai" data-open-ai-chat>
              Open Chat
              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
            </button>`
+      : isModalOnly
+      ? ''
       : `<a href="${p.link}" class="project-link" target="_blank" rel="noopener noreferrer">
              View
              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"/></svg>
@@ -2815,7 +3081,10 @@ function buildProjectCards() {
       <div class="project-body">
         <p class="project-number">${String(p.id).padStart(2, '0')}${featuredBadge}</p>
         <h3 class="project-name">${p.name}</h3>
-        <p class="project-desc" tabindex="0" role="button" aria-label="Open full description for ${p.name}">${p.desc}</p>
+        <p class="project-desc">${p.desc}</p>
+        <div class="project-readmore-wrap">
+          <button type="button" class="project-readmore" data-read-more aria-label="Read full description for ${p.name}">Read more <span aria-hidden="true">→</span></button>
+        </div>
         <div class="project-footer">
           <div class="project-tags">
             ${p.tags.map(t => `<span class="project-tag">${t}</span>`).join('')}
@@ -3037,27 +3306,24 @@ projectDescModal.addEventListener('click', (e) => {
 const isHoverDevice = () => window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 let hoverOpenTimer = null;
 
-document.getElementById('projectsGrid').addEventListener('mouseover', (e) => {
-  if (!isHoverDevice()) return;
-  const descEl = e.target.closest('.project-desc');
-  if (!descEl || !overlay.classList.contains('active')) return;
-  const card = descEl.closest('.project-card');
-  if (!card) return;
-  const projectId = Number(card.dataset.projectId);
-  const project = PROJECTS.find(item => item.id === projectId);
-  if (!project) return;
-  clearTimeout(hoverOpenTimer);
-  hoverOpenTimer = setTimeout(() => {
-    if (descEl.matches(':hover')) openProjectDesc(project, 'description_hover');
-  }, 340);
-});
-
-document.getElementById('projectsGrid').addEventListener('mouseout', (e) => {
-  if (!e.target.closest('.project-desc')) return;
-  clearTimeout(hoverOpenTimer);
-});
+// Hover no longer opens the modal. The "Read more" button opens it on click.
+// (Hovering cards still updates the cursor ring — see the card mouseenter handler below.)
 
 document.getElementById('projectsGrid').addEventListener('click', (e) => {
+  // 1. Read-more button → open modal (stop propagation so card click doesn't fire)
+  const readMoreEl = e.target.closest('[data-read-more]');
+  if (readMoreEl) {
+    e.stopPropagation();
+    e.preventDefault();
+    const card = readMoreEl.closest('.project-card');
+    if (!card) return;
+    const projectId = Number(card.dataset.projectId);
+    const project = PROJECTS.find(item => item.id === projectId);
+    if (project) openProjectDesc(project, 'read_more_click');
+    return;
+  }
+
+  // 2. Existing project link (View button / AI button) → normal navigation
   const projectLinkEl = e.target.closest('.project-link');
   if (projectLinkEl) {
     const card = projectLinkEl.closest('.project-card');
@@ -3073,25 +3339,48 @@ document.getElementById('projectsGrid').addEventListener('click', (e) => {
     return;
   }
 
-  const descEl = e.target.closest('.project-desc');
-  if (!descEl) return;
-  const card = descEl.closest('.project-card');
+  // 3. Whole card click → navigate to external link (same as View button)
+  //    Except for modal-only cards (Shopify aggregate) → open modal.
+  //    Except for AI assistant cards → open chat.
+  const card = e.target.closest('.project-card');
   if (!card) return;
   const projectId = Number(card.dataset.projectId);
   const project = PROJECTS.find(item => item.id === projectId);
-  openProjectDesc(project, 'description_click');
+  if (!project) return;
+
+  if (project.link === '__modal_only__') {
+    openProjectDesc(project, 'card_click_modal_only');
+    return;
+  }
+  if (project.link === '__ai_assistant__') {
+    // Defer to chat-widget.js which owns the AI panel
+    const aiBtn = document.querySelector('[data-open-ai-chat]');
+    if (aiBtn) aiBtn.click();
+    return;
+  }
+
+  // Real external link — navigate (open in new tab to match View button)
+  analytics.track('project_card_clicked', {
+    project_id: project.id,
+    project_name: project.name,
+    project_link: project.link
+  });
+  window.open(project.link, '_blank', 'noopener,noreferrer');
 });
 
 document.getElementById('projectsGrid').addEventListener('keydown', (e) => {
   if (e.key !== 'Enter' && e.key !== ' ') return;
-  const descEl = e.target.closest('.project-desc');
-  if (!descEl) return;
-  const card = descEl.closest('.project-card');
+  const readMoreEl = e.target.closest('[data-read-more]');
+  if (readMoreEl) {
+    e.preventDefault();
+    readMoreEl.click();
+    return;
+  }
+  // Card-level keyboard activation (Enter/Space on focused card)
+  const card = e.target.closest('.project-card');
   if (!card) return;
   e.preventDefault();
-  const projectId = Number(card.dataset.projectId);
-  const project = PROJECTS.find(item => item.id === projectId);
-  openProjectDesc(project, 'description_keyboard');
+  card.click();
 });
 
 document.addEventListener('click', (e) => {
@@ -3323,7 +3612,8 @@ if (window.matchMedia('(hover: none)').matches) {
   btn.innerHTML = ICON_OFF;
   document.body.appendChild(btn);
 
-  // ── Audio hint toast ─────────────────────────────────────
+  // ── Audio hint toast — HI-7: opt-in only. Hint no longer auto-shows on
+  //     first load; it appears only when the user clicks the audio toggle.
   const hintEl = document.getElementById('audioHint');
   const hintDismiss = hintEl && hintEl.querySelector('.audio-hint-dismiss');
   let hintTimer = null;
@@ -3335,20 +3625,19 @@ if (window.matchMedia('(hover: none)').matches) {
     setTimeout(() => { hintEl.classList.remove('visible', 'hiding'); }, 460);
   }
 
-  if (hintEl && !localStorage.getItem('audioHintDismissed')) {
-    // Show after loader finishes (~2.2s)
-    hintTimer = setTimeout(() => {
-      hintEl.classList.add('visible');
-      // Auto-hide after 9s
-      hintTimer = setTimeout(hideHint, 15000);
-    }, 2200);
+  // Expose a global so the audio-toggle button can trigger the hint on demand.
+  window.__showAudioHint = function () {
+    if (!hintEl) return;
+    hintEl.classList.add('visible');
+    clearTimeout(hintTimer);
+    hintTimer = setTimeout(hideHint, 8000);
+  };
 
-    if (hintDismiss) {
-      hintDismiss.addEventListener('click', () => {
-        localStorage.setItem('audioHintDismissed', '1');
-        hideHint();
-      });
-    }
+  if (hintDismiss) {
+    hintDismiss.addEventListener('click', () => {
+      localStorage.setItem('audioHintDismissed', '1');
+      hideHint();
+    });
   }
 
   const cRing = document.getElementById('cursorRing');
@@ -3546,70 +3835,12 @@ if (window.matchMedia('(hover: none)').matches) {
 </script>
 
 <script>
-(function () {
-  const ref = new URLSearchParams(location.search).get('ref');
-
-  if (ref === 'automation') {
-    const titleEl = document.getElementById('card-title-text');
-    if (titleEl) titleEl.textContent = 'Automation Developer • Workflow Systems & Integrations';
-
-    const tagsEl = document.getElementById('card-tags');
-    if (tagsEl) {
-      tagsEl.innerHTML = [
-        ['API / Webhooks',          'Third-party integrations, event payloads, request flows, and service-to-service thinking'],
-        ['Workflow Automation',     'Repeatable execution flows, conditional logic, and structured delivery systems'],
-        ['AI-assisted Delivery',    'Copilot and Claude in daily workflow with manual validation and clear task framing'],
-        ['Prompt Systems',          'Reusable prompts and context structures for technical tasks and documentation'],
-        ['Agent Orchestration',     'Task routing across narrow agents for research, debugging, and execution'],
-        ['Data Mapping',            'Transforming business inputs into structured outputs across tools and processes'],
-        ['JavaScript (ES6+)',       'Core implementation language for integrations, scripting, and logic-heavy workflows'],
-        ['Research Workflows',      'Structured vacancy analysis, documentation, and planning flows backed by source evidence'],
-      ].map(([label, tip]) =>
-        `<span class="tag" role="listitem" data-tip="${tip}">${label}</span>`
-      ).join('');
-    }
-
-    const availEl = document.getElementById('card-availability');
-    if (availEl) {
-      availEl.innerHTML = 'Available for automation, integration, and AI-adjacent projects';
-    }
-
-    const capabilityEl = document.getElementById('card-capability');
-    if (capabilityEl) {
-      capabilityEl.textContent = 'Best fit for workflow automation, technical integrations, internal tools, and AI-assisted delivery systems.';
-    }
-
-    return;
-  }
-
-  if (ref !== 'frontend') return;
-
-  // Frontend developer version — shown only with ?ref=frontend
-  const titleEl = document.getElementById('card-title-text');
-  if (titleEl) titleEl.textContent = 'Frontend Developer • Web Apps & UI';
-
-  const tagsEl = document.getElementById('card-tags');
-  if (tagsEl) {
-    tagsEl.innerHTML = [
-      ['HTML / CSS',        'Semantic markup, Flexbox, Grid, animations, responsive layouts'],
-      ['JavaScript (ES6+)', 'Vanilla JS, DOM, async/await, fetch API, modular code'],
-      ['Svelte',            'Svelte 5 runes — reactive apps, stores, component architecture'],
-      ['TypeScript',        'Type-safe JavaScript for larger apps and component libraries'],
-      ['Responsive Design', 'Mobile-first layouts that work across all screen sizes'],
-      ['CSS Animations',    'Scroll-triggered effects, transitions, keyframe animations'],
-      ['Performance',       'Lazy loading, render-blocking fixes, Core Web Vitals'],
-      ['Tailwind CSS',      'Utility-first CSS — fast, consistent, responsive styling'],
-    ].map(([label, tip]) =>
-      `<span class="tag" role="listitem" data-tip="${tip}">${label}</span>`
-    ).join('');
-  }
-
-  const availEl = document.getElementById('card-availability');
-  if (availEl) availEl.remove();
-
-  const capabilityEl = document.getElementById('card-capability');
-  if (capabilityEl) capabilityEl.remove();
-})();
+/* HI-5: Removed ?ref=automation and ?ref=frontend variant swaps.
+   The portfolio now speaks with one canonical voice: AI Automation Engineer.
+   Per audit D7: three hero variants implied "not sure who this is for".
+   Recruiters targeting other roles can read the long descriptions on the
+   project cards — the methodology, automation, and frontend depth is there
+   without needing to swap the hero. */
 </script>
 <script src="./chat-widget.js?v=2.0.5" defer></script>
 </body>

@@ -179,6 +179,41 @@
   }
   .ai-fab-badge[hidden] { display: none; }
 
+  /* HI-4: visible "Chat with AI" label next to the fab on first visit,
+     then fades. Recruiters learn the fab is interactive, not a decorative orb. */
+  .ai-fab-label {
+    position: fixed;
+    right: 96px;
+    bottom: 36px;
+    z-index: 9997;
+    background: rgba(17, 17, 19, 0.95);
+    color: #e8e8f0;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 14px;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+    opacity: 0;
+    transform: translateX(8px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    white-space: nowrap;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  .ai-fab-label.visible { opacity: 1; transform: translateX(0); }
+  .ai-fab-label::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0; height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 6px solid rgba(17, 17, 19, 0.95);
+  }
+
   .ai-panel {
     position: fixed;
     right: 24px;
@@ -587,6 +622,29 @@
     }, 'AI');
     fabEl.appendChild(fabBadge);
     root.appendChild(fabEl);
+
+    // HI-4: "Chat with AI" label next to the fab on first visit.
+    const fabLabel = el('div', {
+      class: 'ai-fab-label',
+      'aria-hidden': 'true',
+    }, 'Chat with AI');
+    root.appendChild(fabLabel);
+
+    // Show on first visit (no localStorage flag), fade after 8s or on first interaction.
+    if (!localStorage.getItem('taras-ai-fab-label-seen')) {
+      setTimeout(() => {
+        fabLabel.classList.add('visible');
+        setTimeout(() => {
+          fabLabel.classList.remove('visible');
+          localStorage.setItem('taras-ai-fab-label-seen', '1');
+        }, 8000);
+      }, 1800);
+      // Hide on any interaction with the fab
+      fabEl.addEventListener('click', () => {
+        fabLabel.classList.remove('visible');
+        localStorage.setItem('taras-ai-fab-label-seen', '1');
+      }, { once: true });
+    }
 
     // Panel
     panelEl = el('div', {
