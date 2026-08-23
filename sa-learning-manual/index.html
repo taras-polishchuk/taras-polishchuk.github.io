@@ -10008,7 +10008,7 @@ function renderQuiz() {
 
   quizContainer.innerHTML = QUIZ.map((q, i) => {
     let opts = '';
-    if (q.type === 'true') {
+    if (q.type === 'tf') {
       opts = `<div class="quiz-options">
         <button class="quiz-option" data-choice="true">True</button>
         <button class="quiz-option" data-choice="false">False</button>
@@ -10038,13 +10038,13 @@ function renderQuiz() {
       btn.addEventListener('click', () => {
         if (btn.disabled) return;
         const choiceRaw = btn.dataset.choice;
-        const choice = (q.type === 'true') ? (choiceRaw === 'true') : parseInt(choiceRaw, 10);
+        const choice = (q.type === 'tf') ? (choiceRaw === 'true') : parseInt(choiceRaw, 10);
         const expected = q.answer;
         const correct = choice === expected;
 
         wrap.querySelectorAll('.quiz-option').forEach((b, oi) => {
           b.disabled = true;
-          if (q.type === 'true') {
+          if (q.type === 'tf') {
             const isCorrectOpt = (oi === 0 && expected === true) || (oi === 1 && expected === false);
             if (isCorrectOpt) b.classList.add('correct');
           } else {
