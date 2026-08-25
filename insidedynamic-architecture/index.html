@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InsideDynamic Architecture | Taras Polishchuk</title>
+<meta name="description" content="InsideDynamic GmbH architecture analysis: Plesk ax1 + Coolify container platform + Proxmox dev-server. Two-worlds infrastructure, agent-first operations, self-hosted open-source stack.">
+<meta name="author" content="Taras Polishchuk">
+<meta property="og:title" content="InsideDynamic Architecture — Target State">
+<meta property="og:description" content="Two-worlds architecture analysis for InsideDynamic GmbH. Plesk + Coolify + Proxmox. Self-hosted, open-source, agent-friendly.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://taras-polishchuk.github.io/insidedynamic-architecture/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d9488'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='central' font-family='sans-serif' font-size='20' fill='white'%3E%E2%97%88%3E%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #0a0a0b;
+    --bg-soft: #131316;
+    --bg-card: #1a1a1f;
+    --border: #2a2a32;
+    --text: #e4e4e7;
+    --text-muted: #a1a1aa;
+    --accent: #14b8a6;
+    --accent-soft: rgba(20, 184, 166, 0.15);
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --info: #3b82f6;
+    --success: #10b981;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    padding: 2rem 1rem;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+  header {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .breadcrumb {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+  .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--accent); }
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+  h2 {
+    font-size: 1.5rem;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  h3 {
+    font-size: 1.15rem;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    color: var(--accent);
+  }
+  h4 {
+    font-size: 1.05rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+  .subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 1rem; }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 1rem;
+  }
+  .meta-item strong { color: var(--text); }
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .stat {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+  .stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1.2;
+  }
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.25rem;
+  }
+  .risk-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .risk {
+    background: var(--bg-soft);
+    border-left: 4px solid var(--text-muted);
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+  .risk-critical { border-left-color: var(--danger); }
+  .risk-high { border-left-color: var(--warning); }
+  .risk-medium { border-left-color: var(--info); }
+  .risk-low { border-left-color: var(--success); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  th, td {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    background: var(--bg-soft);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg-soft); }
+  ul, ol { margin: 0.5rem 0 0.5rem 1.5rem; }
+  li { margin-bottom: 0.25rem; }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    background: var(--bg-soft);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+  pre {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    color: var(--text);
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+  .arch-diagram {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem 0;
+    overflow-x: auto;
+  }
+  .mermaid { background: var(--bg-card); text-align: center; }
+  .timeline {
+    position: relative;
+    padding: 1rem 0;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 1.25rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+  .phase {
+    position: relative;
+    padding-left: 3rem;
+    margin-bottom: 2rem;
+  }
+  .phase::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 0.25rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 3px solid var(--bg);
+  }
+  .phase h4 {
+    font-size: 1.05rem;
+    margin-bottom: 0.25rem;
+    color: var(--text);
+  }
+  .phase-meta {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+  .badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+  }
+  .badge-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+  .badge-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+  .badge-info { background: rgba(59, 130, 246, 0.15); color: var(--info); }
+  blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 0.25rem 1rem;
+    color: var(--text-muted);
+    margin: 0.5rem 0;
+  }
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+  footer {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-align: center;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <div class="breadcrumb">
+      <a href="/">← Taras Polishchuk</a> › InsideDynamic Architecture
+    </div>
+    <h1>InsideDynamic Architecture — Target State</h1>
+    <p class="subtitle">Two-worlds infrastructure: Plesk ax1 (webhosting) + Coolify containers (apps). Agent-first operations, self-hosted, open-source.</p>
+    <div class="meta">
+      <div class="meta-item"><strong>Author:</strong> Taras Polishchuk, Solution Architect</div>
+      <div class="meta-item"><strong>Date:</strong> 2026-08-25</div>
+      <div class="meta-item"><strong>Status:</strong> Proposal for Viktor review</div>
+    </div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-value">2</div><div class="stat-label">Infrastructure Worlds</div></div>
+    <div class="stat"><div class="stat-value">56</div><div class="stat-label">Domains on ax1</div></div>
+    <div class="stat"><div class="stat-value">8</div><div class="stat-label">KI Agents (KIwerk.one)</div></div>
+    <div class="stat"><div class="stat-value">20</div><div class="stat-label">Issues to fix (P0+P1)</div></div>
+    <div class="stat"><div class="stat-value">4</div><div class="stat-label">Phased roadmap</div></div>
+    <div class="stat"><div class="stat-value">€0-15</div><div class="stat-label">Total monthly cost</div></div>
+  </div>
+<h1>SA Analysis — Two Worlds Architecture (Plesk ax1 + Coolify IONOS/Hetzner)</h1>
+<blockquote><strong>Автор:</strong> Taras Polishchuk, Solution Architect</blockquote>
+<blockquote><strong>Дата:</strong> 2026-08-25</blockquote>
+<blockquote><strong>Джерела:</strong></blockquote>
+<blockquote>- Viktor лист 24.08 (7 знахідок, німецькою)</blockquote>
+<blockquote>- infra-audit (<code>06-correspondence/infra-audit/</code>, 27 файлів, dev-server 192.168.10.124)</blockquote>
+<blockquote>- Statusaufnahme ax1 (<code>06-correspondence/webserver-audit/statusaufnahme-ax1-2026-08-24.md</code>)</blockquote>
+<blockquote>- 7 screenshots hardware inventory (<code>hardware-screenshots-inventory.md</code>)</blockquote>
+<blockquote>- KIwerk.one Confluence (70 pages), Notion (2 pages)</blockquote>
+<hr>
+<h2>1. ПОВНА КАРТИНА — ДВІ СВІТИ</h2>
+<p>Viktor має рацію: <strong>це дві різні інфраструктури з критичними cross-dependencies</strong>.</p>
+<h3>Світ 1: Plesk Webhosting (ax1)</h3>
+<pre><code class="language-plain">
+┌─────────────────────────────────────────────────────────────┐
+│  ax1.webpanel24.de · 217.154.83.16                          │
+│  Ubuntu 24.04 + Plesk Obsidian 18.0.80.3                    │
+│  12 vCPU · 23 GB RAM · 697 GB disk (17% used = 113 GB)      │
+│                                                             │
+│  ┌─── WEBHOSTING (Plesk) ─────────────────────────────┐    │
+│  │ 30 subscriptions                                   │    │
+│  │ 56 domains                                         │    │
+│  │ • 26 WordPress                                     │    │
+│  │ • 8 MODX                                           │    │
+│  │ • 9 PHP apps (custom)                               │    │
+│  │ • 9 static                                         │    │
+│  │ • 1 HostCMS                                         │    │
+│  └────────────────────────────────────────────────────┘    │
+│                                                             │
+│  ┌─── BACKUP ────────────────────────────────────────┐     │
+│  │ Weekly backup → Hetzner Storage Box (external)    │     │
+│  │ • 28 of 29 encrypted                              │     │
+│  │ • 1 NOT encrypted (server full backup) ❌         │     │
+│  │ • 4 backups stale (linkify.cloud, et al.) ❌      │     │
+│  └──────────────────────────────────────────────────┘     │
+│                                                             │
+│  ┌─── CRITICAL DEPENDENCY ──────────────────────────┐     │
+│  │ lic.linkify.cloud = TalkHub license server         │     │
+│  │ Lives on ax1 → TalkHub runs on Hetzner            │     │
+│  │ If ax1 dies → RAZERTECH (paying customer) DOWN    │     │
+│  └──────────────────────────────────────────────────┘     │
+└─────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3>Світ 2: Coolify Container Platform</h3>
+<pre><code class="language-plain">
+┌──────────────────────────┐    ┌──────────────────────────┐
+│ cp.flxo.cloud · 217.160. │    │ srv-datq5 · 178.104.142. │
+│ 65.176 (IONOS Berlin)    │    │ 147 (Hetzner)            │
+│ Coolify MASTER           │    │ Coolify SLAVE: TalkHub   │
+│                          │    │                          │
+│ • /data/netyo-saas/infra │    │ • 2 TalkHub instances    │
+│   (undocumented stack!)  │    │   (own + RAZERTECH)      │
+│                          │    │ • 3-container stack      │
+└──────────────────────────┘    └──────────────────────────┘
+
+┌──────────────────────────┐    ┌──────────────────────────┐
+│ alex-parts-prod · 178.104│    │ INDYN-SRV-001..003       │
+│ .77.165 (Hetzner)        │    │ (Proxmox cluster, q/_xx  │
+│ Coolify SLAVE: Lichtex  │    │ verified via screenshots)│
+│ 🔴 NOT REACHABLE        │    │ R740 + R720 + N54L       │
+│ Port 22 closed           │    │ (bkp-server N54L)        │
+└──────────────────────────┘    └──────────────────────────┘
+
+┌──────────────────────────────────────────────────┐
+│  dev-server (192.168.10.124)                     │
+│  Ubuntu 24.04, 16 cores, 32GB RAM, 200GB disk    │
+│  Proxmox VM (inside pve / pve-x cluster)         │
+│                                                  │
+│  • 7 Claude Code sessions (taras&#x27;s workstation)  │
+│  • 2 PostgreSQL (Docker 5432 + native 5434)      │
+│  • 4 code-server instances (team web IDE)        │
+│  • vertrieb-prod (Cloudflare tunnel)             │
+│  • 76 agents, 151 skills, 14 hooks              │
+│  • No monitoring, no alerting, no backup ❌      │
+└──────────────────────────────────────────────────┘
+</code></pre>
+<h3>Робочі станції</h3>
+<ul>
+<li><strong>INDYN-PC-777</strong> (192.168.10.77) — Dell OptiPlex 9010 MT, Debian 13.6</li>
+<p>  (Taras&#x27;s workstation, не Proxmox!)</p>
+<li><strong>taras@dev-server</strong> (192.168.10.124) — Proxmox VM, Ubuntu 24.04</li>
+<p>  (Taras&#x27;s SSH account на dev-server)</p>
+</ul>
+<hr>
+<h2>2. СЕМЬ КРИТИЧНИХ ЗНАХІДОК VIKTORA (аналіз кожної)</h2>
+<h3>Знахідка #1: alex-parts-prod — Coolify-abgeschnitten</h3>
+<p><strong>Що:</strong></p>
+<blockquote>&quot;alex-parts-prod ist von Coolify abgeschnitten — Ping antwortet, aber Port 22 ist zu.</blockquote>
+<blockquote>Der Kunde Lichtex läuft ungeprüft weiter und ist nicht deploybar.&quot;</blockquote>
+<p><strong>Аналіз:</strong></p>
+<ul>
+<li>Hetzner server (178.104.77.165) був зареєстрований як Coolify slave для клієнта Lichtex</li>
+<li>Сервер відповідає на ping (мережа жива)</li>
+<li>SSH (port 22) закритий — Coolify не може deploy / manage</li>
+<li>Клієнт працює (якщо сервіс не впаде, ніхто не дізнається)</li>
+<li><strong>Це SPOF для клієнта Lichtex</strong> + <strong>operational blind spot</strong></li>
+</ul>
+<p><strong>Причина (можливі):</strong></p>
+<ul>
+<li>Hetzner firewall rules змінилися (outbound update)</li>
+<li>Coolify agent (docker) зупинився</li>
+<li>SSH key rotated без update в Coolify</li>
+<li>Або просто OS update / reboot без recovery</li>
+</ul>
+<p><strong>Що робити (SA пріоритет):</strong></p>
+<ol>
+<li><strong>Immediate (1 год):</strong> Спробувати Hetzner Cloud Console → rescue mode → SSH fix</li>
+<li><strong>Investigation (1 год):</strong> Чому SSH closed? Перевірити <code>journalctl</code>, sshd config</li>
+<li><strong>Re-register (30 хв):</strong> Якщо треба — <code>coolify server add</code> повторно</li>
+<li><strong>Runbook:</strong> &quot;Slave disconnected&quot; → автоматизований recovery через Hetzner API</li>
+</ol>
+<p><strong>Owner:</strong> Viktor (має Hetzner root access)</p>
+<p><strong>Severity:</strong> HIGH (операційна сліпота для paying customer)</p>
+<p><strong>Cost:</strong> €0 (Hetzner Cloud Console безкоштовно)</p>
+<hr>
+<h3>Знахідка #2: netyo.de — kaputt</h3>
+<p><strong>Що:</strong></p>
+<blockquote>&quot;netyo.de ist kaputt — das WP Toolkit meldet Broken, auf der Platte fehlt</blockquote>
+<blockquote>wp-config.php komplett, der Docroot liefert nur noch statisches HTML.</blockquote>
+<blockquote>Eure eigene Firmenseite.&quot;</blockquote>
+<p><strong>Аналіз:</strong></p>
+<ul>
+<li>WordPress core files відсутні (wp-config.php specifically)</li>
+<li>DocumentRoot повертає static HTML fallback (ймовірно Plesk default page)</li>
+<li>WP Toolkit бачить &quot;Broken&quot; статус</li>
+<li><strong>Це Viktor&#x27;s власна фірмова сторінка</strong> — embarrassment + business impact</li>
+</ul>
+<p><strong>Причина (можливі):</strong></p>
+<ul>
+<li>Manual deletion (sabotage, mistake, cleanup script)</li>
+<li>Ransomware encrypt (але wp-config.php specifically?)</li>
+<li>Filesystem corruption</li>
+<li>Migration incomplete (half-done migration to new location)</li>
+<li>Git pull / deploy script overwrote it</li>
+</ul>
+<p><strong>Що робити:</strong></p>
+<pre><code class="language-bash">
+# Step 1: Verify state
+ls -la /var/www/vhosts/netyo.de/httpdocs/
+cat /var/www/vhosts/netyo.de/httpdocs/wp-config.php 2&gt;&amp;1
+
+# Step 2: Check git status (if versioned)
+cd /var/www/vhosts/netyo.de/httpdocs/
+git log --oneline -10
+git status
+
+# Step 3: Restore from backup (28 encrypted backups exist)
+plesk bin domain --restore netyo.de -backup-name [latest-encrypted]
+
+# Step 4: If no backup → manual restore
+cd /var/www/vhosts/netyo.de/httpdocs/
+wget https://wordpress.org/latest.tar.gz
+tar -xzf latest.tar.gz --strip-components=1
+# Restore wp-config.php from backup or recreate
+# Restore database from Plesk backup
+</code></pre>
+<p><strong>Owner:</strong> Taras (з Viktor approval)</p>
+<p><strong>Severity:</strong> MEDIUM (власна сторінка, не customer, не paying)</p>
+<p><strong>Cost:</strong> €0 (Plesk backup)</p>
+<p><strong>Time:</strong> 1-2 години</p>
+<hr>
+<h3>Знахідка #3: Власні сайти гірше за клієнтські</h3>
+<p><strong>Що:</strong></p>
+<blockquote>&quot;Die eigenen Seiten sind die schlechtesten. insidedynamic.de und nikolayev.de</blockquote>
+<blockquote>auf WP 6.9.7, indyn.de Unresponsive — während 14 Kundenseiten sauber auf 7.1 stehen.&quot;</blockquote>
+<p><strong>Аналіз:</strong></p>
+<ul>
+<li>insidedynamic.de, nikolayev.de: <strong>WP 6.9.7</strong> (стара версія)</li>
+<li>indyn.de: <strong>unresponsive</strong> (не відповідає)</li>
+<li>14 клієнтських сайтів: <strong>WP 7.1</strong> (актуальна)</li>
+<li><strong>Pattern:</strong> InsideDynamic не updates свої власні сайти, тільки клієнтські</li>
+</ul>
+<p><strong>Причина:</strong></p>
+<ul>
+<li>Classic &quot;cobbler&#x27;s children have no shoes&quot; — ресурси на клієнтів, не на себе</li>
+<li>Автоматичні updates вимкнені на власних сайтах</li>
+<li>Ручне update потребує часу, який іде на клієнтів</li>
+</ul>
+<p><strong>Що робити:</strong></p>
+<ol>
+<li><strong>Audit all 3 sites</strong> — що не так з indyn.de (unresponsive = проблема серйозна)</li>
+<li><strong>Update WP core</strong> (1-2 год): insidedynamic.de, nikolayev.de → 7.1</li>
+<li><strong>Debug indyn.de</strong> (2-4 год): wp-admin доступ, error log, перевірка</li>
+<li><strong>Enable auto-updates</strong> для всіх власних сайтів</li>
+</ol>
+<p><strong>Owner:</strong> Taras + Viktor</p>
+<p><strong>Severity:</strong> MEDIUM-HIGH (company reputation)</p>
+<p><strong>Cost:</strong> €0</p>
+<hr>
+<h3>Знахідка #4: 4 сайти поза WP Toolkit</h3>
+<p><strong>Що:</strong></p>
+<blockquote>&quot;Vier WordPress laufen am WP Toolkit vorbei (digilift.indyn.de, dms.indyn.de,</blockquote>
+<blockquote>erechnung.indyn.de, new.klimadeluxe.de) — keine Auto-Updates, keine</blockquote>
+<blockquote>Sicherheitsprüfung.&quot;</blockquote>
+<p><strong>Аналіз:</strong></p>
+<ul>
+<li>Ці WP встановлення НЕ зареєстровані в WP Toolkit (Plesk plugin)</li>
+<li>Без auto-updates</li>
+<li>Без security scanning</li>
+<li>Без backup через WP Toolkit (можуть мати file/db backup, але не WP-aware)</li>
+<li><strong>Виявлені тільки через ручну перевірку</strong></li>
+</ul>
+<p><strong>Причина:</strong></p>
+<ul>
+<li>WP встановлено поза Plesk доменом (можливо, окремий vhost)</li>
+<li>Або перенесено з іншого серверу без WP Toolkit re-registration</li>
+<li>WP Toolkit бачить тільки &quot;managed&quot; WP installations</li>
+</ul>
+<p><strong>Що робити:</strong></p>
+<ol>
+<li><strong>Register кожен в WP Toolkit</strong> (Plesk UI → WordPress → Scan)</li>
+<li><strong>Setup auto-updates + backups</strong></li>
+<li><strong>Audit</strong> чи мають вони critical security issues</li>
+<li><strong>Document</strong> як знахідку в Notion <code>Rollen-und-Zugriffsdokumentation</code></li>
+</ol>
+<p><strong>Owner:</strong> Taras (з Viktor approval)</p>
+<p><strong>Severity:</strong> HIGH (security blind spots)</p>
+<p><strong>Cost:</strong> €0</p>
+<p><strong>Time:</strong> 2-4 години</p>
+<hr>
+<h3>Знахідка #5: 2 undokumentierte Container-Stacks</h3>
+<p><strong>Що:</strong></p>
+<blockquote>&quot;Zwei undokumentierte Container-Stacks außerhalb von Coolify:</blockquote>
+<blockquote>infra unter /data/netyo-saas/infra auf dem Master und linkify-adc unter</blockquote>
+<blockquote>/opt/linkify-adc auf srv-datq5. Beide seit Monaten produktiv, von Coolify</blockquote>
+<blockquote>weder überwacht noch gesichert — bei der geplanten Master-Migration würden</blockquote>
+<blockquote>sie schlicht vergessen.&quot;</blockquote>
+<p><strong>Аналіз:</strong></p>
+<p><strong>Stack 1: <code>/data/netyo-saas/infra</code> на Coolify Master</strong></p>
+<ul>
+<li>Living on master (<code>cp.flxo.cloud</code>), not managed by Coolify</li>
+<li>netyo-saas пов&#x27;язаний з <code>netyo.de</code> (який зламаний, Знахідка #2)</li>
+<li>Production status, <strong>але не backup, не monitoring, не in Coolify</strong></li>
+</ul>
+<p><strong>Stack 2: <code>/opt/linkify-adc</code> на srv-datq5 (TalkHub slave)</strong></p>
+<ul>
+<li>Linkify Application Deployment Component</li>
+<li>Production on Hetzner slave</li>
+<li><strong>Not managed by Coolify</strong> (manual docker-compose)</li>
+<li><strong>Not backed up, not monitored</strong></li>
+</ul>
+<p><strong>Причина:</strong></p>
+<ul>
+<li>Pre-Coolify deployments (legacy)</li>
+<li>Кимось створено і забуто</li>
+<li>&quot;Works, don&#x27;t touch&quot; mentality</li>
+<li><strong>При Master Migration — ці стеки зникнуть</strong> (volume/data loss risk)</li>
+</ul>
+<p><strong>Що робити:</strong></p>
+<pre><code class="language-bash">
+# Step 1: Inventory кожен stack
+ls -la /data/netyo-saas/infra/
+cat /data/netyo-saas/infra/docker-compose.yml 2&gt;/dev/null
+ls -la /opt/linkify-adc/
+cat /opt/linkify-adc/docker-compose.yml 2&gt;/dev/null
+
+# Step 2: Document
+echo &quot;Stack: netyo-saas/infra
+Purpose: [TBD from compose]
+Volumes: [from compose]
+Network: [from compose]
+Critical data: [yes/no]
+Backup: [current method]
+Migration risk: HIGH&quot;
+
+# Step 3: Migrate to Coolify OR add to backup plan
+# Option A: re-deploy через Coolify (canonical)
+# Option B: setup restic backup (minimal)
+# Option C: document + skip (acceptable risk)
+
+# Step 4: Add to /etc/restic/exclude file with comments
+</code></pre>
+<p><strong>Owner:</strong> Viktor (master access)</p>
+<p><strong>Severity:</strong> HIGH (data loss при Master migration)</p>
+<p><strong>Cost:</strong> €0</p>
+<p><strong>Time:</strong> 4-8 годин (audit + migration/backup)</p>
+<hr>
+<h3>Знахідка #6: Cross-Dependency TalkHub License на ax1</h3>
+<p><strong>Що:</strong></p>
+<blockquote>&quot;Eine Abhängigkeit quer über beide Welten: der TalkHub-Lizenzserver</blockquote>
+<blockquote>lic.linkify.cloud liegt auf ax1. Fällt ax1 aus, trifft es auch den</blockquote>
+<blockquote>zahlenden Kunden RAZERTECH auf Hetzner.&quot;</blockquote>
+<p><strong>Аналіз:</strong></p>
+<ul>
+<li><strong>lic.linkify.cloud</strong> = TalkHub license server (DNS: lic.linkify.cloud)</li>
+<li>Hosted на ax1 (Plesk webhosting, 217.154.83.16)</li>
+<li>TalkHub (на Hetzner slave srv-datq5) запитує license від ax1</li>
+<li><strong>Якщо ax1 впаде → RAZERTECH (paying customer) втратить service</strong></li>
+</ul>
+<p><strong>Це КРИТИЧНИЙ архітектурний smell</strong>:</p>
+<ul>
+<li>License сервер не повинен жити на webhosting (single Plesk instance)</li>
+<li>Якщо Plesk reboot для maintenance → RAZERTECH down</li>
+<li>Якщо backup restore ax1 → RAZERTECH down during restore</li>
+</ul>
+<p><strong>Що робити (3 варіанти):</strong></p>
+<p><strong>Option A: Move license server to Coolify (рекомендую)</strong></p>
+<ul>
+<li>Deploy license server as Coolify app on master</li>
+<li>HA через 2 instances (master + slave)</li>
+<li>Backup через Coolify</li>
+<li><strong>Cost: 0 €</strong></li>
+</ul>
+<p><strong>Option B: Move to separate VM</strong></p>
+<ul>
+<li>License сервер deserves own VM (micro instance, 1 vCPU / 512 MB RAM)</li>
+<li>Hetzner Cloud: €4/month</li>
+<li>Isolated, simple backup</li>
+<li><strong>Cost: €4/month</strong></li>
+</ul>
+<p><strong>Option C: Make ax1 license server HA</strong></p>
+<ul>
+<li>Add secondary license server (also ax1 but different zone)</li>
+<li>DNS failover</li>
+<li><strong>Cost: 0 € (manual) або €10/month (DNS failover service)</strong></li>
+</ul>
+<p><strong>Рекомендую Option A.</strong> License server → Coolify app (simple container, 256 MB RAM), 2 instances.</p>
+<p><strong>Owner:</strong> Viktor (master Coolify access) + Taras (deployment)</p>
+<p><strong>Severity:</strong> HIGH (загрожує paying customer)</p>
+<p><strong>Cost:</strong> €0-4/month</p>
+<hr>
+<h3>Знахідка #7: srv-datq5 — knapp an Ressourcen</h3>
+<p><strong>Що:</strong></p>
+<blockquote>&quot;srv-datq5 ist knapp: 2 vCPU / 3 GB RAM tragen zwei TalkHub-Instanzen plus</blockquote>
+<blockquote>einen Drei-Container-Stack. Kein Puffer.&quot;</blockquote>
+<p><strong>Аналіз:</strong></p>
+<ul>
+<li>Hetzner server srv-datq5 (178.104.142.147)</li>
+<li>Resources: <strong>2 vCPU / 3 GB RAM</strong> (per Viktor)</li>
+<li>Workloads:</li>
+<p> - 2 TalkHub instances (own + RAZERTECH)</p>
+<p> - 3-container stack (linkify-adc, Знахідка #5)</p>
+<li><strong>Zero buffer</strong> — будь-який spike = OOM killer</li>
+</ul>
+<p><strong>Причина:</strong></p>
+<ul>
+<li>Hetzner cheap plan (CX22 = €4/month or similar)</li>
+<li>Multiple production workloads crammed in</li>
+</ul>
+<p><strong>Що робити:</strong></p>
+<p><strong>Option A: Scale up</strong> (immediate, €10-15/month)</p>
+<ul>
+<li>Hetzner CX32 (4 vCPU / 8 GB) — €15/month</li>
+<li>Або CPX21 (3 vCPU / 4 GB) — €10/month (AMD)</li>
+<li><strong>Decision tree:</strong></li>
+<p> - if workloads growing → CX32</p>
+<p> - if workloads stable → CPX21</p>
+</ul>
+<p><strong>Option B: Move workloads to Proxmox cluster</strong></p>
+<ul>
+<li>3-4 контейнери → Proxmox LXC (lightweight)</li>
+<li>Звільнити srv-datq5</li>
+<li><strong>Cost: €0 (own infra)</strong></li>
+</ul>
+<p><strong>Option C: Add second Hetzner slave</strong></p>
+<ul>
+<li>HA setup (2 slaves)</li>
+<li>Coolify load balance</li>
+<li><strong>Cost: +€10-15/month</strong></li>
+</ul>
+<p><strong>Рекомендую Option A + Option B (parallel).</strong></p>
+<ul>
+<li>Option A — immediate (1-2 год) для stability</li>
+<li>Option B — medium-term (1-2 тижні) для cost optimization</li>
+</ul>
+<p><strong>Owner:</strong> Viktor (Hetzner root)</p>
+<p><strong>Severity:</strong> HIGH (zero buffer = OOM anytime)</p>
+<p><strong>Cost:</strong> €10-15/month</p>
+<hr>
+<h2>3. STATUSAUFNAHME — НОВИЙ КОНТЕКСТ</h2>
+<p>Viktor&#x27;s статус ax1 (повний, live-verified):</p>
+<h3>Hardware</h3>
+<ul>
+<li><strong>12 vCPU, 23 GB RAM, 697 GB disk</strong> (17% used)</li>
+<li>Машина bequem dimensioniert — capacity OK</li>
+<li><strong>Резерв: 584 GB вільно</strong> (можна рости)</li>
+</ul>
+<h3>Backup</h3>
+<table>
+<thead><tr>
+<th>Backup</th>
+<th>Кількість</th>
+<th>Encrypted</th>
+<th>Stale</th>
+</tr></thead><tbody>
+<tr>
+<td>Per-project (28)</td>
+<td>3-12 версій кожен</td>
+<td>✅ Так</td>
+<td>4 stale ❌</td>
+</tr>
+<tr>
+<td>Server full</td>
+<td>1</td>
+<td>❌ <strong>НЕ encrypted</strong></td>
+<td>OK</td>
+</tr>
+<p><strong>Stale backups:</strong></p>
+<ul>
+<li>linkify.cloud — last 19.04 (4+ months stale)</li>
+<li>elektrotechnik.gmbh — last 19.04</li>
+<li>naehmaschinen-senci24.de — last 22.03 (5 months!)</li>
+<li>mks-manuel.de — last 26.07</li>
+</ul>
+<h3>Website state (23 WordPress)</h3>
+<tr>
+<td>State</td>
+<td>Count</td>
+<td>Examples</td>
+</tr>
+<tr>
+<td><strong>In Ordnung</strong></td>
+<td>15</td>
+<td>Current WP 7.1</td>
+</tr>
+<tr>
+<td><strong>Veraltet</strong></td>
+<td>5</td>
+<td>Old WP version</td>
+</tr>
+<tr>
+<td><strong>Reagiert nicht</strong></td>
+<td>2</td>
+<td>indyn.de, life.netyo.de (обидва як infected!)</td>
+</tr>
+<tr>
+<td><strong>Defekt</strong></td>
+<td>1</td>
+<td>netyo.de (wp-config.php missing)</td>
+</tr>
+<tr>
+<td><strong>Nicht in WP Toolkit</strong></td>
+<td>4</td>
+<td>digilift, dms, erechnung, new.klimadeluxe</td>
+</tr>
+<h3>Critical security issues</h3>
+<ol>
+<li><strong>14 from 23 сайти</strong> — abgelaufenes Sicherheitszertifikat</li>
+<p> (besucher bekommen Sicherheitswarnung!)</p>
+<p> - insidedynamic.de, zahnarzt-dr-kuksen-mannheim.de, lema-hv.de,</p>
+<p> marzenell-immobilien.de, skorikova.de, schabelskij.de, 3d-diyou.de,</p>
+<p> digilift-solutions.de, gw-reinigungsservice.de, md-autohaus-werkstatt.de,</p>
+<p> nata-fusspflege-worms.de, new.aleks.gmbh, new.dm-betonbohren.de,</p>
+<p> tk-mobile-pedicure.de, weibert-pflegedienst.de</p>
+</ol>
+<ol>
+<li><strong>2 сайти</strong> як infected: indyn.de, life.netyo.de</li>
+<p> - <strong>Не оновлювати чи бекапити</strong> поки не перевірено!</p>
+<p> - Бо може потрапити в backup</p>
+</ol>
+<ol>
+<li><strong>339 з 443 плагінів</strong> без auto-update (76%)</li>
+</ol>
+<h3>Backup encryption gap</h3>
+<blockquote>&quot;28 der 29 Sicherungen gehen verschlüsselt zum externen Speicher.</blockquote>
+<blockquote>Ausgerechnet die Komplettsicherung des Servers — die alle Kundendaten</blockquote>
+<blockquote>und Zugänge enthält — ist die eine Ausnahme und läuft im Klartext über</blockquote>
+<blockquote>das Netz.&quot;</blockquote>
+<p><strong>Це ЗАБОРГАНО</strong> через GDPR + § 203 StGB (German criminal code, healthcare</p>
+<p>professionals).</p>
+<hr>
+<h2>4. AGGREGATED RISK MATRIX (SA view)</h2>
+<tr>
+<td>ID</td>
+<td>Issue</td>
+<td>Severity</td>
+<td>Owner</td>
+<td>Action</td>
+<td>Effort</td>
+</tr>
+<tr>
+<td>INF-001</td>
+<td><strong>life.netyo.de + indyn.de infected</strong></td>
+<td><strong>CRITICAL</strong></td>
+<td>Taras</td>
+<td>Investigate BEFORE any updates/backups</td>
+<td>2-4h</td>
+</tr>
+<tr>
+<td>INF-002</td>
+<td><strong>Server backup unencrypted</strong> (GDPR violation)</td>
+<td><strong>CRITICAL</strong></td>
+<td>Taras</td>
+<td>Enable encryption in Plesk</td>
+<td>5 min</td>
+</tr>
+<tr>
+<td>INF-003</td>
+<td><strong>14 SSL certs expired</strong> (customer-facing!)</td>
+<td><strong>CRITICAL</strong></td>
+<td>Taras</td>
+<td>Let&#x27;s Encrypt renewal</td>
+<td>1-2h</td>
+</tr>
+<tr>
+<td>INF-004</td>
+<td><strong>alex-parts-prod SSH closed</strong></td>
+<td>HIGH</td>
+<td>Viktor</td>
+<td>Hetzner Console rescue</td>
+<td>1-2h</td>
+</tr>
+<tr>
+<td>INF-005</td>
+<td><strong>srv-datq5 zero buffer</strong> (2c/3GB / 5 containers)</td>
+<td>HIGH</td>
+<td>Viktor</td>
+<td>Scale up Hetzner</td>
+<td>1h</td>
+</tr>
+<tr>
+<td>INF-006</td>
+<td><strong>netyo.de kaputt</strong> (wp-config.php missing)</td>
+<td>HIGH</td>
+<td>Taras</td>
+<td>Restore from backup</td>
+<td>1-2h</td>
+</tr>
+<tr>
+<td>INF-007</td>
+<td><strong>lic.linkify.cloud SPOF</strong> (RAZERTECH affected)</td>
+<td>HIGH</td>
+<td>Taras+Viktor</td>
+<td>Move to Coolify</td>
+<td>4-8h</td>
+</tr>
+<tr>
+<td>INF-008</td>
+<td><strong>2 undokumentierte container stacks</strong></td>
+<td>HIGH</td>
+<td>Viktor</td>
+<td>Inventory + backup</td>
+<td>4-8h</td>
+</tr>
+<tr>
+<td>INF-009</td>
+<td><strong>4 WP not in Toolkit</strong> (no auto-update, no backup)</td>
+<td>HIGH</td>
+<td>Taras</td>
+<td>Register in WP Toolkit</td>
+<td>2-4h</td>
+</tr>
+<tr>
+<td>INF-010</td>
+<td><strong>339/443 plugins no auto-update</strong></td>
+<td>MEDIUM</td>
+<td>Taras</td>
+<td>Enable per-plugin auto-update</td>
+<td>4-8h</td>
+</tr>
+<tr>
+<td>INF-011</td>
+<td><strong>4 stale backups</strong> (linkify.cloud 5 months!)</td>
+<td>MEDIUM</td>
+<td>Taras</td>
+<td>Debug why backups failed</td>
+<td>2-4h</td>
+</tr>
+<tr>
+<td>INF-012</td>
+<td><strong>Own sites outdated</strong> (insidedynamic.de WP 6.9.7)</td>
+<td>MEDIUM</td>
+<td>Taras</td>
+<td>Update WP core</td>
+<td>1-2h</td>
+</tr>
+<tr>
+<td>INF-013</td>
+<td><strong>Stale tar / backup cron</strong> (?)</td>
+<td>LOW</td>
+<td>Audit</td>
+<td>Inventory cron jobs</td>
+<td>1h</td>
+</tr>
+<p><strong>Total critical effort: ~30-50 годин (1-2 тижні)</strong></p>
+<hr>
+<h2>5. ГЛОБАЛЬНА АРХІТЕКТУРА — TARGET STATE</h2>
+<div class="arch-diagram">
+<pre class="mermaid">
+graph TB
+    subgraph Internet["🌐 Internet"]
+        User((👤 Користувач))
+        Client((💼 Клієнт RAZERTECH))
+    end
+
+    subgraph CF["☁️ Cloudflare (DNS/WAF/CDN)"]
+        cf1[indyn.de<br/>*.indyn.de]
+        cf2[lic.linkify.cloud]
+    end
+
+    subgraph Sandbox["🖥️ NEW SANDBOX SERVER (Taras)"]
+        direction TB
+        subgraph Apps["Applications (Docker)"]
+            Vault[Vaultwarden<br/>Password Manager]
+            Plane[Plane Community<br/>Task Tracker]
+            MVP[MVP Web App<br/>Next.js 14]
+            Kuma[Uptime Kuma<br/>Status Monitoring]
+        end
+
+        subgraph Services["Core Services (Native)"]
+            Caddy[Caddy<br/>Reverse Proxy + SSL]
+            PG[(PostgreSQL 16)]
+            Redis[(Redis 7)]
+            UFW[UFW + fail2ban<br/>Firewall]
+            Restic[restic<br/>Backup]
+        end
+    end
+
+    subgraph Plesk["📦 ax1.webpanel24.de (LEGACY)"]
+        PleskWeb[Plesk Obsidian<br/>56 domains]
+        License[lic.linkify.cloud<br/>⚠️ SPOF]
+    end
+
+    subgraph Coolify["🚀 Coolify Container Platform"]
+        subgraph IONOS["IONOS Berlin (Master)"]
+            CoolifyMaster[cp.flxo.cloud<br/>Coolify Master]
+            InfraLegacy[/data/netyo-saas/infra<br/>⚠️ undocumented]
+        end
+
+        subgraph Hetzner["Hetzner Slaves"]
+            TalkHub[srv-datq5<br/>2c/3GB ⚠️ knapp]
+            Lichtex[alex-parts-prod<br/>🔴 SSH closed]
+        end
+    end
+
+    subgraph Proxmox["🏢 Proxmox VE Cluster"]
+        DevSrv[dev-server<br/>16c/32GB/200GB<br/>⚠️ no backup]
+        Backup[SRV-003 N54L<br/>bkp-server / PBS]
+    end
+
+    User --> cf1
+    Client --> cf2
+    cf1 --> Caddy
+    cf2 -.-> License
+    cf1 --> CoolifyMaster
+
+    Caddy --> Apps
+    UFW -.->|protects| Sandbox
+    Restic --> Hetzner
+
+    Vault --> PG
+    Plane --> PG
+    Plane --> Redis
+    MVP --> PG
+
+    Plan[Migration Plan] -.->|future| Coolify
+    Plan --> Sandbox
+
+    CoolifyMaster --> TalkHub
+    CoolifyMaster --> Lichtex
+    CoolifyMaster --> InfraLegacy
+
+    Backup -->|snapshots| DevSrv
+
+    style Vault fill:#14b8a6,color:#fff
+    style Plane fill:#8b5cf6,color:#fff
+    style MVP fill:#ec4899,color:#fff
+    style License fill:#ef4444,color:#fff
+    style Lichtex fill:#ef4444,color:#fff
+    style TalkHub fill:#f59e0b,color:#fff
+    style DevSrv fill:#f59e0b,color:#fff
+</pre></div>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      primaryColor: '#1a1a1f',
+      primaryTextColor: '#e4e4e7',
+      primaryBorderColor: '#14b8a6',
+      lineColor: '#2a2a32',
+      secondaryColor: '#131316',
+      tertiaryColor: '#0a0a0b',
+      background: '#0a0a0b',
+      mainBkg: '#1a1a1f',
+      secondBkg: '#131316',
+      tertiaryBkg: '#0a0a0b',
+      fontFamily: 'Inter, sans-serif',
+    },
+    flowchart: { curve: 'basis', padding: 20 },
+    securityLevel: 'loose'
+  });
+</script>
+
+<p><strong>Key changes from current:</strong></p>
+<ol>
+<li><strong>License server moved out of Plesk</strong> → Coolify (cross-dependency fixed)</li>
+<li><strong>Plesk ax1 reduced to legacy webhosting only</strong> (no critical deps)</li>
+<li><strong>Coolify = new home for modern apps</strong></li>
+<li><strong>dev-server (Proxmox)</strong> = dev/agents platform with proper observability</li>
+</ol>
+<hr>
+<h2>6. ROADMAP (пріоритизований)</h2>
+<h3>Week 1 — STOP THE BLEEDING (10 год, €0)</h3>
+<p><strong>Day 1 (2 год):</strong></p>
+<ul>
+<li>[ ] INF-002: Enable encryption for server backup (5 min, Plesk setting)</li>
+<li>[ ] INF-003: Investigate 14 expired SSL certs (1.5 год)</li>
+<li>[ ] Set up SSL auto-renewal monitoring (1 год)</li>
+</ul>
+<p><strong>Day 2 (3 год):</strong></p>
+<ul>
+<li>[ ] INF-001: Investigate life.netyo.de + indyn.de infection (2 год)</li>
+<li>[ ] Decide: clean or quarantine (1 год)</li>
+</ul>
+<p><strong>Day 3 (4 год):</strong></p>
+<ul>
+<li>[ ] INF-006: Restore netyo.de from backup (1-2 год)</li>
+<li>[ ] INF-012: Update insidedynamic.de + nikolayev.de WP (1-2 год)</li>
+<li>[ ] Document fix in Notion + GitHub commit</li>
+</ul>
+<p><strong>Day 4 (1 год):</strong></p>
+<ul>
+<li>[ ] INF-011: Debug 4 stale backups (linkify.cloud, etc.)</li>
+<li>[ ] Fix backup jobs</li>
+</ul>
+<h3>Week 2 — RESCUE + MIGRATE (16 год, €0-15)</h3>
+<p><strong>Day 5-6 (8 год):</strong></p>
+<ul>
+<li>[ ] INF-004: Rescue alex-parts-prod через Hetzner Console (2 год)</li>
+<li>[ ] INF-005: Scale up srv-datq5 (CX32 €15/month) (1 год)</li>
+<li>[ ] INF-008: Inventory 2 undokumentierte Container-Stacks (4 год)</li>
+<li>[ ] Decide: migrate to Coolify OR add to backup plan</li>
+</ul>
+<p><strong>Day 7-8 (8 год):</strong></p>
+<ul>
+<li>[ ] INF-007: Move lic.linkify.cloud з ax1 до Coolify (4-8 год)</li>
+<p>  - Deploy license server as Coolify app (2 instances for HA)</p>
+<p>  - DNS update (lic.linkify.cloud → Coolify endpoint)</p>
+<p>  - Test with TalkHub (verify license check works)</p>
+<p>  - <strong>Звільняє ax1 від critical dependency!</strong></p>
+</ul>
+<h3>Week 3 — PLESK MODERNIZE (12 год, €0)</h3>
+<p><strong>Day 9-10 (6 год):</strong></p>
+<ul>
+<li>[ ] INF-009: Register 4 WP not in Toolkit (digilift, dms, erechnung, klimadeluxe) (3 год)</li>
+<li>[ ] INF-010: Enable auto-update for 443 plugins (3 год, batch operation)</li>
+</ul>
+<p><strong>Day 11-12 (6 год):</strong></p>
+<ul>
+<li>[ ] Set up monitoring для ax1 (Zabbix agent або Prometheus node_exporter) (4 год)</li>
+<li>[ ] Document all infrastructure in Confluence/Notion (2 год)</li>
+</ul>
+<h3>Week 4 — OBSERVABILITY + INTEGRATION (8 год)</h3>
+<p><strong>Day 13-14 (8 год):</strong></p>
+<ul>
+<li>[ ] Add ax1 to LGTM stack (Loki + Promtail agent) (2 год)</li>
+<li>[ ] Add Hetzner slaves to monitoring (2 год)</li>
+<li>[ ] Add Coolify master to monitoring (2 год)</li>
+<li>[ ] First cross-infrastructure dashboard (Grafana) (2 год)</li>
+</ul>
+<h3>TOTAL</h3>
+<tr>
+<td>Effort</td>
+<td>Cost</td>
+<td>Impact</td>
+</tr>
+<tr>
+<td>~46 годин за 4 тижні</td>
+<td><strong>€0-15/month</strong> (srv-datq5 upgrade)</td>
+<td><strong>CRITICAL issues 100% fixed</strong></td>
+</tr>
+<hr>
+<h2>7. CROSS-INFRASTRUCTURE OBSERVABILITY (target)</h2>
+<p><strong>One Grafana dashboard for ALL infrastructure:</strong></p>
+<pre><code class="language-plain">
+┌─────────────────────────────────────────────────────────────┐
+│              INSIDEDYNAMIC INFRASTRUCTURE                   │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─── ax1 (Plesk) ────┐  ┌─── Coolify Master ────┐       │
+│  │ • CPU/RAM/Disk      │  │ • CPU/RAM/Disk         │       │
+│  │ • 56 domains status │  │ • Apps status          │       │
+│  │ • Backups status    │  │ • Lic.linkify.cloud OK │       │
+│  │ • SSL certs expiry  │  │ • 8 agents health      │       │
+│  │ • WP infections ⚠  │  │ • Coolify version      │       │
+│  └────────────────────┘  └─────────────────────────┘       │
+│                                                             │
+│  ┌─── dev-server (Proxmox) ──┐  ┌─── Hetzner slaves ──┐ │
+│  │ • 7 Claude Code sessions   │  │ • srv-datq5         │ │
+│  │ • PostgreSQL ×2            │  │ • TalkHub health    │ │
+│  │ • 4 code-server            │  │ • linkify-adc stack │ │
+│  │ • vertrieb-prod            │  │ • alex-parts-prod   │ │
+│  │ ⚠ No backup yet (Phase 3) │  │   (if reachable)     │ │
+│  └────────────────────────────┘  └─────────────────────┘ │
+│                                                             │
+│  Alerts: Telegram #ops channel + on-call rotation           │
+└─────────────────────────────────────────────────────────────┘
+</code></pre>
+<p><strong>Tool:</strong> Grafana + Prometheus + Loki (all on dev-server, per SA-ARCHITECT-ANALYSIS.md)</p>
+<hr>
+<h2>8. ЩО Я ЗРОБИВ У WORKSPACE</h2>
+<p>Створив <strong>directory + file</strong>:</p>
+<ul>
+<li><code>06-correspondence/webserver-audit/statusaufnahme-ax1-2026-08-24.md</code> (6.7 KB) — оригінальний текст від Viktor</li>
+</ul>
+<p>Цей файл (SA-ARCHITECTURE-AX1-COOLIFY.md) — повний аналіз.</p>
+<hr>
+<h2>9. OPEN QUESTIONS для Віктора (Decision Points)</h2>
+<ol>
+<li><strong>License server migration (Знахідка #6):</strong> Option A (Coolify) vs Option B (separate VM €4/month)?</li>
+<li><strong>srv-datq5 scaling (Знахідка #7):</strong> CPX21 (€10) чи CX32 (€15) зараз?</li>
+<li><strong>alex-parts-prod (Знахідка #1):</strong> Хто має Hetzner root access для rescue?</li>
+<li><strong>netyo.de (Знахідка #2):</strong> Чи маємо backup перед відновленням, чи відновлюємо з Plesk?</li>
+<li><strong>2 undokumentierte stacks (Знахідка #5):</strong> Migrate до Coolify чи backup plan?</li>
+<li><strong>life.netyo.de + indyn.de (Statusaufnahme):</strong> Спочатку clean (€?), чи quarantine + restore?</li>
+<li><strong>14 expired SSL (Statusaufnahme):</strong> Single batch renewal, чи per-domain manual?</li>
+<li><strong>SSL auto-renewal (Statusaufnahme):</strong> Чому не працює? Let&#x27;s Encrypt rate limits?</li>
+<li><strong>4 stale backups (Statusaufnahme):</strong> Backup job не запускається чи падає?</li>
+<li><strong>Backup encryption gap (Statusaufnahme):</strong> Чому 1 з 29 unencrypted? Single setting чи structural?</li>
+</ol>
+<hr>
+<h2>10. SUMMARY</h2>
+<p><strong>Viktor дав мені повну картину двох світів:</strong></p>
+<tr>
+<td>Світ</td>
+<td>Сервери</td>
+<td>Стан</td>
+</tr>
+<tr>
+<td><strong>Plesk webhosting</strong></td>
+<td>ax1 (1 server, 56 domains)</td>
+<td>Backup OK, maintenance не дуже</td>
+</tr>
+<tr>
+<td><strong>Coolify containers</strong></td>
+<td>Master (IONOS) + 2 slaves (Hetzner)</td>
+<td>Operational, 1 slave disconnected</td>
+</tr>
+<tr>
+<td><strong>Proxmox cluster</strong></td>
+<td>SRV-001..003 + dev-server</td>
+<td>Production, no monitoring/backup</td>
+</tr>
+<tr>
+<td><strong>Workstations</strong></td>
+<td>PC-777 (Taras Debian) + others</td>
+<td>For dev work</td>
+</tr>
+<p><strong>7 знахідок Viktor + 13 розширених знахідок з Statusaufnahme = 20 issues to fix.</strong></p>
+<p><strong>Top priorities (Week 1):</strong></p>
+<ol>
+<li><strong>CRITICAL:</strong> life.netyo.de + indyn.de infected (НЕ backup, НЕ update поки не clean)</li>
+<li><strong>CRITICAL:</strong> Enable server backup encryption (5 min fix!)</li>
+<li><strong>CRITICAL:</strong> 14 expired SSL certs (customer-facing impact)</li>
+<li><strong>HIGH:</strong> alex-parts-prod SSH closed</li>
+<li><strong>HIGH:</strong> srv-datq5 scale up</li>
+<li><strong>HIGH:</strong> netyo.de restore</li>
+<li><strong>HIGH:</strong> lic.linkify.cloud → Coolify migration (RAZERTECH protection)</li>
+</ol>
+<p><strong>Total effort: ~46 годин / 4 тижні, €0-15/month</strong></p>
+<p><strong>Питання: чи можемо почати з Week 1 завтра?</strong></p>
+<hr>
+<p><em>Створено:</em> 2026-08-25.</p>
+<p><em>Автор:</em> Taras Polishchuk (Solution Architect).</p>
+<p><em>Джерела:</em> Viktor лист 24.08 (7 знахідок) + Statusaufnahme ax1 24.08.2026</p>
+<p>+ infra-audit dev-server + KIwerk.one Confluence (70 pages).</p>
+<p><em>Залежить від:</em> Viktor approval + Hetzner root access для INF-004, INF-005.</p>
+</tbody></table>
+  <footer>
+    <p>
+      <strong>Author:</strong> Taras Polishchuk ·
+      <a href="https://taras-polishchuk.github.io/">taras-polishchuk.github.io</a> ·
+      Last updated: 2026-08-25
+    </p>
+    <p>
+      Sources: Viktor 24.08 (7 знахідок), Statusaufnahme ax1 24.08, infra-audit dev-server 24.08,
+      KIwerk.one Confluence (70 pages), Notion (2 pages, 113 blocks).
+    </p>
+  </footer>
+
+</div>
+</body>
+</html>
