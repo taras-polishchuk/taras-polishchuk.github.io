@@ -1,0 +1,183 @@
+# Deployment
+
+> **Audience:** anyone who needs to maintain this site.
+> **Date:** 2026-08-25.
+
+This document describes the build, deploy, and CI/CD pipeline.
+
+---
+
+## 1. Build
+
+The site is a SvelteKit static site. No backend.
+
+```bash
+cd /home/taras/projects/work/insidedynamic/11-learning-platform
+npm install
+npm run build      # outputs to ./build/
+```
+
+`vite build` calls SvelteKit with `adapter-static`, which pre-renders every
+route (we have `export const prerender = true` on root + module route) and
+produces a static bundle.
+
+---
+
+## 2. Local preview
+
+```bash
+npm run preview
+# serves ./build/ on http://localhost:4173
+```
+
+For development with hot reload:
+
+```bash
+npm run dev
+# serves on http://localhost:5173 with HMR
+```
+
+---
+
+## 3. Production deployment
+
+The site is deployed as a **subpath** of the operator's existing portfolio at
+`https://taras-polishchuk.github.io/learning-platform/`.
+
+### Why a subpath, not a separate domain
+
+The operator's portfolio (`career/taras-polishchuk.github.io/`) is the
+established hosting target. Adding a separate domain would require:
+- A new DNS zone.
+- A new GitHub repo with GitHub Pages enabled.
+- A new CI/CD pipeline.
+
+The subpath approach reuses:
+- The existing `taras-polishchuk.github.io` GitHub Pages deployment.
+- The existing CI/CD pipeline (one workflow, multiple jobs).
+
+### Subpath integration
+
+`svelte.config.js` sets:
+
+```js
+paths: {
+  base: '/learning-platform',
+  assets: '/learning-platform',
+}
+```
+
+This ensures all internal links and asset references resolve correctly when the
+site is served from the subpath.
+
+### How the subpath is built and copied
+
+The `.github/workflows/deploy.yml` workflow:
+
+1. Builds the SvelteKit site → `./build/`.
+2. Copies `./build/` → `../career/taras-polishchuk.github.io/learning-platform/`.
+3. Commits + pushes the portfolio repo (or opens a PR — see below).
+
+The portfolio repo's existing GitHub Pages workflow then picks up the new files
+and deploys them.
+
+---
+
+## 4. CI/CD
+
+The repository is `taras-polishchuk/learning-platform` (private).
+
+Workflow: `.github/workflows/deploy.yml`
+
+```yaml
+name: Build & deploy
+on:
+  push:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Copy build to portfolio
+        run: |
+          mkdir -p ../taras-polishchuk.github.io/learning-platform
+          cp -r build/* ../taras-polishchuk.github.io/learning-platform/
+      - name: Commit & push portfolio
+        run: |
+          cd ../taras-polishchuk.github.io
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add learning-platform/
+          git commit -m "chore(learning-platform): deploy ${{ github.sha }}" || echo "no changes"
+          git push
+```
+
+(The actual workflow uses the GitHub CLI PAT and adjusts secrets handling.)
+
+---
+
+## 5. Validation after deployment
+
+After each deploy, the CI workflow verifies:
+
+- Build succeeds (npm run build returns 0).
+- Output directory `./build/` exists and contains `index.html`.
+- The portfolio copy succeeds.
+
+Manual smoke tests after deploy:
+
+- Open `https://taras-polishchuk.github.io/learning-platform/`.
+- Click through Orientation → module → complete → return home (progress saved).
+- Open Resources tab; filter; open one resource.
+- Open Docs tab; click a doc.
+
+---
+
+## 6. Branching
+
+`main` is the protected branch. All changes go through PRs.
+
+- Feature branches: `feat/<short-name>`.
+- Fix branches: `fix/<short-name>`.
+- Docs branches: `docs/<short-name>`.
+
+---
+
+## 7. Rollback
+
+The portfolio repo's `learning-platform/` directory is overwritten on each
+deploy. To roll back:
+
+1. Identify the previous successful commit in the portfolio repo.
+2. `git revert` or `git reset --hard <sha>` in the portfolio.
+3. Push.
+
+To roll back the source repo:
+
+1. Revert the offending PR in `taras-polishchuk/learning-platform`.
+2. The next push triggers a rebuild.
+
+---
+
+## 8. Environment variables
+
+None. The site is 100% static. All data is in `src/lib/data/*.ts`.
+
+---
+
+## 9. Where the live URL lives
+
+The portfolio's existing `index.html` should include a link to
+`/learning-platform/`. If it does not, the URL still works — it is just not
+discoverable from the portfolio home.
+
+---
+
+*End of Deployment.*
