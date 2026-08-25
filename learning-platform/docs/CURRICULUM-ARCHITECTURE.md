@@ -102,8 +102,8 @@ a **practical artifact**:
 | Sprint Week 4 | Role-specific capstone | Demonstrates AI assistance |
 
 **Without an artifact, the specialist cannot claim competence.** This is the same
-discipline InsideDynamic uses for the Solution Architect work — see
-`work/insidedynamic/09-adr/`.
+This is the same pattern InsideDynamic uses internally for the Solution Architect work —
+see the company's ADR directory.
 
 ---
 

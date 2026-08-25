@@ -29,8 +29,7 @@ oriented. AI Specialist Journey is 90+ days and technically oriented.
 **Rejected:** specialists are adults with day jobs. Long courses get abandoned.
 
 **Chosen:** 4-week sprint with weekly milestones and a capstone. Maps directly
-to the Junior Onboarding Plan that already exists in
-`work/insidedynamic/06-correspondence/JUNIOR-ONBOARDING-PLAN.md`.
+to the company AI-specialist onboarding syllabus (operator's curated curriculum).
 
 ---
 

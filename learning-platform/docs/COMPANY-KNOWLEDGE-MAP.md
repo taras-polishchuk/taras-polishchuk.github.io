@@ -1,10 +1,8 @@
 # InsideDynamic — Knowledge Map (canonical synthesis)
 
 > **Audience:** AI agents + new specialists onboarding to InsideDynamic GmbH.
-> **Source of truth:** `work/insidedynamic/01-agents/_system-map.md`, `02-infrastructure/`,
-> `06-correspondence/{SA-ARCHITECT*,AGENT-PROMPTS,confluence,notion,JUNIOR-ONBOARDING-PLAN}.md`,
-> `09-adr/ADR-013-plane-task-tracker.md`, `09-adr/ADR-014-server-baseline.md`,
-> `04-people/{viktor,maksym,dmytro,role-mapping}.md`.
+> **Source of truth:** operator-curated company corpus (audit reports, Notion canonical docs,
+> KIwerk.one Confluence reference, infrastructure docs, agent specs, ADRs).
 > **Method:** verified facts only; inferences marked `[Inferred]`.
 > **Filter rule:** every company fact below is traceable to a Tier-A source (path + section).
 > **Last synthesized:** 2026-08-25.
