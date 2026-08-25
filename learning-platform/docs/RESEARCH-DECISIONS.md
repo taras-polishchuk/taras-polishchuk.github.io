@@ -104,7 +104,7 @@ Both share the same Orientation pre-requisite.
 
 | Topic | Why deferred | Plan |
 |---|---|---|
-| Per-role specific tracks (QA / Frontend / Infra) | The Junior Onboarding Plan covers this in narrative form; converting to structured data is a separate mission | After v1 ships, add `m-sprint-w1-qa`, `m-sprint-w1-fe`, `m-sprint-w1-infra` |
+| Per-role specific tracks (QA / Frontend / Infra) | The AI-Specialist Onboarding Syllabus covers this in narrative form; converting to structured data is a separate mission | After v1 ships, add `m-sprint-w1-qa`, `m-sprint-w1-fe`, `m-sprint-w1-infra` |
 | KIwerk.one Confluence coverage beyond the 19 extracted pages | 50 pages remain; the extraction is incomplete | Re-extract in a follow-up mission; add as resources |
 | Hands-on lab environment | Requires deployable sandbox; out of scope for static site | Future Coolify-deployed lab |
 | Quiz / knowledge check components | Requires backend for cross-user analytics | Future: optional server-side progress sync |
