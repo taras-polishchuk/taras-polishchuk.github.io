@@ -107,23 +107,43 @@ are the reference implementations; InsideDynamic adapts them.
 
 ## 4. Infrastructure inventory (verified)
 
+The company runs **two parallel deployment models** as of 2026-08-26:
+
+### Active primary deployment (pve-x, deployed 24-26 Aug 2026)
+
 | Asset | Role | Status |
 |---|---|---|
-| `cp.flxo.cloud` (IONOS, Berlin) | **Coolify Master** | verified live |
-| `srv-datq5` (Hetzner, Falkenstein) | Coolify slave — TalkHub (own + RAZERTECH) | knapp (2c/3GB, 5 containers) |
-| `alex-parts-prod` (Hetzner) | Coolify slave — Lichtex | **disconnected** (SSH closed, 24.08) |
-| `ax1.webpanel24.de` (Plesk, 217.154.83.16) | 30 subscriptions, 56 domains | 12c/23GB/697GB; 2 infected sites; 14 SSL expired; backup OK except 1 unencrypted + 4 stale |
-| `dev-server` (Proxmox VM, 192.168.10.124) | Workstation + 7 Claude Code sessions | **no backup, no monitoring** |
-| `R720` (Proxmox, `pve-x`) | Agents — 20c/40vCPU/64GB | VERIFIED |
-| `R740` (Proxmox) | Client projects + flexpos-abrechnung | VERIFIED (specs TBD) |
-| `Debian 13` (new) | Viktor's personal agent | VERIFIED |
-| `NAS` | Storage, 2×5TB RAID 0 | VERIFIED |
+| **`pve-x`** (Dell PowerEdge R720, PVE 9.2.2, Cluster INDYN-CL node 2) | Host for all new product LXC containers | VERIFIED, 192.168.10.29, 40 threads, 62 GB RAM |
+| `CT700` coolify (10.11.12.10, 2 vCPU / 4 GB / 30 GB) | Coolify 4.3.11 control plane + cloudflared | VERIFIED on `nvme-auto` ZFS |
+| `CT701` plane (10.11.12.11, 2 vCPU / 4 GB / 30 GB) | Plane 1.4.2 task tracker | VERIFIED |
+| `CT702` vault (10.11.12.12, 1 vCPU / 1 GB / 10 GB) | Vaultwarden 1.37.2 password vault | VERIFIED |
+| `CT703` mvp (10.11.12.13, 1 vCPU / 1 GB / 20 GB) | MVP Web App (placeholder) | VERIFIED |
+| `pc777` (192.168.10.77 / 10.11.12.20) | Automation hub + jump host into VLAN 11 | VERIFIED |
+| **Cloudflare Tunnel** `insidedynamic-infra` (UUID `2db2df5d-...`) | Zero-port ingress for 5 domains | VERIFIED, 4 QUIC outbound connections |
+| **Cloudflare Access** (`insidedynamic.cloudflareaccess.com`) | Zero-Trust auth, One-Time-PIN | VERIFIED |
+| `NAS` (existing) | Storage | VERIFIED |
 | Hetzner Storage Box | External backup target (€3.5/TB/mo) | VERIFIED |
 
-**Source-of-truth docs:**
-- `02-infrastructure/hardware.md` (verified 24.08 + audit)
-- `02-infrastructure/coolify.md` (Coolify Master confirmed on IONOS)
-- `06-correspondence/SA-ARCHITECT-ANALYSIS.md` (2-worlds architecture)
+**Domains (active):** `cp.idstar.de`, `task.idstar.de`, `vault.idstar.de`, `mvp.idstar.de` (all behind CF Tunnel + Access).
+
+**Network segmentation:** VLAN 11 `INDYN-DEV-AI` (10.11.12.0/24) is **deny-by-default** to VLAN 10 `Corp` (10.20.30.0/24) — verified.
+
+### Legacy / coexisting deployment
+
+| Asset | Role | Status |
+|---|---|---|
+| `pve` (192.168.10.25) | Production Proxmox node, Cluster INDYN-CL member | VERIFIED (out of bootstrap scope) |
+| `dev-server` (192.168.10.124) | Workstation, 7 Claude Code sessions | **no backup, no monitoring** (RISK) |
+| `R740` (Proxmox) | Client projects + flexpos-abrechnung | VERIFIED (specs TBD) |
+| `Debian 13` | Viktor's personal agent | VERIFIED |
+| Hetzner 1 (linkify-talkhub) | 1 VM, 5 nodes max | VERIFIED |
+| Hetzner 2 (client agents) | €5-10/month, always online | VERIFIED |
+| `IONOS` (Hetzner DC) | **Coolify Master** for legacy 51-client deployment | VERIFIED |
+| `ax1.webpanel24.de` (Plesk, 217.154.83.16) | 30 subscriptions, 56 domains | 12c/23GB/697GB; 2 infected sites; 14 SSL expired; backup OK except 1 unencrypted + 4 stale |
+| `indyn-pc-777` | Reserved for separate agent (Viktor's note); do not touch | VERIFIED |
+ - `02-infrastructure/coolify.md` (legacy Coolify Master on IONOS)
+ - `06-correspondence/SA-ARCHITECT-ANALYSIS.md` (2-worlds architecture)
+ - **`02-infrastructure/infra-bootstrap/docs/`** — canonical 11-file source of truth for pve-x deployment (overview → proxmox → lxc → cloudflare → coolify → plane → vaultwarden → credentials → backup → runbooks → onboarding)
 
 ---
 
