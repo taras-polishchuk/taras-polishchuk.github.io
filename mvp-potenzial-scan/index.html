@@ -1,1327 +1,1080 @@
 <!DOCTYPE html>
-<html lang="de" data-theme="dark">
+<html lang="uk">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Potenzial-Scan · InsideDynamic MVP · Taras Polishchuk</title>
-<meta name="description" content="InsideDynamic B2B Lead-Produkt: 5-Minuten-AI-Potenzial-Scan für deutsche KMU. Architektur, User Journey, Legal-Compliance, Roadmap.">
-<meta name="author" content="Taras Polishchuk">
+<title>Potenzial-Scan Lite · InsideDynamic GmbH · 5-хвилинна AI-оцінка для німецького Mittelstand</title>
+<meta name="description" content="InsideDynamic Potenzial-Scan Lite: 5-хвилинна AI-оцінка процесу для німецького Mittelstand. Без реєстрації, з телефоном і email, GDPR-compliant, інтеграція з Odoo CRM.">
+<meta name="author" content="InsideDynamic GmbH · Taras Polishchuk">
 <link rel="canonical" href="https://taras-polishchuk.github.io/mvp-potenzial-scan/">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2314b8a6'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='central' font-family='sans-serif' font-size='18' font-weight='800' fill='white'%3EPS%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%239a5a2f'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='central' font-family='Georgia,serif' font-size='20' font-weight='700' fill='%23fffdf8'%3EП%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!--
+  Source-of-truth citations (architecture freeze V2):
+  - §1.1 Product function         : 11-AUTHORITATIVE-MVP-ARCHITECTURE-V2.md L-13..L-16
+  - §1.2 Non-goals               : 11-AUTHORITATIVE-MVP-ARCHITECTURE-V2.md L-24..L-26
+  - §5.1 Stack freeze            : 11-AUTHORITATIVE-MVP-ARCHITECTURE-V2.md L-17..L-21
+  - §5.2 Routes (Next.js)        : 11-AUTHORITATIVE-MVP-ARCHITECTURE-V2.md L-126..L-162
+  - §5.3 Middleware              : 11-AUTHORITATIVE-MVP-ARCHITECTURE-V2.md L-164..L-173
+  - §3 Infrastructure topology   : 11-AUTHORITATIVE-MVP-ARCHITECTURE-V2.md L-63..L-91
+  - §9 Odoo integration          : 11-AUTHORITATIVE-MVP-ARCHITECTURE-V2.md L-260..L-321
+  - §10 No user accounts         : 11-AUTHORITATIVE-MVP-ARCHITECTURE-V2.md L-323..L-349
+  - §11 GDPR + deletion saga     : 11-AUTHORITATIVE-MVP-ARCHITECTURE-V2.md L-351..L-385
+  - §13 L-1..L-26 MUST HAVE      : 11-AUTHORITATIVE-MVP-ARCHITECTURE-V2.md L-411..L-457
+  - §14 X-1..X-34 explicit EXCL  : 11-AUTHORITATIVE-MVP-ARCHITECTURE-V2.md L-444..L-457
+  - §12 Gate A prerequisites     : 11-AUTHORITATIVE-MVP-ARCHITECTURE-V2.md L-389..L-403
+  - Closure verdict              : architecture-closure-2026-08-30/03-POST-CORRECTION-READINESS.md
+-->
 <style>
   :root {
-    --bg: #0a0a0b;
-    --bg-soft: #131316;
-    --bg-card: #18181f;
-    --bg-card-hover: #1f1f28;
-    --border: #2a2a32;
-    --border-strong: #3a3a44;
-    --text: #e4e4e7;
-    --text-muted: #a1a1aa;
-    --text-dim: #71717a;
-    --accent: #14b8a6;
-    --accent-bright: #2dd4bf;
-    --accent-soft: rgba(20, 184, 166, 0.12);
-    --accent-glow: rgba(20, 184, 166, 0.25);
-    --warn: #f59e0b;
-    --danger: #ef4444;
-    --info: #3b82f6;
-    --success: #10b981;
-    --ink: #c2410c;
+    /* Editorial design system — warm paper, terracotta, serif */
+    --bg: #fbf7f0;
+    --surface: #fffdf8;
+    --surface-warm: #f1e6d6;
+    --fg: #1f1a16;
+    --fg-2: #4b4038;
+    --muted: #7d7168;
+    --meta: #9a5a2f;
+    --border: #ded3c5;
+    --border-soft: #eee5da;
+    --accent: #9a5a2f;
+    --accent-on: #fffdf8;
+    --accent-hover: color-mix(in oklab, var(--accent), black 8%);
+    --accent-active: color-mix(in oklab, var(--accent), black 14%);
+    --success: #4f8a4f;
+    --warn: #c9822f;
+    --danger: #b33a3a;
+
+    --font-display: "Source Serif Pro", Georgia, "Times New Roman", serif;
+    --font-body: "Source Serif Pro", Georgia, serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+
+    --text-xs: 0.75rem;     /* 12 */
+    --text-sm: 0.875rem;    /* 14 */
+    --text-base: 1.0625rem; /* 17 — slightly tighter than 18 for Ukrainian */
+    --text-lg: 1.25rem;     /* 20 */
+    --text-xl: 1.625rem;    /* 26 */
+    --text-2xl: 2.125rem;   /* 34 */
+    --text-3xl: 2.75rem;    /* 44 */
+
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --space-7: 3rem;
+    --space-8: 4rem;
+    --space-9: 6rem;
+
+    --container-max: 64rem;   /* 1024 */
+    --container-narrow: 44rem;/* 704 */
+
+    --leading-tight: 1.18;
+    --leading-body: 1.55;
+
+    --border-radius: 2px;     /* editorial — sharp, not pill */
   }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
+  html, body { background: var(--bg); }
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.6;
+    font-family: var(--font-body);
+    color: var(--fg);
+    line-height: var(--leading-body);
+    font-size: var(--text-base);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    text-rendering: optimizeLegibility;
   }
 
-  /* Navigation */
+  ::selection { background: var(--accent); color: var(--accent-on); }
+
+  /* TYPOGRAPHY */
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    line-height: var(--leading-tight);
+    color: var(--fg);
+    letter-spacing: -0.01em;
+  }
+  h1 { font-size: var(--text-3xl); font-weight: 700; letter-spacing: -0.02em; }
+  h2 { font-size: var(--text-2xl); font-weight: 700; }
+  h3 { font-size: var(--text-xl); font-weight: 600; }
+  h4 { font-size: var(--text-lg); font-weight: 600; }
+  p { margin-bottom: var(--space-3); }
+  code, pre, kbd, samp { font-family: var(--font-mono); font-size: 0.92em; }
+
+  /* LAYOUT */
+  .container {
+    width: 100%;
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding-left: var(--space-5);
+    padding-right: var(--space-5);
+  }
+  .narrow { max-width: var(--container-narrow); margin-left: auto; margin-right: auto; }
+
+  /* NAV */
   .nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    background: rgba(10, 10, 11, 0.78);
-    border-bottom: 1px solid var(--border);
-    padding: 1rem 2rem;
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in oklab, var(--bg), white 35%);
+    border-bottom: 1px solid var(--border-soft);
+    backdrop-filter: blur(8px);
   }
   .nav-inner {
-    max-width: 1400px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 2rem;
+    display: flex; justify-content: space-between; align-items: center;
+    height: 56px; max-width: var(--container-max);
+    margin: 0 auto; padding: 0 var(--space-5);
   }
   .nav-brand {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
+    font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1.05rem;
-  }
-  .nav-brand-mark {
-    width: 32px; height: 32px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, var(--accent), #0d9488);
-    display: flex; align-items: center; justify-content: center;
-    color: white; font-weight: 800; font-size: 0.9rem;
-  }
-  .nav-links {
-    display: flex; gap: 1.5rem; flex-wrap: wrap;
-    font-size: 0.875rem;
-  }
-  .nav-links a {
-    color: var(--text-muted);
+    font-size: var(--text-lg);
+    color: var(--fg);
     text-decoration: none;
-    transition: color 0.15s;
+    display: flex; gap: var(--space-2); align-items: center;
+  }
+  .nav-brand .dot {
+    width: 10px; height: 10px; background: var(--accent); display: inline-block;
+  }
+  .nav-links { display: flex; gap: var(--space-5); list-style: none; }
+  .nav-links a {
+    color: var(--fg-2); text-decoration: none; font-size: var(--text-sm);
+    transition: color 120ms ease;
   }
   .nav-links a:hover { color: var(--accent); }
-  .nav-meta {
-    font-size: 0.8rem;
-    color: var(--text-dim);
-    font-family: 'JetBrains Mono', monospace;
-  }
 
-  /* Layout */
-  .container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 2rem;
-  }
-  section {
-    padding: 4rem 0;
+  /* HERO */
+  .hero {
+    padding-top: var(--space-8); padding-bottom: var(--space-7);
     border-bottom: 1px solid var(--border);
   }
-  section:last-child { border-bottom: none; }
-
-  /* Section header */
-  .sec-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
-    color: var(--accent);
-    letter-spacing: 0.2em;
-    margin-bottom: 0.75rem;
-  }
-  .sec-title {
-    font-size: clamp(1.75rem, 2.5vw, 2.5rem);
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    margin-bottom: 0.5rem;
-    line-height: 1.15;
-  }
-  .sec-sub {
-    color: var(--text-muted);
-    font-size: 1.05rem;
-    max-width: 720px;
-    margin-bottom: 2.5rem;
-  }
-
-  /* Hero */
-  .hero {
-    padding: 5rem 0 3rem;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -20%; left: 50%;
-    transform: translateX(-50%);
-    width: 80%; height: 80%;
-    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 60%);
-    pointer-events: none;
-    filter: blur(40px);
-  }
-  .hero-inner { position: relative; z-index: 1; }
-  .hero-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--accent-soft);
-    color: var(--accent-bright);
-    padding: 0.4rem 0.9rem;
-    border-radius: 999px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    border: 1px solid rgba(20, 184, 166, 0.3);
-  }
-  .hero-tag::before {
-    content: '';
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 8px var(--accent);
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-  .hero h1 {
-    font-size: clamp(2.5rem, 5.5vw, 5rem);
-    font-weight: 800;
-    letter-spacing: -0.035em;
-    line-height: 1.05;
-    margin-bottom: 1.25rem;
-    max-width: 14ch;
-  }
-  .hero h1 .accent {
-    background: linear-gradient(135deg, var(--accent-bright), #5eead4);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-  .hero p.lead {
-    font-size: clamp(1.1rem, 1.5vw, 1.35rem);
-    color: var(--text-muted);
-    max-width: 700px;
-    margin-bottom: 2rem;
-  }
-  .hero-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    padding: 1.25rem 1.5rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    font-size: 0.875rem;
-    margin-top: 2.5rem;
-    max-width: 880px;
-  }
-  .hero-meta-item { display: flex; flex-direction: column; gap: 0.15rem; }
-  .hero-meta-item strong { color: var(--text); font-weight: 600; }
-  .hero-meta-item span { color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; }
-
-  /* Stat row */
-  .stats-row {
+  .hero-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-    gap: 1rem;
-    margin: 2rem 0;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: var(--space-7);
+    align-items: start;
   }
-  .stat {
-    background: var(--bg-card);
+  .hero-eyebrow {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--meta);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1.25rem;
-    transition: all 0.2s;
+    padding: 4px 10px;
+    margin-bottom: var(--space-4);
   }
-  .stat:hover { border-color: var(--border-strong); transform: translateY(-2px); }
-  .stat-value {
-    font-size: 1.75rem;
-    font-weight: 800;
-    color: var(--accent-bright);
+  .hero-lede {
+    font-size: var(--text-lg);
+    color: var(--fg-2);
+    margin-bottom: var(--space-5);
+    max-width: 36rem;
+  }
+  .hero-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+    border-top: 1px solid var(--border);
+    padding-top: var(--space-4);
+    margin-top: var(--space-5);
+  }
+  .hero-stat-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  .hero-stat-value {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-2xl);
+    color: var(--fg);
     line-height: 1.1;
-    letter-spacing: -0.02em;
+    margin-top: 2px;
   }
-  .stat-label {
-    font-size: 0.75rem;
-    color: var(--text-muted);
+
+  /* FUNNEL DIAGRAM (Section A) */
+  .funnel-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: var(--space-5);
+  }
+  .funnel-card h3 { margin-bottom: var(--space-4); }
+
+  /* SECTION HEAD */
+  .section { padding-top: var(--space-8); padding-bottom: var(--space-7); }
+  .section + .section { border-top: 1px solid var(--border-soft); }
+  .section-head { max-width: 44rem; margin-bottom: var(--space-6); }
+  .section-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-top: 0.25rem;
+    color: var(--meta);
+    margin-bottom: var(--space-2);
   }
-  .stat-detail {
-    font-size: 0.75rem;
-    color: var(--text-dim);
-    margin-top: 0.5rem;
-  }
+  .section-head h2 { margin-bottom: var(--space-3); }
+  .section-head p { color: var(--fg-2); }
 
-  /* Concept scorecard */
-  .scorecard {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.25rem;
-    margin-top: 2rem;
-  }
-  @media (max-width: 900px) {
-    .scorecard { grid-template-columns: 1fr; }
-  }
-  .concept {
-    background: var(--bg-card);
+  /* DIAGRAMM-BOX */
+  .diagram {
+    background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 1.5rem;
-    position: relative;
-    transition: all 0.2s;
-  }
-  .concept:hover { transform: translateY(-3px); border-color: var(--border-strong); }
-  .concept.winner {
-    border-color: var(--accent);
-    background: linear-gradient(180deg, var(--accent-soft), var(--bg-card) 60%);
-    box-shadow: 0 0 0 1px var(--accent-soft), 0 10px 30px -10px var(--accent-glow);
-  }
-  .concept-badge {
-    position: absolute;
-    top: -10px; right: 16px;
-    background: var(--accent);
-    color: var(--bg);
-    padding: 0.25rem 0.7rem;
-    border-radius: 999px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-  }
-  .concept-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem; }
-  .concept-tag { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem; }
-  .concept-score {
-    font-size: 2.25rem;
-    font-weight: 800;
-    color: var(--text);
-    line-height: 1;
-    margin-bottom: 0.25rem;
-  }
-  .concept.winner .concept-score { color: var(--accent-bright); }
-  .concept-score-max { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 1rem; }
-  .concept-list {
-    list-style: none;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-  }
-  .concept-list li {
-    padding-left: 1rem;
-    position: relative;
-    margin-bottom: 0.35rem;
-  }
-  .concept-list li::before {
-    content: '→';
-    position: absolute;
-    left: 0;
-    color: var(--accent);
-  }
-  .concept-list li.reject::before { content: '✕'; color: var(--danger); }
-
-  /* Flow */
-  .flow {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 0.5rem;
-    margin: 2rem 0;
-    align-items: stretch;
-  }
-  @media (max-width: 1100px) { .flow { grid-template-columns: repeat(4, 1fr); } }
-  @media (max-width: 700px) { .flow { grid-template-columns: 1fr; } }
-  .flow-step {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1rem;
-    position: relative;
-    transition: all 0.2s;
-  }
-  .flow-step:hover { border-color: var(--accent); transform: translateY(-2px); }
-  .flow-step.activation {
-    background: linear-gradient(180deg, rgba(16, 185, 129, 0.15), var(--bg-card));
-    border-color: var(--success);
-  }
-  .flow-step.conv {
-    background: linear-gradient(180deg, rgba(245, 158, 11, 0.15), var(--bg-card));
-    border-color: var(--warn);
-  }
-  .flow-num {
-    position: absolute;
-    top: -8px; left: 10px;
-    background: var(--bg);
-    color: var(--accent);
-    width: 24px; height: 24px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem; font-weight: 700;
-    border: 1px solid var(--border);
-  }
-  .flow-step.activation .flow-num { color: var(--success); border-color: var(--success); }
-  .flow-step.conv .flow-num { color: var(--warn); border-color: var(--warn); }
-  .flow-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.25rem; padding-right: 0.5rem; }
-  .flow-time { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--accent); margin-bottom: 0.4rem; }
-  .flow-step.activation .flow-time { color: var(--success); }
-  .flow-step.conv .flow-time { color: var(--warn); }
-  .flow-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.45; }
-
-  /* Two-column */
-  .two-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-top: 2rem;
-  }
-  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
-
-  /* Card */
-  .card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.5rem;
-  }
-  .card-h {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--accent);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 0.75rem;
-  }
-  .card-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; }
-  .card-text { color: var(--text-muted); font-size: 0.9rem; }
-
-  /* Feature grid */
-  .features {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-  .feat {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1.25rem;
-    transition: all 0.2s;
-  }
-  .feat:hover { border-color: var(--border-strong); transform: translateY(-2px); }
-  .feat-icon {
-    width: 36px; height: 36px;
-    border-radius: 8px;
-    background: var(--accent-soft);
-    color: var(--accent);
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 0.75rem;
-    font-size: 1rem;
-    font-weight: 700;
-  }
-  .feat-h { font-weight: 600; margin-bottom: 0.25rem; font-size: 0.95rem; }
-  .feat-d { font-size: 0.83rem; color: var(--text-muted); line-height: 1.5; }
-
-  /* Architecture diagram */
-  .arch {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 2rem;
-    margin-top: 2rem;
+    padding: var(--space-5);
+    margin-bottom: var(--space-5);
     overflow-x: auto;
   }
-  .arch-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 1rem;
+  .diagram-title {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: var(--space-3);
   }
-  .arch-box {
-    background: var(--bg-soft);
-    border: 1px solid var(--border-strong);
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    font-size: 0.85rem;
-    font-weight: 500;
-    text-align: center;
-    min-width: 130px;
+  .diagram pre {
+    background: var(--surface-warm);
+    border: 1px solid var(--border-soft);
+    padding: var(--space-4);
+    font-size: var(--text-sm);
+    line-height: 1.55;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .diagram svg { display: block; max-width: 100%; height: auto; }
+
+  /* STEP CARDS — Section B (Як працює) */
+  .step-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-4);
+    counter-reset: step;
+  }
+  .step-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: var(--space-4);
     position: relative;
   }
-  .arch-box.accent {
-    background: var(--accent-soft);
-    border-color: var(--accent);
-    color: var(--accent-bright);
+  .step-card::before {
+    counter-increment: step;
+    content: counter(step, decimal-leading-zero);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--meta);
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: var(--space-2);
   }
-  .arch-box .small { display: block; font-size: 0.7rem; color: var(--text-muted); font-weight: 400; margin-top: 0.15rem; }
-  .arch-box.accent .small { color: var(--accent); opacity: 0.8; }
-  .arch-arrow {
-    color: var(--text-dim);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 1.1rem;
+  .step-card h4 {
+    font-size: var(--text-base);
+    font-weight: 600;
+    margin-bottom: var(--space-2);
   }
-  .arch-row-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem;
-    color: var(--text-dim);
+  .step-card p {
+    font-size: var(--text-sm);
+    color: var(--fg-2);
+    margin-bottom: 0;
+    line-height: 1.5;
+  }
+  .step-card .step-tag {
+    display: inline-block;
+    margin-top: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    width: 90px;
-    text-align: right;
+    letter-spacing: 0.08em;
+    color: var(--meta);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+  }
+
+  /* INFRA DIAGRAM — Section C */
+  .infra-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-5);
+  }
+  .infra-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: var(--space-5);
+  }
+  .infra-card h3 { margin-bottom: var(--space-3); font-size: var(--text-lg); }
+  .infra-card ul { list-style: none; }
+  .infra-card li {
+    font-size: var(--text-sm);
+    padding: 6px 0;
+    border-bottom: 1px dotted var(--border);
+    display: flex; gap: var(--space-3);
+  }
+  .infra-card li:last-child { border-bottom: 0; }
+  .infra-card li code {
+    background: var(--surface-warm);
+    border: 1px solid var(--border-soft);
+    padding: 1px 6px;
+    font-size: 0.8125rem;
+    color: var(--meta);
     flex-shrink: 0;
   }
 
-  /* Legal matrix */
-  .legal-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 0.75rem;
-    margin-top: 2rem;
-  }
-  .legal {
-    background: var(--bg-card);
+  /* TIMELINE — Section D (Життєвий шлях) */
+  .timeline {
+    background: var(--surface);
     border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
-    border-radius: 8px;
-    padding: 1rem 1.1rem;
-    transition: all 0.2s;
+    padding: var(--space-5);
   }
-  .legal:hover { background: var(--bg-card-hover); }
-  .legal.warn { border-left-color: var(--warn); }
-  .legal.danger { border-left-color: var(--danger); }
-  .legal.info { border-left-color: var(--info); }
-  .legal-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.2rem; }
-  .legal-ref { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--accent); margin-bottom: 0.4rem; }
-  .legal.warn .legal-ref { color: var(--warn); }
-  .legal.danger .legal-ref { color: var(--danger); }
-  .legal.info .legal-ref { color: var(--info); }
-  .legal-d { font-size: 0.78rem; color: var(--text-muted); line-height: 1.45; }
+  .timeline-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    margin-top: var(--space-4);
+  }
+  .timeline-col {
+    padding: var(--space-4);
+    border-right: 1px solid var(--border-soft);
+  }
+  .timeline-col:last-child { border-right: 0; }
+  .timeline-col h4 {
+    font-size: var(--text-base);
+    font-weight: 600;
+    margin-bottom: var(--space-3);
+    color: var(--meta);
+  }
+  .timeline-col ul {
+    list-style: none;
+    font-size: var(--text-sm);
+    color: var(--fg-2);
+  }
+  .timeline-col li {
+    padding: 6px 0;
+    border-bottom: 1px dotted var(--border);
+    line-height: 1.45;
+  }
+  .timeline-col li:last-child { border-bottom: 0; }
+  .timeline-col li strong {
+    color: var(--fg);
+    font-weight: 600;
+  }
 
-  /* Roadmap */
-  .roadmap {
+  /* IN/OUT LISTS — Section E */
+  .scope-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 0.5rem;
-    margin: 2rem 0 1rem;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-5);
   }
-  @media (max-width: 1000px) { .roadmap { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 600px) { .roadmap { grid-template-columns: 1fr; } }
-  .phase {
-    background: var(--bg-card);
+  .scope-card {
+    background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1.1rem;
-    position: relative;
+    padding: var(--space-5);
   }
-  .phase.urgent { border-top: 3px solid var(--danger); }
-  .phase.ready { border-top: 3px solid var(--success); }
-  .phase.next { border-top: 3px solid var(--accent); }
-  .phase-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem;
-    color: var(--text-dim);
-    letter-spacing: 0.1em;
-    margin-bottom: 0.4rem;
+  .scope-card.in h3::before { content: "✓ "; color: var(--success); }
+  .scope-card.out h3::before { content: "� "; color: var(--danger); }
+  .scope-card ul { list-style: none; font-size: var(--text-sm); }
+  .scope-card li {
+    padding: 6px 0;
+    border-bottom: 1px dotted var(--border);
+    color: var(--fg-2);
   }
-  .phase-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.3rem; }
-  .phase-owner {
-    display: inline-block;
-    font-size: 0.7rem;
-    padding: 0.15rem 0.5rem;
-    background: var(--bg-soft);
-    border-radius: 4px;
-    color: var(--text-muted);
-    margin-bottom: 0.6rem;
-  }
-  .phase-time { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent); margin-bottom: 0.6rem; }
-  .phase.urgent .phase-time { color: var(--danger); }
-  .phase.ready .phase-time { color: var(--success); }
-  .phase-d { font-size: 0.78rem; color: var(--text-muted); line-height: 1.45; }
+  .scope-card li:last-child { border-bottom: 0; }
 
-  /* Persona */
-  .personas {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-  @media (max-width: 900px) { .personas { grid-template-columns: 1fr; } }
-  .persona {
-    background: var(--bg-card);
+  /* GATE A — Section F */
+  .gate-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.25rem;
+    font-size: var(--text-sm);
   }
-  .persona-name { font-weight: 700; margin-bottom: 0.15rem; font-size: 1rem; }
-  .persona-role { font-size: 0.8rem; color: var(--accent); margin-bottom: 0.75rem; }
-  .persona-list { list-style: none; font-size: 0.85rem; color: var(--text-muted); }
-  .persona-list li { padding-left: 1rem; position: relative; margin-bottom: 0.3rem; }
-  .persona-list li::before { content: '•'; position: absolute; left: 0; color: var(--accent); }
-
-  /* Cost table */
-  .cost-table {
-    margin-top: 2rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
+  .gate-table th, .gate-table td {
+    padding: var(--space-3) var(--space-4);
+    text-align: left;
+    border-bottom: 1px solid var(--border-soft);
+    vertical-align: top;
   }
-  .cost-row {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 2fr;
-    padding: 0.85rem 1.25rem;
-    border-bottom: 1px solid var(--border);
-    font-size: 0.88rem;
-    align-items: center;
-  }
-  .cost-row:last-child { border-bottom: none; }
-  .cost-row.head {
-    background: var(--bg-soft);
-    font-size: 0.75rem;
+  .gate-table th {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    background: var(--surface-warm);
     font-weight: 600;
   }
-  .cost-row.total {
-    background: var(--accent-soft);
-    color: var(--accent-bright);
-    font-weight: 700;
+  .gate-table td code {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--meta);
   }
-  .cost-row .pos { color: var(--success); font-weight: 600; }
-  .cost-row .neg { color: var(--warn); font-weight: 600; }
+  .gate-table .status-block { color: var(--danger); font-weight: 600; }
+  .gate-table .status-ready { color: var(--success); font-weight: 600; }
 
-  /* CTA box */
-  .cta-box {
-    background: linear-gradient(135deg, var(--accent-soft), transparent);
-    border: 1px solid var(--accent);
-    border-radius: 16px;
-    padding: 2.5rem;
-    text-align: center;
-    margin-top: 2rem;
+  /* FOOTER */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: var(--space-6) 0;
+    background: var(--surface-warm);
+    margin-top: var(--space-8);
   }
-  .cta-box h3 {
-    font-size: 1.75rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    margin-bottom: 0.5rem;
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: var(--space-5);
+    font-size: var(--text-sm);
   }
-  .cta-box p { color: var(--text-muted); max-width: 600px; margin: 0 auto; }
-
-  /* Footer */
-  footer {
-    padding: 3rem 0;
-    color: var(--text-dim);
-    font-size: 0.85rem;
-    text-align: center;
-  }
-  footer strong { color: var(--text); }
-
-  /* Utility */
-  .badge-inline {
-    display: inline-block;
-    padding: 0.15rem 0.5rem;
-    border-radius: 4px;
-    background: var(--bg-soft);
-    color: var(--accent);
-    font-size: 0.75rem;
+  .footer h4 {
+    font-size: var(--text-sm);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: var(--space-3);
     font-weight: 600;
-    font-family: 'JetBrains Mono', monospace;
   }
-  .num-pill {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    background: var(--accent);
-    color: var(--bg);
-    font-size: 0.7rem;
-    font-weight: 800;
-    margin-right: 0.5rem;
+  .footer ul { list-style: none; }
+  .footer li { padding: 3px 0; }
+  .footer a {
+    color: var(--fg-2);
+    text-decoration: none;
+    transition: color 120ms ease;
   }
-  ul.clean { list-style: none; }
-  ul.clean li { padding-left: 1.4rem; position: relative; margin-bottom: 0.4rem; font-size: 0.88rem; color: var(--text-muted); }
-  ul.clean li::before { content: '✓'; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
-  ul.clean li.cross::before { content: '✕'; color: var(--text-dim); }
-
-  .divider {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
-    margin: 2rem 0;
+  .footer a:hover { color: var(--accent); }
+  .footer-meta {
+    margin-top: var(--space-5);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--muted);
+    text-align: center;
   }
 
-  /* Print */
-  @media print {
-    .nav { display: none; }
-    body { background: white; color: #111; }
-    .card, .concept, .feat, .stat, .legal, .arch, .cost-table, .phase, .persona, .cta-box {
-      border-color: #ccc;
-      background: white;
-      box-shadow: none;
+  /* RESPONSIVE — 1024, 768, 480, 360 */
+  @media (max-width: 1024px) {
+    .hero-grid { grid-template-columns: 1fr; gap: var(--space-5); }
+    .step-grid { grid-template-columns: repeat(2, 1fr); }
+    .infra-grid { grid-template-columns: 1fr; }
+    .scope-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    h1 { font-size: var(--text-2xl); }
+    h2 { font-size: var(--text-xl); }
+  }
+
+  @media (max-width: 768px) {
+    .container { padding-left: var(--space-4); padding-right: var(--space-4); }
+    .nav-links { display: none; }
+    .hero { padding-top: var(--space-6); padding-bottom: var(--space-5); }
+    .section { padding-top: var(--space-6); padding-bottom: var(--space-5); }
+    .step-grid { grid-template-columns: 1fr; }
+    .timeline-grid { grid-template-columns: 1fr; }
+    .timeline-col { border-right: 0; border-bottom: 1px solid var(--border-soft); }
+    .timeline-col:last-child { border-bottom: 0; }
+    .hero-stats { grid-template-columns: 1fr; gap: var(--space-3); }
+    .gate-table { font-size: var(--text-xs); }
+    .gate-table th, .gate-table td { padding: var(--space-2) var(--space-3); }
+    .footer-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 1.875rem; }
+  }
+
+  @media (max-width: 480px) {
+    h1 { font-size: 1.625rem; }
+    h2 { font-size: 1.375rem; }
+    h3 { font-size: 1.125rem; }
+    .diagram { padding: var(--space-3); }
+    .diagram pre { font-size: 0.75rem; padding: var(--space-3); }
+    .step-card, .infra-card, .scope-card, .timeline, .funnel-card { padding: var(--space-3); }
+  }
+
+  /* ACCESSIBILITY */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
     }
-    .concept.winner, .flow-step.activation, .flow-step.conv { background: #f5f5f5; }
-    .stat-value, .concept-score, .concept.winner .concept-score { color: #111; }
-    h1, h2, h3 { color: #111; }
+    html { scroll-behavior: auto; }
   }
+  .visually-hidden {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+  svg [role="img"] { display: block; }
 </style>
 </head>
 <body>
 
-<nav class="nav">
+<nav class="nav" aria-label="Головна навігація">
   <div class="nav-inner">
-    <div class="nav-brand">
-      <div class="nav-brand-mark">PS</div>
-      <span>Potenzial-Scan</span>
-    </div>
-    <div class="nav-links">
-      <a href="#problem">Problem</a>
-      <a href="#konzept">Konzept</a>
-      <a href="#journey">User Journey</a>
-      <a href="#features">Features</a>
-      <a href="#architektur">Architektur</a>
-      <a href="#legal">Legal</a>
-      <a href="#roadmap">Roadmap</a>
-      <a href="#cta">Approve</a>
-    </div>
-    <div class="nav-meta">v3.9 · 2026-08-27</div>
+    <a href="#top" class="nav-brand"><span class="dot" aria-hidden="true"></span>Potenzial-Scan Lite</a>
+    <ul class="nav-links">
+      <li><a href="#shcho-ce-take">Що це</a></li>
+      <li><a href="#iak-pratsiuie">Як працює</a></li>
+      <li><a href="#arkhitektura">Архітектура</a></li>
+      <li><a href="#shliakh">Шлях користувача</a></li>
+      <li><a href="#scope">Scope</a></li>
+      <li><a href="#gate-a">Gate A</a></li>
+    </ul>
   </div>
 </nav>
 
-<!-- ===================== HERO ===================== -->
-<section class="hero">
-  <div class="container hero-inner">
-    <div class="hero-tag">InsideDynamic · MVP · Bereit für CEO-Approval</div>
-    <h1>5 Minuten.<br>Ein <span class="accent">PDF</span>.<br>Klarheit für Ihr KMU.</h1>
-    <p class="lead">
-      Ein KI-Potenzial-Scan, der deutschen Geschäftsführern in unter 5 Minuten zeigt,
-      welche Aufgaben KI in <em>ihrem</em> Unternehmen diese Woche übernehmen kann —
-      personalisiert, datenschutz-konform, kostenlos.
-    </p>
+<main id="top">
 
-    <div class="stats-row">
-      <div class="stat">
-        <div class="stat-value">5 Min</div>
-        <div class="stat-label">Time-to-Value</div>
-        <div class="stat-detail">Vom Klick zum PDF-Bericht</div>
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <span class="hero-eyebrow">InsideDynamic GmbH · Mannheim · Lite MVP</span>
+        <h1>5-хвилинна AI-оцінка процесу для німецького Mittelstand</h1>
+        <p class="hero-lede">Відвідувач заповнює короткий structured-діалог → калькулятор визначає робоче навантаження → AI ранжує три контрольовані сценарії → результат доступний через email + телефон → лід потрапляє в Odoo CRM. Без реєстрації. Без вигаданих цифр. З повним видаленням за 30 днів.</p>
+        <div class="hero-stats">
+          <div>
+            <div class="hero-stat-label">Маршрутів API</div>
+            <div class="hero-stat-value">18</div>
+          </div>
+          <div>
+            <div class="hero-stat-label">Таблиць БД</div>
+            <div class="hero-stat-value">11</div>
+          </div>
+          <div>
+            <div class="hero-stat-label">Подій Plausible</div>
+            <div class="hero-stat-value">22</div>
+          </div>
+        </div>
       </div>
-      <div class="stat">
-        <div class="stat-value">14 Tage</div>
-        <div class="stat-label">Trial</div>
-        <div class="stat-detail">Ohne Kreditkarte</div>
-      </div>
-      <div class="stat">
-        <div class="stat-value">4-6 W</div>
-        <div class="stat-label">Time-to-MVP</div>
-        <div class="stat-detail">1 Senior Engineer</div>
-      </div>
-      <div class="stat">
-        <div class="stat-value">€10-60</div>
-        <div class="stat-label">Monatliche Kosten</div>
-        <div class="stat-detail">+ LLM-Variable</div>
-      </div>
-      <div class="stat">
-        <div class="stat-value">100%</div>
-        <div class="stat-label">Infra-Reuse</div>
-        <div class="stat-detail">pve-x · Coolify · n8n</div>
-      </div>
-    </div>
 
-    <div class="hero-meta">
-      <div class="hero-meta-item"><span>Produkt</span><strong>Potenzial-Scan</strong></div>
-      <div class="hero-meta-item"><span>Konzept-Score</span><strong>91.8% / 100%</strong></div>
-      <div class="hero-meta-item"><span>Freeze-Version</span><strong>v3.9 (audit-3.9)</strong></div>
-      <div class="hero-meta-item"><span>Owner</span><strong>Taras (impl) · Viktor (Vendor)</strong></div>
-      <div class="hero-meta-item"><span>Status</span><strong style="color: var(--success)">Implementation Ready</strong></div>
+      <aside class="funnel-card" aria-label="Канонічна воронка лідів">
+        <h3>Канонічна воронка</h3>
+        <svg viewBox="0 0 320 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Воронка: відвідувач → MQL → Setter → Closer">
+          <style>
+            .fnl-bg { fill: var(--surface-warm); }
+            .fnl-stroke { fill: none; stroke: var(--border); stroke-width: 1; }
+            .fnl-text { font-family: var(--font-body); font-size: 13px; fill: var(--fg); }
+            .fnl-text-mono { font-family: var(--font-mono); font-size: 10px; fill: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+            .fnl-text-meta { font-family: var(--font-body); font-size: 12px; fill: var(--meta); font-weight: 600; }
+            .fnl-arrow { fill: none; stroke: var(--accent); stroke-width: 1.5; marker-end: url(#arr); }
+          </style>
+          <defs>
+            <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+              <path d="M0,0 L6,4 L0,8 Z" fill="var(--accent)" />
+            </marker>
+          </defs>
+          <rect class="fnl-bg" x="0" y="0" width="320" height="280" />
+
+          <!-- Visitor -->
+          <rect class="fnl-stroke" x="20" y="20" width="280" height="40" />
+          <text class="fnl-text-mono" x="32" y="36">01</text>
+          <text class="fnl-text" x="32" y="52">Відвідувач · без реєстрації</text>
+
+          <!-- Scan -->
+          <rect class="fnl-stroke" x="20" y="80" width="280" height="40" />
+          <text class="fnl-text-mono" x="32" y="96">02</text>
+          <text class="fnl-text" x="32" y="112">Scan: company · pain · adaptive · calc · AI</text>
+
+          <!-- Qualification -->
+          <rect class="fnl-stroke" x="20" y="140" width="280" height="40" />
+          <text class="fnl-text-mono" x="32" y="156">03</text>
+          <text class="fnl-text" x="32" y="172">Кваліфікація · hoch / selektiv / unzureichend</text>
+
+          <!-- MQL / Sales-ready MQL -->
+          <rect class="fnl-stroke" x="20" y="200" width="135" height="40" />
+          <text class="fnl-text-mono" x="32" y="216">04a</text>
+          <text class="fnl-text" x="32" y="232">MQL · 24 год</text>
+
+          <rect class="fnl-stroke" x="165" y="200" width="135" height="40" />
+          <text class="fnl-text-mono" x="177" y="216">04b</text>
+          <text class="fnl-text-meta" x="177" y="232">SALES-READY MQL</text>
+
+          <!-- Arrows -->
+          <line class="fnl-arrow" x1="160" y1="60" x2="160" y2="78" />
+          <line class="fnl-arrow" x1="160" y1="120" x2="160" y2="138" />
+          <line class="fnl-arrow" x1="160" y1="180" x2="85" y2="198" />
+          <line class="fnl-arrow" x1="160" y1="180" x2="230" y2="198" />
+
+          <!-- Odoo -->
+          <text class="fnl-text-meta" x="32" y="265">→ Odoo CRM (Setter · Closer)</text>
+        </svg>
+      </aside>
     </div>
   </div>
-</section>
+</header>
 
-<!-- ===================== PROBLEM ===================== -->
-<section id="problem">
+<!-- ============ SECTION A — ЩО ЦЕ ТАКЕ ============ -->
+<section class="section" id="shcho-ce-take">
   <div class="container">
-    <div class="sec-num">01 · PROBLEM</div>
-    <h2 class="sec-title">Der deutsche Mittelstand hat ein KI-Problem.</h2>
-    <p class="sec-sub">
-      Es ist nicht «ob KI funktioniert». Es ist «was KI konkret für <em>mich</em> tun kann».
-      Und: keine Zeit für 1-Stunden-Sales-Calls, um das rauszufinden.
-    </p>
-
-    <div class="two-col">
-      <div class="card">
-        <div class="card-h">DAS PROBLEM</div>
-        <div class="card-title">«Ich weiß nicht, ob KI für mein Unternehmen relevant ist.»</div>
-        <p class="card-text">
-          Geschäftsführer von 5-50-Mitarbeiter-KMUs in Handwerk, Dienstleistung, Praxen,
-          Kanzleien, Agenturen, Onlinehandel — skeptisch, zeitarm, mit Heerscharen an
-          konkurrierenden AI-Versprechen konfrontiert. Sie haben von ChatGPT gehört, es
-          vielleicht einmal probiert — aber der Sprung von «interessant» zu «konkret
-          umsetzbar» fehlt.
-        </p>
-      </div>
-      <div class="card">
-        <div class="card-h">DER SCHMERZ</div>
-        <div class="card-title">Sales-Calls, die niemand will. Generische PDFs, die niemand liest.</div>
-        <p class="card-text">
-          Jedes AI-Vendor-Pitch kostet eine Stunde. Standard-Brochures sagen nichts
-          Spezifisches. Was fehlt: ein <strong>personalisiertes Assessment</strong>,
-          das in 5 Minuten zeigt, <em>welche konkreten Aufgaben</em> in <em>diesem
-          spezifischen Unternehmen</em> automatisierbar wären — mit Zeitschätzung,
-          Kostenersparnis und dem passenden ersten Schritt.
-        </p>
-      </div>
+    <div class="section-head">
+      <div class="section-eyebrow">A · Визначення</div>
+      <h2>Що це таке</h2>
+      <p>Potenzial-Scan Lite — це 5-хвилинна structured-діалогова AI-оцінка, яка допомагає німецькому Mittelstand відповісти на одне конкретне питання: <em>«Чи має сенс AI для мого конкретного процесу — і якщо так, то де саме?»</em></p>
     </div>
 
-    <div class="personas">
-      <div class="persona">
-        <div class="persona-name">Geschäftsführer Markus</div>
-        <div class="persona-role">PRIMÄR · 5-50 MA · 35-60 J.</div>
-        <ul class="persona-list">
-          <li>Arbeitet 60+ Stunden pro Woche</li>
-          <li>Skeptisch gegenüber «AI-Hype»</li>
-          <li>Trifft Entscheidungen nach 1-2 Wochen</li>
-          <li>Werte: Ehrlichkeit, lokale Präsenz</li>
-        </ul>
-      </div>
-      <div class="persona">
-        <div class="persona-name">Office-Managerin Sandra</div>
-        <div class="persona-role">SEKUNDÄR · Prokurist / Chief of Staff</div>
-        <ul class="persona-list">
-          <li>Operative Verantwortung</li>
-          <li>Würde AI-Tools täglich nutzen</li>
-          <li>Treibt Digitalisierung</li>
-          <li>Gatekeeperin zum Chef</li>
-        </ul>
-      </div>
-      <div class="persona">
-        <div class="persona-name">Junior-Partner Jonas</div>
-        <div class="persona-role">TERTIÄR · Übergabe-Szenario</div>
-        <ul class="persona-list">
-          <li>Nächste Generation</li>
-          <li>AI-fluent</li>
-          <li>Drückt auf Digitalisierung</li>
-          <li>«Bring das dem Alten bei»</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
+    <div class="diagram">
+      <div class="diagram-title">Де живе Potenzial-Scan Lite у воронці продажів InsideDynamic</div>
+      <svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Позиція продукту у воронці">
+        <style>
+          .ctx-stroke { fill: var(--surface); stroke: var(--border); stroke-width: 1; }
+          .ctx-fill { fill: var(--surface-warm); }
+          .ctx-arrow { fill: none; stroke: var(--accent); stroke-width: 1.5; marker-end: url(#arr2); }
+          .ctx-text { font-family: var(--font-body); font-size: 13px; fill: var(--fg); }
+          .ctx-text-mono { font-family: var(--font-mono); font-size: 10px; fill: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+          .ctx-text-bold { font-family: var(--font-body); font-size: 13px; fill: var(--fg); font-weight: 600; }
+          .ctx-text-meta { font-family: var(--font-body); font-size: 12px; fill: var(--meta); font-weight: 600; }
+          .ctx-text-mute { font-family: var(--font-body); font-size: 12px; fill: var(--muted); }
+        </style>
+        <defs>
+          <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M0,0 L6,4 L0,8 Z" fill="var(--accent)" />
+          </marker>
+        </defs>
 
-<!-- ===================== KONZEPT ===================== -->
-<section id="konzept">
-  <div class="container">
-    <div class="sec-num">02 · KONZEPTWAHL</div>
-    <h2 class="sec-title">Drei Konzepte evaluiert. Eines gewonnen.</h2>
-    <p class="sec-sub">
-      12 Kriterien × 97 Gewichtungspunkte. Scoring-Matrix entschied zwischen
-      Potenzial-Scan, Probespiel-Sandbox und KI-Briefkasten.
-    </p>
+        <rect class="ctx-fill" x="0" y="0" width="800" height="200" />
 
-    <div class="scorecard">
-      <div class="concept winner">
-        <div class="concept-badge">GEWÄHLT</div>
-        <div class="concept-name">A · Potenzial-Scan</div>
-        <div class="concept-tag">5-Min-Assessment → PDF-Report</div>
-        <div class="concept-score">445</div>
-        <div class="concept-score-max">/ 485 · 91.8%</div>
-        <ul class="concept-list">
-          <li>Höchste Customer Value</li>
-          <li>Höchste Lead-Qualität</li>
-          <li>100% Infra-Reuse</li>
-          <li>Niedrigste rechtliche Risiken</li>
-          <li>4-6 Wochen bis MVP</li>
-        </ul>
-      </div>
-      <div class="concept">
-        <div class="concept-name">B · Probespiel</div>
-        <div class="concept-tag">Skill-Sandbox mit 15-20 Templates</div>
-        <div class="concept-score">371</div>
-        <div class="concept-score-max">/ 485 · 76.5%</div>
-        <ul class="concept-list">
-          <li>Zu viel Content-Authoring</li>
-          <li>8-12 Wochen bis MVP</li>
-          <li>Lower Lead Quality</li>
-          <li class="reject">Komplexität zu hoch</li>
-          <li class="reject">Phase-2-Kandidat</li>
-        </ul>
-      </div>
-      <div class="concept">
-        <div class="concept-name">C · KI-Briefkasten</div>
-        <div class="concept-tag">Echte Mailbox mit AI-Drafts</div>
-        <div class="concept-score">354</div>
-        <div class="concept-score-max">/ 485 · 73.0%</div>
-        <ul class="concept-list">
-          <li>Höchster Wow-Effekt</li>
-          <li>Höchste Operational Risk</li>
-          <li>12-16 Wochen bis MVP</li>
-          <li class="reject">E-Mail = regulatorisch schwer</li>
-          <li class="reject">IST Mail-Mitarbeiter</li>
-        </ul>
-      </div>
+        <!-- 4 funnel stages -->
+        <rect class="ctx-stroke" x="20" y="60" width="170" height="80" />
+        <text class="ctx-text-mono" x="32" y="80">Awareness</text>
+        <text class="ctx-text" x="32" y="100">Google Ads · SEO</text>
+        <text class="ctx-text-mute" x="32" y="116">LinkedIn · Referral</text>
+
+        <rect class="ctx-stroke" x="210" y="40" width="180" height="120" />
+        <text class="ctx-text-mono" x="222" y="60">Lead-Gen · ЦЕЙ ПРОДУКТ</text>
+        <text class="ctx-text-bold" x="222" y="82">Potenzial-Scan Lite</text>
+        <text class="ctx-text" x="222" y="102">5-хв scan · AI · Odoo</text>
+        <text class="ctx-text-mute" x="222" y="120">Без реєстрації</text>
+        <text class="ctx-text-mute" x="222" y="138">GDPR-compliant</text>
+
+        <rect class="ctx-stroke" x="410" y="60" width="170" height="80" />
+        <text class="ctx-text-mono" x="422" y="80">Qualification</text>
+        <text class="ctx-text" x="422" y="100">Setter (InsideDynamic)</text>
+        <text class="ctx-text-mute" x="422" y="116">BANT · Setter-Karte</text>
+
+        <rect class="ctx-stroke" x="600" y="60" width="180" height="80" />
+        <text class="ctx-text-mono" x="612" y="80">Closing</text>
+        <text class="ctx-text" x="612" y="100">AE (InsideDynamic)</text>
+        <text class="ctx-text-mute" x="612" y="116">Tech-presales · Vertrag</text>
+
+        <line class="ctx-arrow" x1="190" y1="100" x2="208" y2="100" />
+        <line class="ctx-arrow" x1="390" y1="100" x2="408" y2="100" />
+        <line class="ctx-arrow" x1="580" y1="100" x2="598" y2="100" />
+      </svg>
     </div>
 
-    <div class="cta-box" style="margin-top: 2rem;">
-      <h3 style="font-size: 1.3rem;">Entscheidung: Konzept A</h3>
-      <p>
-        Kleinste korrekte Lösung. Höchste Lead-Qualität. 100% Infra-Reuse.
-        Niedrigstes Risiko. Schnellster Time-to-MVP. Konvertiert natürlich zu
-        InsideDynamics tieferem Implementierungs-Portfolio.
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== USER JOURNEY ===================== -->
-<section id="journey">
-  <div class="container">
-    <div class="sec-num">03 · USER JOURNEY</div>
-    <h2 class="sec-title">Vom Google-Klick zum InsideDynamic-Termin.</h2>
-    <p class="sec-sub">
-      7 Schritte · 5 Minuten bis zum ersten Wert. Activation = PDF-Download.
-      Conversion = gebuchter Beratungstermin.
-    </p>
-
-    <div class="flow">
-      <div class="flow-step">
-        <div class="flow-num">1</div>
-        <div class="flow-title">Landing</div>
-        <div class="flow-time">~30s</div>
-        <div class="flow-desc">Google Ads, LinkedIn, SEO → Value-Prop-Hero.</div>
-      </div>
-      <div class="flow-step">
-        <div class="flow-num">2</div>
-        <div class="flow-title">Quick Scan</div>
-        <div class="flow-time">~60s</div>
-        <div class="flow-desc">4 Felder, kein Signup. 3 generische Opportunities als Teaser.</div>
-      </div>
-      <div class="flow-step">
-        <div class="flow-num">3</div>
-        <div class="flow-title">Signup</div>
-        <div class="flow-time">~30s</div>
-        <div class="flow-desc">E-Mail + Magic-Link. Kein Kreditkarte. DSGVO-Hinweis.</div>
-      </div>
-      <div class="flow-step">
-        <div class="flow-num">4</div>
-        <div class="flow-title">Onboarding</div>
-        <div class="flow-time">~4-5min</div>
-        <div class="flow-desc">10 Fragen, konversativ-adaptiv (Typeform-Pattern).</div>
-      </div>
-      <div class="flow-step">
-        <div class="flow-num">5</div>
-        <div class="flow-title">AI-Report</div>
-        <div class="flow-time">~10-30s</div>
-        <div class="flow-desc">5-10 personalisierte Opportunities, Streaming-Progress.</div>
-      </div>
-      <div class="flow-step activation">
-        <div class="flow-num">6</div>
-        <div class="flow-title">PDF-Download</div>
-        <div class="flow-time">AKTIVIERUNG</div>
-        <div class="flow-desc">User hat greifbaren Wert. Aha-Moment.</div>
-      </div>
-      <div class="flow-step conv">
-        <div class="flow-num">7</div>
-        <div class="flow-title">Termin-Buchung</div>
-        <div class="flow-time">KONVERSION</div>
-        <div class="flow-desc">Calendly-CTA. InsideDynamic erhält qualifizierten Lead.</div>
-      </div>
-    </div>
-
-    <div class="two-col">
-      <div class="card">
-        <div class="card-h">AKTIVIERUNG</div>
-        <div class="card-title">User lädt PDF herunter.</div>
-        <p class="card-text">
-          Greifbares Artefakt. Firmenname prominent. 5-10 konkrete Aufgaben mit
-          Zeitschätzung (h/Woche) und Kostenersparnis (€/Jahr). Implementierungs-
-          Komplexität (einfach/mittel/schwer). Empfohlenes ID-Produkt dazu.
-        </p>
-      </div>
-      <div class="card">
-        <div class="card-h">WIEDERHOLUNGS-MECHANISMUS</div>
-        <div class="card-title">Bis zu 5× Re-Scan. Dashboard-Returns.</div>
-        <p class="card-text">
-          User passt Context an (neues Tool, neue MA, neuer Prozess) → frischer
-          Report. Dashboard mit Empfehlungs-Karten, persistentem «Beratung buchen»-CTA.
-          8 E-Mails über 44 Tage — weicher Conversion-Push ohne Spam.
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== FEATURES ===================== -->
-<section id="features">
-  <div class="container">
-    <div class="sec-num">04 · FEATURES</div>
-    <h2 class="sec-title">Was im MVP drin ist — und was bewusst nicht.</h2>
-    <p class="sec-sub">
-      17 Must-Have-Features, 6 Should-Have für 90 Tage danach, 5 Could-Have für
-      Phase 2+, und 12 explizit ausgeschlossene Features mit Begründung.
-    </p>
-
-    <div class="features">
-      <div class="feat">
-        <div class="feat-icon">M</div>
-        <div class="feat-h">Landing Page (DE)</div>
-        <div class="feat-d">SSR, Vertrauenssignale, 1 CTA.</div>
-      </div>
-      <div class="feat">
-        <div class="feat-icon">M</div>
-        <div class="feat-h">Quick Scan (kein Signup)</div>
-        <div class="feat-d">4 Felder, 60 Sek, generische Ausgabe.</div>
-      </div>
-      <div class="feat">
-        <div class="feat-icon">M</div>
-        <div class="feat-h">Signup + Magic-Link</div>
-        <div class="feat-d">6-stelliger OTP, 10 Min gültig, single JWT.</div>
-      </div>
-      <div class="feat">
-        <div class="feat-icon">M</div>
-        <div class="feat-h">Onboarding Wizard</div>
-        <div class="feat-d">10 Fragen, konversativ-adaptiv, Branchen-spezifisch.</div>
-      </div>
-      <div class="feat">
-        <div class="feat-icon">M</div>
-        <div class="feat-h">LLM-Report</div>
-        <div class="feat-d">5-10 personalisierte Opportunities, strukturiertes JSON.</div>
-      </div>
-      <div class="feat">
-        <div class="feat-icon">M</div>
-        <div class="feat-h">PDF-Branding</div>
-        <div class="feat-d">InsideDynamic-Branding, Logo, downloadbar.</div>
-      </div>
-      <div class="feat">
-        <div class="feat-icon">M</div>
-        <div class="feat-h">Dashboard + Re-Scan</div>
-        <div class="feat-d">5 Re-Scans max, Empfehlungs-Karten, CTA.</div>
-      </div>
-      <div class="feat">
-        <div class="feat-icon">M</div>
-        <div class="feat-h">Account-Settings</div>
-        <div class="feat-d">Datenexport (Art. 15), Account-Löschung (Art. 17).</div>
-      </div>
-      <div class="feat">
-        <div class="feat-icon">M</div>
-        <div class="feat-h">Trial-Lifecycle</div>
-        <div class="feat-d">14 Tage Trial, dann 30 Tage Read-only, dann Purge.</div>
-      </div>
-      <div class="feat">
-        <div class="feat-icon">M</div>
-        <div class="feat-h">Termin-Buchung</div>
-        <div class="feat-d">Calendly-Embed → InsideDynamic-Call.</div>
-      </div>
-      <div class="feat">
-        <div class="feat-icon">M</div>
-        <div class="feat-h">Impressum · DSE · AGB</div>
-        <div class="feat-d">DDG §5, GDPR Art. 13, deutsch, immer verlinkt.</div>
-      </div>
-      <div class="feat">
-        <div class="feat-icon">M</div>
-        <div class="feat-h">KI-Transparenz</div>
-        <div class="feat-d">«Sie interagieren mit KI»-Badge, EU AI Act Art. 50.</div>
-      </div>
-    </div>
-
-    <div class="two-col" style="margin-top: 2.5rem;">
-      <div class="card">
-        <div class="card-h">EXPLIZIT AUSGESCHLOSSEN</div>
-        <div class="card-title">Was wir NICHT bauen — und warum.</div>
-        <ul class="clean">
-          <li class="cross">Voice / Telefon — zu hohe EU-AI-Act-Komplexität</li>
-          <li class="cross">CRM/ERP-Integration — Sicherheitsrisiko für MVP</li>
-          <li class="cross">Mobile App — Responsive Web reicht</li>
-          <li class="cross">Stripe / Billing — Trial ist gratis</li>
-          <li class="cross">Multi-Language — DE-only zum Start</li>
-          <li class="cross">MFA / SSO — zu viel Friction für Trial</li>
-          <li class="cross">Microservices / K8s — FastAPI-Monolith reicht</li>
-          <li class="cross">Self-hosted LLM — Quality zu gering für v1</li>
+    <div class="infra-grid">
+      <div class="infra-card">
+        <h3>Для кого</h3>
+        <ul>
+          <li><code>target</code> Німецький Mittelstand · 10–250 співробітників</li>
+          <li><code>scope</code> Конкретний процес, не «AI взагалі»</li>
+          <li><code>fit</code> Owner / decision-maker, який готовий говорити про цифри</li>
         </ul>
       </div>
-      <div class="card">
-        <div class="card-h">PHASE 2+ (NACH VALIDIERUNG)</div>
-        <div class="card-title">Was kommt, wenn Konzept A Demand beweist.</div>
-        <ul class="clean">
-          <li>Probespiel-Sandbox (Top 3-5 Skills aus A-Insights)</li>
-          <li>Per-Segment Landing-Pages</li>
-          <li>Branchen-spezifische Opportunity-Templates</li>
-          <li>Multi-Language (EN)</li>
-          <li>Action Tracker («2/8 angegangen»)</li>
-          <li>White-Label für Partner</li>
-          <li>Public REST API + MCP-Server</li>
-          <li>Self-hosted LLM (Ollama) wenn Souveränität Hard-Requirement</li>
+      <div class="infra-card">
+        <h3>Чому саме так</h3>
+        <ul>
+          <li><code>gap</code> Mittelстанду бракує швидкого способу відсікти «AI не для нас» від «AI потрібен ось тут»</li>
+          <li><code>role</code> Не продає AI — допомагає відвідувачу самому зрозуміти, чи є сенс</li>
+          <li><code>handoff</code> Sales-ready MQL → Odoo CRM → Setter → Closer (не auto-close)</li>
         </ul>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ===================== ARCHITEKTUR ===================== -->
-<section id="architektur">
+<!-- ============ SECTION B — ЯК ПРАЦЮЄ ============ -->
+<section class="section" id="iak-pratsiuie">
   <div class="container">
-    <div class="sec-num">05 · ARCHITEKTUR</div>
-    <h2 class="sec-title">100% Reuse. 0% neue Infrastruktur.</h2>
-    <p class="sec-sub">
-      Komplette Architektur läuft auf bestehender pve-x-Infrastruktur: CT703 (Coolify),
-      Cloudflare-Tunnel, n8n-Orchestrierung. Nur eine neue Postgres-Instanz für Mandanten-
-      Isolation. Sonst nichts.
-    </p>
+    <div class="section-head">
+      <div class="section-eyebrow">B · Маршрут</div>
+      <h2>Як працює: 8 кроків відвідувача</h2>
+      <p>Кожен крок = один API-маршрут. Жоден крок не вимагає реєстрації. Кожен крок має одну конкретну мету. Жоден крок не вигадує цифри.</p>
+    </div>
 
-    <div class="arch">
-      <div class="arch-row">
-        <div class="arch-row-label">EDGE</div>
-        <div class="arch-box accent">Cloudflare<br><span class="small">TLS · WAF · DDoS</span></div>
-        <div class="arch-arrow">→</div>
-        <div class="arch-box">Tunnel<br><span class="small">outbound-only</span></div>
+    <div class="step-grid">
+      <div class="step-card">
+        <h4>Старт</h4>
+        <p>Відвідувач відкриває landing. Без форми реєстрації.</p>
+        <span class="step-tag">POST /api/scan/start</span>
       </div>
-
-      <div class="arch-row">
-        <div class="arch-row-label">APP</div>
-        <div class="arch-box accent">FastAPI<br><span class="small">CT703 · Coolify</span></div>
-        <div class="arch-box">Next.js 15<br><span class="small">React 19 · MUI v6</span></div>
+      <div class="step-card">
+        <h4>Контекст компанії</h4>
+        <p>Розмір, галузь, роль. Без PII.</p>
+        <span class="step-tag">/scan/step1</span>
       </div>
-
-      <div class="arch-row">
-        <div class="arch-row-label">DATA</div>
-        <div class="arch-box">PostgreSQL 16<br><span class="small">RLS · getrennt</span></div>
-        <div class="arch-box">PDF Storage<br><span class="small">Postgres bytea</span></div>
-        <div class="arch-box">Plausible<br><span class="small">self-hosted · ClickHouse</span></div>
+      <div class="step-card">
+        <h4>Опис болю</h4>
+        <p>Який процес болить. Вільний текст або chip.</p>
+        <span class="step-tag">/scan/step2</span>
       </div>
-
-      <div class="arch-row">
-        <div class="arch-row-label">ORCH</div>
-        <div class="arch-box">n8n<br><span class="small">existing · Cal.com bridge</span></div>
+      <div class="step-card">
+        <h4>Адаптивні питання</h4>
+        <p>1–2 deterministic. Тільки якщо потрібно.</p>
+        <span class="step-tag">/scan/adaptive</span>
       </div>
-
-      <div class="arch-row">
-        <div class="arch-row-label">OUTBOUND</div>
-        <div class="arch-box accent">LLM API (EU)<br><span class="small">Aleph Alpha + OpenAI EU</span></div>
-        <div class="arch-box accent">SMTP (DE)<br><span class="small">IONOS / Mailbox.org</span></div>
-        <div class="arch-box">Plane API<br><span class="small">Lead-Handoff</span></div>
+      <div class="step-card">
+        <h4>Калькулятор</h4>
+        <p>Поточне навантаження. Сценарії від користувача.</p>
+        <span class="step-tag">/scan/calculator</span>
+      </div>
+      <div class="step-card">
+        <h4>AI-аналіз</h4>
+        <p>LLM ранжує 3 сценарії. Без вигаданих цифр.</p>
+        <span class="step-tag">/scan/complete</span>
+      </div>
+      <div class="step-card">
+        <h4>Popup-и телефону</h4>
+        <p>Опційно на кроках 1, 2, перед complete. Опційний email.</p>
+        <span class="step-tag">/popup/* + /contact/start</span>
+      </div>
+      <div class="step-card">
+        <h4>Фінальний шлюз</h4>
+        <p>Email + телефон обов'язково → доступ до результату.</p>
+        <span class="step-tag">/result/access</span>
       </div>
     </div>
 
-    <div class="two-col" style="margin-top: 2rem;">
-      <div class="card">
-        <div class="card-h">SICHERHEITS-PERIMETER</div>
-        <div class="card-title">Eine einzige öffentliche Angriffsfläche.</div>
-        <p class="card-text">
-          Nur FastAPI ist via Cloudflare-Tunnel erreichbar — als <code>app.idstar.de</code>
-          (Domain-Entscheidung offen). Postgres, Plausible und n8n sind intern-only,
-          nicht aus dem Internet erreichbar. RLS-Policies erzwingen Mandanten-Trennung
-          auf DB-Ebene. Idempotency-Keys auf teuren Operationen. PII erreicht Analytics
-          nie — server-side opaque IDs nur.
-        </p>
-      </div>
-      <div class="card">
-        <div class="card-h">AUTH-MODELL</div>
-        <div class="card-title">Magic-Link only. Keine Passwörter.</div>
-        <p class="card-text">
-          6-stelliger OTP per E-Mail (10 Min gültig). Single JWT-Session-Cookie,
-          «strictly necessary» per TDDDG §25(2)(2) — keine Consent-Banner für Auth
-          nötig. Account-Recovery läuft als «Documented Ownership Verification»
-          durch Viktor (KEIN regulatorisches KYC). Session-IDs als UUIDs für
-          kanonische Analytics-Bindung.
-        </p>
-      </div>
-    </div>
-
-    <div class="cost-table">
-      <div class="cost-row head">
-        <div>Komponente</div><div>Kosten</div><div>Quelle</div><div>Bemerkung</div>
-      </div>
-      <div class="cost-row"><div>CT703 (LXC)</div><div class="pos">€0</div><div>existing</div><div>Headroom 50GB RAM, 600GB Disk</div></div>
-      <div class="cost-row"><div>Cloudflare Tunnel</div><div class="pos">€0</div><div>existing</div><div>Free-Tier ausreichend</div></div>
-      <div class="cost-row"><div>Cloudflare Access</div><div class="pos">€0</div><div>existing</div><div>Free bis 50 User</div></div>
-      <div class="cost-row"><div>Domain idstar.de</div><div class="pos">€0</div><div>existing</div><div>—</div></div>
-      <div class="cost-row"><div>PostgreSQL self-host</div><div class="pos">€0</div><div>existing pattern</div><div>indyn-portal precedent</div></div>
-      <div class="cost-row"><div>Plausible self-host</div><div class="pos">€0</div><div>existing pattern</div><div>Container in Coolify</div></div>
-      <div class="cost-row"><div>Backup (PBS)</div><div class="pos">€0</div><div>existing</div><div>Tägliches pg_dump</div></div>
-      <div class="cost-row"><div>SMTP-Provider (DE)</div><div class="neg">€2-5</div><div>IONOS / Mailbox.org</div><div>DPA in Gate A-2</div></div>
-      <div class="cost-row"><div>LLM-API (EU)</div><div class="neg">€5-50</div><div>variable</div><div>100× Safety-Margin budgetiert</div></div>
-      <div class="cost-row total"><div>TOTAL</div><div>€10-60 / Monat + LLM-Variable</div><div></div><div>Bei Pilot-Traffic realistisch ~€30/mo</div></div>
+    <div class="diagram" style="margin-top: var(--space-6);">
+      <div class="diagram-title">Потік станів сканування · FSM</div>
+      <pre>START ──► STEP1 ──► STEP2 ──► ADAPTIVE? ──► CALC ──► AI ──► QUALIFY ──► RESULT
+  │                  │           │             │       │         │           │
+  │ popup-1 (opt)    │ popup-2   │             │ popup-4│         │ popup-5   │
+  │ phone            │ phone     │             │ phone  │         │ FINAL     │
+  │                  │           │             │        │         │ email+    │
+  ▼                  ▼           ▼             ▼        ▼         ▼ phone     │
+scan_id             scan_id    scan_id        calc    scan_id  hot/warm    gate
+created             updated    updated        id      complete /unqual    ok→pdf
+                                                                                    ▼
+                                                               ODOO_HANDOFF ─► Odoo outbox ─► Odoo CRM</pre>
     </div>
   </div>
 </section>
 
-<!-- ===================== LEGAL ===================== -->
-<section id="legal">
+<!-- ============ SECTION C — АРХІТЕКТУРА ============ -->
+<section class="section" id="arkhitektura">
   <div class="container">
-    <div class="sec-num">06 · LEGAL & COMPLIANCE</div>
-    <h2 class="sec-title">EU-by-design. DSGVO-konform von Anfang an.</h2>
-    <p class="sec-sub">
-      19 rechtliche Anforderungen aus 7 Primärquellen (GDPR, BDSG, TDDDG, DDG,
-      EU AI Act, EAA, UWG) identifiziert. DPIA vor Launch. EU-Region-Lock.
-      Sub-Processor-Liste erweitert.
-    </p>
+    <div class="section-head">
+      <div class="section-eyebrow">C · Стек</div>
+      <h2>Архітектура: один стек, один deployable</h2>
+      <p>Без мікросервісів. Без Python. Один TypeScript-репо. Один Postgres. Один LLM-постачальник (на Gate A-1). Один CRM (Odoo). Два ізольованих restore-домени (CT703 + CT-DL-X).</p>
+    </div>
 
-    <div class="legal-grid">
-      <div class="legal warn">
-        <div class="legal-name">Impressum</div>
-        <div class="legal-ref">DDG § 5</div>
-        <div class="legal-d">Auf jeder Seite, mit Mannheim-Adresse, Handelsregister, Vertretungsberechtigung.</div>
+    <div class="diagram">
+      <div class="diagram-title">Trust boundaries · єдиний deployable</div>
+      <svg viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Trust boundaries: edge → tunnel → app → ledger">
+        <style>
+          .tb-stroke { fill: var(--surface); stroke: var(--border); stroke-width: 1; }
+          .tb-stroke-strong { fill: var(--surface); stroke: var(--meta); stroke-width: 1.5; }
+          .tb-fill-warm { fill: var(--surface-warm); }
+          .tb-arrow { fill: none; stroke: var(--accent); stroke-width: 1.5; marker-end: url(#arr3); }
+          .tb-text { font-family: var(--font-body); font-size: 12px; fill: var(--fg); }
+          .tb-text-mono { font-family: var(--font-mono); font-size: 10px; fill: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+          .tb-text-bold { font-family: var(--font-body); font-size: 13px; fill: var(--fg); font-weight: 600; }
+          .tb-text-meta { font-family: var(--font-body); font-size: 11px; fill: var(--meta); font-weight: 600; }
+          .tb-edge { fill: var(--surface-warm); }
+        </style>
+        <defs>
+          <marker id="arr3" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M0,0 L6,4 L0,8 Z" fill="var(--accent)" />
+          </marker>
+        </defs>
+
+        <rect class="tb-edge" x="0" y="0" width="800" height="320" />
+
+        <!-- Edge -->
+        <rect class="tb-stroke" x="20" y="40" width="160" height="50" />
+        <text class="tb-text-mono" x="32" y="58">EDGE</text>
+        <text class="tb-text-bold" x="32" y="78">Cloudflare · TLS · WAF</text>
+
+        <!-- Tunnel -->
+        <rect class="tb-stroke" x="20" y="110" width="160" height="50" />
+        <text class="tb-text-mono" x="32" y="128">TUNNEL</text>
+        <text class="tb-text-bold" x="32" y="148">Cloudflare Tunnel</text>
+
+        <!-- App CT703 -->
+        <rect class="tb-stroke-strong" x="240" y="60" width="280" height="160" />
+        <text class="tb-text-mono" x="252" y="78">CT703 · mvp-app · Single deployable</text>
+        <text class="tb-text-bold" x="252" y="100">Next.js · TS · Drizzle · Zod</text>
+        <text class="tb-text" x="252" y="118">PostgreSQL 16 · 11 таблиць</text>
+        <text class="tb-text" x="252" y="134">scan_access_token cookie</text>
+        <text class="tb-text" x="252" y="150">18 routes · 22 Plausible events</text>
+        <text class="tb-text-meta" x="252" y="180">→ LLM Gateway (OPEN GATE)</text>
+        <text class="tb-text-meta" x="252" y="196">→ Odoo outbox (cron · 30s)</text>
+
+        <!-- Ledger CT-DL-X -->
+        <rect class="tb-stroke-strong" x="560" y="40" width="220" height="100" />
+        <text class="tb-text-mono" x="572" y="58">CT-DL-X · deletion-ledger</text>
+        <text class="tb-text-bold" x="572" y="80">PostgreSQL · окремий restore-домен</text>
+        <text class="tb-text" x="572" y="98">tombstone · deletion-event</text>
+        <text class="tb-text" x="572" y="114">restore-operation · reconciliation</text>
+
+        <!-- Odoo -->
+        <rect class="tb-stroke" x="560" y="160" width="220" height="60" />
+        <text class="tb-text-mono" x="572" y="178">CRM Authority</text>
+        <text class="tb-text-bold" x="572" y="200">Odoo 19 Custom · JSON-2 · bearer</text>
+        <text class="tb-text" x="572" y="216">Setter context · no PII duplication</text>
+
+        <!-- Plausible -->
+        <rect class="tb-stroke" x="20" y="180" width="160" height="50" />
+        <text class="tb-text-mono" x="32" y="198">ANALYTICS</text>
+        <text class="tb-text-bold" x="32" y="218">Plausible · categorical only</text>
+
+        <!-- Arrows -->
+        <line class="tb-arrow" x1="180" y1="65" x2="238" y2="100" />
+        <line class="tb-arrow" x1="180" y1="135" x2="238" y2="170" />
+        <line class="tb-arrow" x1="520" y1="120" x2="558" y2="80" />
+        <line class="tb-arrow" x1="520" y1="200" x2="558" y2="190" />
+        <line class="tb-arrow" x1="180" y1="205" x2="238" y2="200" />
+      </svg>
+    </div>
+
+    <div class="infra-grid">
+      <div class="infra-card">
+        <h3>Stack freeze</h3>
+        <ul>
+          <li><code>lang</code> TypeScript strict · одна мова · без Python</li>
+          <li><code>fw</code> Next.js App Router · pinned at scaffold</li>
+          <li><code>db</code> PostgreSQL 16 · Drizzle · Zod на кожному боундарі</li>
+          <li><code>test</code> Vitest + Playwright</li>
+          <li><code>repo</code> <code>mvp-product/</code> · <code>app/</code> + <code>ledger/</code> packages</li>
+        </ul>
       </div>
-      <div class="legal warn">
-        <div class="legal-name">Datenschutzerklärung (DE)</div>
-        <div class="legal-ref">GDPR Art. 13</div>
-        <div class="legal-d">Vor Signup. Sub-Processor: Cloudflare, OpenAI, Aleph Alpha, IONOS, Namecheap.</div>
-      </div>
-      <div class="legal warn">
-        <div class="legal-name">Cookie-Consent</div>
-        <div class="legal-ref">TDDDG § 25(1)</div>
-        <div class="legal-d">Nur funktionale Cookies. Analytics cookie-less via Server-Side-Session.</div>
-      </div>
-      <div class="legal info">
-        <div class="legal-name">KI-Transparenz</div>
-        <div class="legal-ref">EU AI Act Art. 50</div>
-        <div class="legal-d">«Sie interagieren mit KI»-Badge auf Outputs. Limited-Risk-Klassifikation.</div>
-      </div>
-      <div class="legal danger">
-        <div class="legal-name">Recht auf Löschung</div>
-        <div class="legal-ref">GDPR Art. 17</div>
-        <div class="legal-d">Account-Löschung + vollständiger Purge. Tombstone + Restore-Reconciliation getestet.</div>
-      </div>
-      <div class="legal danger">
-        <div class="legal-name">Daten-Export</div>
-        <div class="legal-ref">GDPR Art. 15 + 20</div>
-        <div class="legal-d">JSON-Download im Account. Maschinenlesbar, strukturiert.</div>
-      </div>
-      <div class="legal info">
-        <div class="legal-name">DPIA</div>
-        <div class="legal-ref">GDPR Art. 35</div>
-        <div class="legal-d">Profiling-basierte Lead-Gen triggert DPIA. Vor MVP-Launch fertig. Gate A-3.</div>
-      </div>
-      <div class="legal danger">
-        <div class="legal-name">Breach-Notification</div>
-        <div class="legal-ref">GDPR Art. 33</div>
-        <div class="legal-d">72h-Notification an LfDI BW. Runbook mit Template vorhanden. Gate C-7.</div>
-      </div>
-      <div class="legal">
-        <div class="legal-name">EU-Region-Lock</div>
-        <div class="legal-ref">EU AI Act</div>
-        <div class="legal-d">Nur <code>eu</code> + <code>eu-de</code>. Kein <code>global</code>, kein <code>us-*</code>. OpenRouter entfernt.</div>
-      </div>
-      <div class="legal">
-        <div class="legal-name">AVV / DPA</div>
-        <div class="legal-ref">GDPR Art. 28</div>
-        <div class="legal-d">Mit allen Sub-Processorn. Template vorhanden. Gate A-2 (Aleph Alpha) + IONOS.</div>
-      </div>
-      <div class="legal info">
-        <div class="legal-name">TDDDG-Conformity</div>
-        <div class="legal-ref">TDDDG § 25(2)(2)</div>
-        <div class="legal-d">Auth-Cookie ist «strictly necessary». Analytics nutzt keinen Browser-Cookie.</div>
-      </div>
-      <div class="legal info">
-        <div class="legal-name">EAA / Accessibility</div>
-        <div class="legal-ref">Directive 2019/882</div>
-        <div class="legal-d">WCAG 2.1 AA + BITV 2.0. Kontrast, Keyboard, Screen-Reader. Ab Launch.</div>
+      <div class="infra-card">
+        <h3>Інфраструктура</h3>
+        <ul>
+          <li><code>edge</code> Cloudflare (TLS · WAF · Turnstile)</li>
+          <li><code>CT703</code> mvp-app (Lite MVP)</li>
+          <li><code>CT700</code> Coolify + Plausible + ClickHouse</li>
+          <li><code>CT-DL-X</code> deletion-ledger (окремий restore-домен)</li>
+          <li><code>PBS</code> щоденний backup до Hetzner Storage Box DE</li>
+        </ul>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ===================== ROADMAP ===================== -->
-<section id="roadmap">
+<!-- ============ SECTION D — ШЛЯХ КОРИСТУВАЧА ============ -->
+<section class="section" id="shliakh">
   <div class="container">
-    <div class="sec-num">07 · ROADMAP & KOSTEN</div>
-    <h2 class="sec-title">5 Domains. 4-6 Wochen. €0 Vendor-Spend nötig.</h2>
-    <p class="sec-sub">
-      Sequenzielle Implementierung, jede Domain hat eigenes Gate-A-Blocker-Set.
-      Parallelisierung möglich nach Gate-A-Closure. Gate C (Launch-Readiness)
-      erst nach Build.
-    </p>
+    <div class="section-head">
+      <div class="section-eyebrow">D · Journey</div>
+      <h2>Життєвий шлях користувача</h2>
+      <p>Від першого кліку по рекламі до моменту, коли InsideDynamic-sales-team телефонує. І після того, як користувач пішов — що стається з його даними.</p>
+    </div>
 
-    <div class="roadmap">
-      <div class="phase urgent">
-        <div class="phase-num">DOMAIN 0</div>
-        <div class="phase-name">Gate A Schließen</div>
-        <div class="phase-owner">Viktor · Maksym</div>
-        <div class="phase-time">2-5 Tage</div>
-        <div class="phase-d">A-1 OpenAI EU verify · A-2 Aleph Alpha DPA · A-3 DPIA · A-4 IONOS SMTP · A-5 Tombstone-Store prov.</div>
-      </div>
-      <div class="phase next">
-        <div class="phase-num">DOMAIN 1</div>
-        <div class="phase-name">Foundation</div>
-        <div class="phase-owner">Maksym + Taras</div>
-        <div class="phase-time">~3-4 Tage</div>
-        <div class="phase-d">LXC-Provisioning · ClickHouse · Plausible · Cal.com · Hetzner · DNS.</div>
-      </div>
-      <div class="phase next">
-        <div class="phase-num">DOMAIN 2</div>
-        <div class="phase-name">Auth + DB</div>
-        <div class="phase-owner">Taras</div>
-        <div class="phase-time">~1 Woche</div>
-        <div class="phase-d">FastAPI · Postgres + RLS · Next.js · Magic-Link · Idempotency-Table. 16 Tests.</div>
-      </div>
-      <div class="phase next">
-        <div class="phase-num">DOMAIN 3</div>
-        <div class="phase-name">LLM + Assessment</div>
-        <div class="phase-owner">Taras</div>
-        <div class="phase-time">~1.5 Wochen</div>
-        <div class="phase-d">LLM-Gateway · Capability-Class-Routing · Control-Flags · Report-Gen · PDF.</div>
-      </div>
-      <div class="phase next">
-        <div class="phase-num">DOMAIN 4</div>
-        <div class="phase-name">Workspace + Lifecycle</div>
-        <div class="phase-owner">Taras</div>
-        <div class="phase-time">~1 Woche</div>
-        <div class="phase-d">Decisions · Follow-ups · Lifecycle · Tombstone · Analytics · E-Mail-Cadence.</div>
+    <div class="timeline">
+      <div class="diagram-title">Before · During · After</div>
+      <div class="timeline-grid">
+        <div class="timeline-col">
+          <h4>Before · До заходу</h4>
+          <ul>
+            <li><strong>Google Ads / LinkedIn / SEO</strong> — реклама веде на landing</li>
+            <li><strong>CTA</strong> — «5-хвилинна безкоштовна оцінка»</li>
+            <li><strong>Без cookies</strong> — жодного трекінгу до згоди</li>
+            <li><strong>DSGVO Art. 6(1)(a)</strong> — згода перед будь-яким процесингом</li>
+          </ul>
+        </div>
+        <div class="timeline-col">
+          <h4>During · Під час скану</h4>
+          <ul>
+            <li><strong>5 хвилин</strong> structured-діалог</li>
+            <li><strong>Без реєстрації</strong> — анонімний <code>scan_id</code> (HMAC)</li>
+            <li><strong>Popup-и телефону</strong> — опційно на кроках 1, 2, перед complete</li>
+            <li><strong>Фінальний шлюз</strong> — email + телефон обов'язково</li>
+            <li><strong>Plausible</strong> — categorical events, без PII</li>
+          </ul>
+        </div>
+        <div class="timeline-col">
+          <h4>After · Після</h4>
+          <ul>
+            <li><strong>Анонімний скан</strong> — 30 днів TTL → auto-purge (GDPR Art. 17)</li>
+            <li><strong>MQL</strong> — Odoo лід створено · sales team контактує протягом 24 год</li>
+            <li><strong>Sales-ready MQL</strong> — те саме + priority handoff</li>
+            <li><strong>Запит на видалення</strong> — 8-крокова idempotent saga (V2 file 04)</li>
+          </ul>
+        </div>
       </div>
     </div>
 
-    <div class="roadmap" style="grid-template-columns: 1fr 1fr;">
-      <div class="phase ready">
-        <div class="phase-num">DOMAIN 5</div>
-        <div class="phase-name">Operations + Launch</div>
-        <div class="phase-owner">Taras + Maksym + Viktor</div>
-        <div class="phase-time">~1 Woche</div>
-        <div class="phase-d">Synthetic Monitoring (3 Tiers) · Runbooks · Backup-Drill · Cost-Reconciliation · DOV-Procedure. Schließt alle Gate-C-Items.</div>
-      </div>
-      <div class="phase ready">
-        <div class="phase-num">PILOT</div>
-        <div class="phase-name">First 100 Trials</div>
-        <div class="phase-owner">Taras + Viktor</div>
-        <div class="phase-time">2-4 Wochen</div>
-        <div class="phase-d">Google-Ads-Pilot · Conversion-Tracking · 8-15% Trial→Consultation als Erfolgs-Kriterium. Iteration der LLM-Prompts basierend auf Real-Daten.</div>
-      </div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="two-col">
-      <div class="card">
-        <div class="card-h">WARUM JETZT</div>
-        <div class="card-title">Die Infrastruktur wartet. Der Bedarf ist da.</div>
-        <p class="card-text">
-          pve-x hat Headroom. CT703 ist provisioniert. Coolify läuft. Die LLM-Provider
-          sind reif. Die Regulatorik ist klar. Der deutsche Mittelstand fragt nach
-          genau diesem Produkt — und Wettbewerber wie Lindy.ai, Relevance AI, Intercom
-          Fin validieren das Pattern bereits im englischsprachigen Markt. Wer jetzt
-          mit dem DE-spezifischen, GDPR-konformen Pendant startet, hat 12-18 Monate
-          First-Mover-Vorteil im DACH-Raum.
-        </p>
-      </div>
-      <div class="card">
-        <div class="card-h">ERFOLGS-KRITERIEN</div>
-        <div class="card-title">Wie messen wir, ob es funktioniert?</div>
-        <p class="card-text">
-          <strong>Woche 4:</strong> 30% Landing→Quick-Scan, 40% Quick-Scan→Signup,
-          70% Signup→Verified, 80% Verified→Onboarding, 95% Onboarding→Report,
-          75% Report→PDF-Download. <strong>Woche 8:</strong> 8-15% PDF→Beratungs-Buchung.
-          Bei &lt;5% Conversion → LLM-Prompts + Onboarding-Fragen iterieren.
-          Bei &gt;15% → Ads-Budget skalieren.
-        </p>
-      </div>
-    </div>
-
-    <div class="cta-box" id="cta">
-      <h3>Approve-Punkt für CEO</h3>
-      <p>
-        Architektur ist gefroren (v3.9). Implementation-Readiness-Gate dokumentiert.
-        5 sequenzielle Domains × ~6 Wochen. €0 Vendor-Commitment vor Gate A-2 (Aleph Alpha DPA).
-        Frage an CEO: <strong style="color: var(--accent-bright);">Freigabe zur Implementation — und wer übernimmt die Gate-A-Items?</strong>
-      </p>
+    <div class="diagram" style="margin-top: var(--space-5);">
+      <div class="diagram-title">Lifecycle одного scan_id</div>
+      <pre>t=0       t+5min     t+15min        t+30days
+ │          │           │               │
+ ├──────────┼───────────┼───────────────┤
+ START      COMPLETE    LEAD_CREATED    AUTO_PURGE
+ (HMAC)     (qualify)   (Odoo outbox)   (GDPR Art. 17)
+ │          │           │               │
+ │ popup-1  │ result    │               │
+ │ popup-2  │ gate      │ 24h SLA       │
+ │ popup-3  │ email+    │ → MQL         │
+ │ popup-4  │ phone     │ → sales-ready │
+ │          │           │               ▼
+ ▼          ▼           ▼           deletion saga
+ scan       scan        qualified  (8 кроків,
+ created    complete    lead       Odoo erase
+            → result    created    before local)
+            access      → Odoo     tombstone
+                        CRM        → reconcile
+                                    → restore</pre>
     </div>
   </div>
 </section>
 
-<footer>
+<!-- ============ SECTION E — SCOPE ============ -->
+<section class="section" id="scope">
   <div class="container">
-    <p>
-      <strong>Potenzial-Scan MVP · InsideDynamic</strong> · Autor: Taras Polishchuk ·
-      Stand: <span class="badge-inline">FREEZE v3.9 · 2026-08-27</span>
-    </p>
-    <p style="margin-top: 0.5rem;">
-      Quellen: <code>audit-3.9/06-FINAL-FREEZE-AMENDMENT-3.9.md</code> · <code>concepts/02-concept-scorecard.md</code> ·
-      <code>architecture/01-product-architecture-concept-a.md</code> · <code>research/15-legal-gdpr-ai-act-eaa.md</code>
-    </p>
-    <p style="margin-top: 0.5rem; font-size: 0.8rem;">
-      Internal document · not for public distribution · single source of truth at <code>/home/taras/projects/work/insidedynamic/mvp-product/landing/</code>
-    </p>
+    <div class="section-head">
+      <div class="section-eyebrow">E · Scope</div>
+      <h2>Що в scope · Що поза scope</h2>
+      <p>Чіткі межі Lite MVP. Те, чого немає тут — це не «coming soon». Це або в наступному релізі, або свідомо виключене.</p>
+    </div>
+
+    <div class="scope-grid">
+      <div class="scope-card in">
+        <h3>В scope (Lite MVP)</h3>
+        <ul>
+          <li>Landing · server component · German/Ukrainian</li>
+          <li>5-хв scan flow (step1 · step2 · adaptive · calc · AI)</li>
+          <li>Pattern-based qualification (hoch / selektiv / unzureichend / nicht_empfohlen)</li>
+          <li>Popup-driven phone capture (multi-stage)</li>
+          <li>Final gate: email + phone both verified</li>
+          <li>Odoo 19 Custom handoff (JSON-2 · bearer · canonical DTO)</li>
+          <li>GDPR deletion saga (8 кроків · idempotent)</li>
+          <li>Plausible analytics (categorical · 22 events)</li>
+          <li>CT-DL-X deletion ledger (separate restore domain)</li>
+        </ul>
+      </div>
+      <div class="scope-card out">
+        <h3>Поза scope (свідомо)</h3>
+        <ul>
+          <li>Persistent user accounts · 14-day trial</li>
+          <li>AI voice · SIP · VAPI · TalkHub</li>
+          <li>Booking widget · calendar integration</li>
+          <li>Multi-tenant SaaS admin panel</li>
+          <li>RAG / knowledge product · persistent KB</li>
+          <li>Local sales state duplication (X-31)</li>
+          <li>BANT-style invented sales data (X-34)</li>
+          <li>SDR/AE/IT specific person assignments (X-27)</li>
+          <li>AI provider fallback chain (X-28)</li>
+          <li>Per-lead Odoo feedback ingestion (X-31)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECTION F — GATE A ============ -->
+<section class="section" id="gate-a">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-eyebrow">F · Launch Readiness</div>
+      <h2>Відкриті рішення · Gate A</h2>
+      <p>Engineering handoff — <strong>READY</strong> (closure 03). Production launch — <strong>BLOCKED</strong> на 7 Gate A prerequisites. Кожен зовнішній blocker має власника.</p>
+    </div>
+
+    <div style="overflow-x: auto;">
+      <table class="gate-table" aria-label="Gate A prerequisites">
+        <thead>
+          <tr>
+            <th style="width: 18%;">Gate</th>
+            <th style="width: 52%;">Що потрібно</th>
+            <th style="width: 18%;">Власник</th>
+            <th style="width: 12%;">Статус</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>A-1</code></td>
+            <td>LLM provider (OPEN GATE) · confirm primary + per-call budget</td>
+            <td>Viktor</td>
+            <td><span class="status-block">BLOCKED</span></td>
+          </tr>
+          <tr>
+            <td><code>A-2</code></td>
+            <td>Tailwind дозвіл · V2 §5.1 neutral · operator approve CSS strategy</td>
+            <td>Viktor</td>
+            <td><span class="status-block">BLOCKED</span></td>
+          </tr>
+          <tr>
+            <td><code>A-3</code></td>
+            <td>Launch allowlist (segment) · recommended Praxen · operator decide</td>
+            <td>Viktor</td>
+            <td><span class="status-block">BLOCKED</span></td>
+          </tr>
+          <tr>
+            <td><code>A-4</code></td>
+            <td>Legal review · DSGVO + AI Act Art. 50 · Lite variant</td>
+            <td>External counsel</td>
+            <td><span class="status-block">BLOCKED</span></td>
+          </tr>
+          <tr>
+            <td><code>A-5</code></td>
+            <td>CT-DL-X VMID allocation · Dmytro allocates from live Proxmox</td>
+            <td>Dmytro</td>
+            <td><span class="status-block">BLOCKED</span></td>
+          </tr>
+          <tr>
+            <td><code>A-6</code></td>
+            <td>Odoo 19 Custom plan · upgrade + x_studio_* fields + mapping table</td>
+            <td>Viktor</td>
+            <td><span class="status-block">BLOCKED</span></td>
+          </tr>
+          <tr>
+            <td><code>A-7</code></td>
+            <td>Phone OTP provider · Twilio / SIP / SMS gateway · DE compliant</td>
+            <td>Viktor + Dmytro</td>
+            <td><span class="status-block">BLOCKED</span></td>
+          </tr>
+          <tr>
+            <td><code>handoff</code></td>
+            <td>Engineering handoff · 13 vertical slices · decomposition/02</td>
+            <td>Taras + team</td>
+            <td><span class="status-ready">READY</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h4>Potenzial-Scan Lite</h4>
+        <p style="font-size: var(--text-sm); color: var(--fg-2);">5-хвилинна AI-оцінка процесу для німецького Mittelstand. Без реєстрації. GDPR-compliant. Odoo-integrated.</p>
+      </div>
+      <div>
+        <h4>Продукт</h4>
+        <ul>
+          <li><a href="#shcho-ce-take">Що це</a></li>
+          <li><a href="#iak-pratsiuie">Як працює</a></li>
+          <li><a href="#arkhitektura">Архітектура</a></li>
+          <li><a href="#shliakh">Шлях користувача</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Про InsideDynamic</h4>
+        <ul>
+          <li>Mannheim · Deutschland</li>
+          <li>insidedynamic.de</li>
+          <li>Solution Architect · Taras Polishchuk</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-meta">
+      Architecture freeze V2 · 11-AUTHORITATIVE-MVP-ARCHITECTURE-V2.md · 26 L + 34 X · Closure READY FOR ENGINEERING HANDOFF
+    </div>
   </div>
 </footer>
 
