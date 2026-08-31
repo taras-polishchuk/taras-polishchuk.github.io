@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Potenzial-Scan Lite · Mockup · InsideDynamic MVP · Taras Polishchuk</title>
+<meta name="description" content="Interactive mockup of the Potenzial-Scan Lite MVP — 5-Minuten-AI-Potenzial-Scan für deutsche KMU. InsideDynamic GmbH (Mannheim). 4 Schritte: Basiskontext → Adaptive Messung → Rechner → AI-Ergebnis.">
+<meta name="author" content="Taras Polishchuk">
+<link rel="canonical" href="https://taras-polishchuk.github.io/potenzial-scan-mockup/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2314b8a6'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='central' font-family='sans-serif' font-size='18' font-weight='800' fill='white'%3EPS%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0b;
+    --bg-soft: #131316;
+    --bg-card: #18181f;
+    --bg-card-hover: #1f1f28;
+    --bg-input: #0e0e10;
+    --border: #2a2a32;
+    --border-strong: #3a3a44;
+    --text: #e4e4e7;
+    --text-muted: #a1a1aa;
+    --text-dim: #71717a;
+    --accent: #14b8a6;
+    --accent-bright: #2dd4bf;
+    --accent-soft: rgba(20, 184, 166, 0.12);
+    --accent-glow: rgba(20, 184, 166, 0.25);
+    --warn: #f59e0b;
+    --danger: #ef4444;
+    --info: #3b82f6;
+    --success: #10b981;
+    --gold: #eab308;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ============ NAV ============ */
+  .nav {
+    position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    background: rgba(10, 10, 11, 0.78);
+    border-bottom: 1px solid var(--border);
+    padding: 0.9rem 2rem;
+  }
+  .nav-inner {
+    max-width: 1400px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between; gap: 2rem;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 0.75rem; font-weight: 700; font-size: 1.05rem; }
+  .nav-brand-mark {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), #0d9488);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 800; font-size: 0.85rem;
+    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
+  }
+  .nav-title { display: flex; flex-direction: column; line-height: 1.1; }
+  .nav-title-main { font-size: 1.05rem; font-weight: 700; color: var(--text); }
+  .nav-title-sub { font-size: 0.75rem; color: var(--text-dim); font-weight: 500; }
+  .nav-links { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+  .nav-link {
+    color: var(--text-muted); font-size: 0.85rem; text-decoration: none;
+    padding: 0.4rem 0.75rem; border-radius: 6px; transition: all 0.15s;
+    border: 1px solid transparent;
+  }
+  .nav-link:hover { color: var(--text); background: var(--bg-card); }
+  .nav-link.mockup {
+    color: var(--accent-bright);
+    border-color: var(--border-strong);
+    background: var(--accent-soft);
+  }
+
+  /* ============ MAIN WRAPPER ============ */
+  main {
+    max-width: 1100px; margin: 0 auto;
+    padding: 2rem 2rem 4rem;
+  }
+
+  /* ============ HEADER ============ */
+  .hero { margin: 1rem 0 2.5rem; text-align: center; }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    color: var(--accent-bright); font-size: 0.8rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    background: var(--accent-soft);
+    padding: 0.4rem 0.9rem; border-radius: 99px;
+    border: 1px solid var(--border-strong);
+    margin-bottom: 1.5rem;
+  }
+  .hero-eyebrow .dot { width: 6px; height: 6px; background: var(--accent-bright); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.3); }
+  }
+  .hero-title {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 800; line-height: 1.15; letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+  .hero-title .accent { color: var(--accent-bright); }
+  .hero-subtitle { color: var(--text-muted); font-size: 1.05rem; max-width: 640px; margin: 0 auto; }
+
+  /* ============ STEP PIPELINE ============ */
+  .pipeline {
+    display: flex; gap: 0.5rem; align-items: center; justify-content: center;
+    margin: 2.5rem 0 2rem; padding: 1rem;
+    background: var(--bg-soft); border: 1px solid var(--border); border-radius: 14px;
+    overflow-x: auto;
+  }
+  .step-tab {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.6rem 1rem; border-radius: 10px;
+    color: var(--text-dim); font-size: 0.85rem; font-weight: 500;
+    cursor: pointer; transition: all 0.15s;
+    border: 1px solid transparent;
+    background: transparent;
+    white-space: nowrap;
+  }
+  .step-tab .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--bg-card); border: 1px solid var(--border);
+    font-size: 0.75rem; font-weight: 700; color: var(--text-dim);
+  }
+  .step-tab.active {
+    background: var(--accent-soft); color: var(--accent-bright);
+    border-color: var(--border-strong);
+  }
+  .step-tab.active .num {
+    background: var(--accent); color: white;
+    border-color: var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+  .step-tab.done .num {
+    background: var(--success); color: white; border-color: var(--success);
+  }
+  .step-tab.done { color: var(--text-muted); }
+  .step-arrow { color: var(--text-dim); font-size: 1rem; }
+
+  /* ============ SCREEN PANELS ============ */
+  .screen {
+    display: none;
+    animation: fadeIn 0.3s ease-out;
+  }
+  .screen.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .screen-card {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 2.5rem;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+  }
+  .screen-label {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    color: var(--text-dim); font-size: 0.78rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    margin-bottom: 0.75rem;
+  }
+  .screen-title {
+    font-size: 1.75rem; font-weight: 700; letter-spacing: -0.015em;
+    margin-bottom: 0.5rem; line-height: 1.2;
+  }
+  .screen-desc { color: var(--text-muted); margin-bottom: 2rem; }
+
+  /* ============ FORM ELEMENTS ============ */
+  .field { margin-bottom: 1.5rem; }
+  .field-label {
+    display: block; color: var(--text); font-weight: 600;
+    margin-bottom: 0.5rem; font-size: 0.95rem;
+  }
+  .field-hint { color: var(--text-dim); font-size: 0.85rem; margin-top: 0.4rem; }
+  .field-required { color: var(--accent-bright); margin-left: 0.2rem; }
+
+  .input, .select {
+    width: 100%; padding: 0.85rem 1rem;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text); font-family: inherit; font-size: 0.95rem;
+    transition: all 0.15s;
+  }
+  .input:focus, .select:focus {
+    outline: none; border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  .select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.5rem; }
+  textarea.input { resize: vertical; min-height: 100px; }
+
+  /* ============ CHIP GROUPS ============ */
+  .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    padding: 0.5rem 0.9rem; border-radius: 99px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-muted); font-size: 0.85rem; font-weight: 500;
+    cursor: pointer; transition: all 0.15s;
+    user-select: none;
+  }
+  .chip:hover { color: var(--text); border-color: var(--border-strong); }
+  .chip.selected {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: var(--accent-bright);
+  }
+  .chip.selected::before {
+    content: '✓'; font-weight: 700;
+  }
+
+  /* ============ BUTTONS ============ */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    padding: 0.85rem 1.5rem; border-radius: 10px;
+    font-family: inherit; font-size: 0.95rem; font-weight: 600;
+    border: 1px solid transparent; cursor: pointer;
+    transition: all 0.15s; text-decoration: none;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #0d9488);
+    color: white;
+    box-shadow: 0 4px 14px rgba(20, 184, 166, 0.3);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(20, 184, 166, 0.4); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-secondary {
+    background: var(--bg-card); color: var(--text);
+    border-color: var(--border-strong);
+  }
+  .btn-secondary:hover { background: var(--bg-card-hover); border-color: var(--accent); }
+  .btn-ghost {
+    background: transparent; color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--border-strong); }
+  .btn-row {
+    display: flex; gap: 0.75rem; flex-wrap: wrap;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ============ TRUST / META STRIP ============ */
+  .trust-row {
+    display: flex; gap: 1.5rem; flex-wrap: wrap;
+    margin-top: 1.5rem; padding-top: 1.5rem;
+    border-top: 1px dashed var(--border);
+    justify-content: center;
+  }
+  .trust-item { display: flex; align-items: center; gap: 0.5rem; color: var(--text-dim); font-size: 0.82rem; }
+  .trust-item .icon { color: var(--accent-bright); }
+
+  /* ============ METRIC CARDS ============ */
+  .metrics-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem; margin-bottom: 2rem;
+  }
+  .metric-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+  .metric-label { color: var(--text-dim); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-bottom: 0.4rem; }
+  .metric-value { font-size: 1.85rem; font-weight: 700; color: var(--text); line-height: 1.1; letter-spacing: -0.01em; }
+  .metric-unit { font-size: 0.95rem; color: var(--text-muted); font-weight: 500; margin-left: 0.2rem; }
+  .metric-sub { color: var(--text-dim); font-size: 0.8rem; margin-top: 0.3rem; }
+
+  /* ============ CLASSIFICATION BADGE ============ */
+  .classification {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    padding: 0.6rem 1.1rem; border-radius: 99px;
+    font-size: 0.95rem; font-weight: 700; letter-spacing: 0.02em;
+    margin-bottom: 1.5rem;
+  }
+  .classification.hoch {
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--success);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+  }
+  .classification.selektiv {
+    background: rgba(59, 130, 246, 0.12);
+    color: var(--info);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+  }
+  .classification.unzureichend {
+    background: rgba(245, 158, 11, 0.12);
+    color: var(--warn);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+  }
+  .classification .icon { font-size: 1.1rem; }
+
+  /* ============ OPPORTUNITY CARDS ============ */
+  .opportunity {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .opportunity:hover { border-color: var(--border-strong); background: var(--bg-card-hover); }
+  .opportunity-rank {
+    position: absolute; top: -10px; left: 1.5rem;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--accent); color: white; font-weight: 800; font-size: 0.85rem;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 10px var(--accent-glow);
+  }
+  .opportunity-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 1rem; margin-bottom: 0.75rem; margin-top: 0.5rem;
+  }
+  .opportunity-title { font-size: 1.1rem; font-weight: 700; color: var(--text); line-height: 1.3; }
+  .opportunity-meta { display: flex; gap: 0.5rem; flex-shrink: 0; }
+  .meta-badge {
+    font-size: 0.7rem; padding: 0.25rem 0.55rem; border-radius: 6px;
+    background: var(--bg-soft); border: 1px solid var(--border);
+    color: var(--text-dim); font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+  }
+  .meta-badge.calc-ref {
+    background: var(--accent-soft); color: var(--accent-bright);
+    border-color: var(--accent);
+  }
+  .meta-badge.confidence { color: var(--success); }
+  .opportunity-rationale { color: var(--text-muted); font-size: 0.92rem; line-height: 1.6; margin-bottom: 1rem; }
+  .opportunity-savings {
+    display: inline-flex; align-items: baseline; gap: 0.35rem;
+    padding: 0.5rem 0.9rem; border-radius: 8px;
+    background: rgba(20, 184, 166, 0.08);
+    border: 1px solid rgba(20, 184, 166, 0.3);
+    color: var(--accent-bright); font-size: 0.85rem;
+  }
+  .opportunity-savings strong { font-size: 1rem; font-weight: 700; }
+
+  /* ============ CTA BOX ============ */
+  .cta-box {
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.1), rgba(13, 148, 136, 0.05));
+    border: 2px solid var(--accent);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    margin-top: 2rem;
+    box-shadow: 0 0 40px rgba(20, 184, 166, 0.15);
+  }
+  .cta-box h3 { font-size: 1.4rem; margin-bottom: 0.5rem; font-weight: 700; }
+  .cta-box p { color: var(--text-muted); margin-bottom: 1.25rem; max-width: 480px; margin-left: auto; margin-right: auto; }
+  .cta-box .btn-primary { font-size: 1.05rem; padding: 1rem 2rem; }
+
+  /* ============ CALCULATOR ============ */
+  .scenario-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem; margin-top: 1rem;
+  }
+  .scenario {
+    padding: 1.1rem 1rem; border-radius: 12px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    cursor: pointer; transition: all 0.15s; text-align: center;
+  }
+  .scenario:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+  .scenario.selected {
+    background: var(--accent-soft); border-color: var(--accent);
+    box-shadow: 0 0 16px var(--accent-glow);
+  }
+  .scenario-pct { font-size: 1.6rem; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
+  .scenario-label { color: var(--text-muted); font-size: 0.82rem; margin-top: 0.2rem; }
+  .scenario-result { color: var(--accent-bright); font-size: 0.78rem; margin-top: 0.5rem; font-weight: 600; }
+
+  .eur-toggle {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    padding: 0.7rem 1.1rem; border-radius: 10px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    cursor: pointer; transition: all 0.15s;
+    margin-top: 1rem;
+  }
+  .eur-toggle:hover { border-color: var(--border-strong); }
+  .toggle-switch {
+    width: 36px; height: 20px; background: var(--bg-input);
+    border-radius: 99px; position: relative; transition: background 0.15s;
+    border: 1px solid var(--border);
+  }
+  .toggle-switch::after {
+    content: ''; position: absolute; top: 1px; left: 1px;
+    width: 16px; height: 16px; background: var(--text-dim);
+    border-radius: 50%; transition: all 0.15s;
+  }
+  .eur-toggle.on .toggle-switch { background: var(--accent); border-color: var(--accent); }
+  .eur-toggle.on .toggle-switch::after { left: 17px; background: white; }
+  .eur-input {
+    width: 110px; padding: 0.5rem 0.75rem;
+    background: var(--bg-input); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-size: 0.85rem;
+  }
+
+  /* ============ LOCK / UNLOCK STATE ============ */
+  .info-strip {
+    display: flex; align-items: flex-start; gap: 0.75rem;
+    padding: 1rem 1.25rem; border-radius: 12px;
+    background: var(--accent-soft); border: 1px solid rgba(20, 184, 166, 0.3);
+    color: var(--text); margin-bottom: 1.5rem;
+  }
+  .info-strip .icon { color: var(--accent-bright); flex-shrink: 0; margin-top: 2px; }
+  .info-strip .body { font-size: 0.88rem; line-height: 1.5; }
+  .info-strip .body strong { color: var(--accent-bright); }
+
+  /* ============ INPUT GROUP (number input) ============ */
+  .number-row { display: flex; gap: 0.75rem; align-items: stretch; }
+  .number-row .input { flex: 1; font-size: 1.5rem; font-weight: 700; text-align: center; }
+  .number-unit {
+    display: flex; align-items: center; padding: 0 1.25rem;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--text-muted); font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  /* ============ TECH STAMP (footer) ============ */
+  .footer {
+    max-width: 1100px; margin: 3rem auto 1rem; padding: 2rem;
+    color: var(--text-dim); font-size: 0.82rem; text-align: center;
+    border-top: 1px solid var(--border);
+  }
+  .footer a { color: var(--text-muted); text-decoration: none; border-bottom: 1px dashed var(--border); }
+  .footer a:hover { color: var(--accent-bright); }
+  .footer-code { font-family: 'JetBrains Mono', monospace; }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 720px) {
+    .nav { padding: 0.75rem 1rem; }
+    .nav-inner { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+    .nav-links { width: 100%; gap: 0.5rem; }
+    main { padding: 1.5rem 1rem 3rem; }
+    .screen-card { padding: 1.5rem; }
+    .pipeline { padding: 0.5rem; }
+    .step-tab { padding: 0.5rem 0.7rem; font-size: 0.78rem; }
+    .opportunity-head { flex-direction: column; gap: 0.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <div class="nav-brand-mark">PS</div>
+      <div class="nav-title">
+        <span class="nav-title-main">Potenzial-Scan Lite</span>
+        <span class="nav-title-sub">InsideDynamic MVP · Mockup</span>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a class="nav-link" href="https://taras-polishchuk.github.io/mvp-potenzial-scan/" target="_blank" rel="noopener">CEO-Deck ↗</a>
+      <a class="nav-link" href="https://taras-polishchuk.github.io/learning-platform/" target="_blank" rel="noopener">Learning Platform ↗</a>
+      <a class="nav-link" href="https://taras-polishchuk.github.io/" target="_blank" rel="noopener">Portfolio ↗</a>
+      <a class="nav-link mockup" href="./">Mockup</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ============ HERO ============ -->
+  <header class="hero">
+    <div class="hero-eyebrow"><span class="dot"></span>Mockup · interaktiv · V2-Architektur</div>
+    <h1 class="hero-title">5 Minuten.<br><span class="accent">Ihr AI-Potenzial</span> — klar, datenschutzkonform.</h1>
+    <p class="hero-subtitle">Klicken Sie sich durch den gesamten 4-Schritte-Flow: vom Landing zum Ergebnis, mit AI-gestützter Auswertung und konkreten Zeitersparnis-Szenarien. Alles deterministisch. Keine erfundenen Zahlen.</p>
+  </header>
+
+  <!-- ============ STEP PIPELINE ============ -->
+  <div class="pipeline" role="tablist">
+    <button class="step-tab active" data-target="screen-0" role="tab">
+      <span class="num">1</span><span>Landing</span>
+    </button>
+    <span class="step-arrow">→</span>
+    <button class="step-tab" data-target="screen-1" role="tab">
+      <span class="num">2</span><span>Basiskontext</span>
+    </button>
+    <span class="step-arrow">→</span>
+    <button class="step-tab" data-target="screen-2" role="tab">
+      <span class="num">3</span><span>Adaptive Messung</span>
+    </button>
+    <span class="step-arrow">→</span>
+    <button class="step-tab" data-target="screen-3" role="tab">
+      <span class="num">4</span><span>Rechner</span>
+    </button>
+    <span class="step-arrow">→</span>
+    <button class="step-tab" data-target="screen-4" role="tab">
+      <span class="num">5</span><span>AI-Ergebnis</span>
+    </button>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- ============ SCREEN 1: LANDING ============================ -->
+  <!-- ============================================================ -->
+  <section class="screen active" id="screen-0">
+    <div class="screen-card">
+      <div class="screen-label"><span style="color: var(--accent-bright);">●</span> Schritt 1 · Landing</div>
+      <h2 class="screen-title">Finden Sie heraus, wo KI in Ihrem KMU wirklich sinnvoll ist.</h2>
+      <p class="screen-desc">Keine Anmeldung. Keine Daten-Weitergabe. In 5 Minuten erhalten Sie eine ehrliche, datenbasierte Ersteinschätzung — mit konkreten Zeit- und Kostenszenarien, die auf <em>Ihren</em> Angaben beruhen.</p>
+
+      <div class="trust-row">
+        <div class="trust-item"><span class="icon">✓</span> DSGVO + EU AI Act</div>
+        <div class="trust-item"><span class="icon">✓</span> Kein Account nötig</div>
+        <div class="trust-item"><span class="icon">✓</span> ~3 Min zum Ergebnis</div>
+        <div class="trust-item"><span class="icon">✓</span> Daten lokal verarbeitet</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="goToScreen(1)">5-Minuten-Scan starten →</button>
+        <button class="btn btn-ghost" onclick="alert('Im echten Produkt: Beispiel-Scan als Demo laden')">Beispiel-Scan ansehen</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- ============ SCREEN 2: BASISKONTEXT ======================= -->
+  <!-- ============================================================ -->
+  <section class="screen" id="screen-1">
+    <div class="screen-card">
+      <div class="screen-label"><span style="color: var(--accent-bright);">●</span> Schritt 2 · Basiskontext</div>
+      <h2 class="screen-title">Vier kurze Angaben — das genügt für den ersten Scan.</h2>
+      <p class="screen-desc">Diese Informationen helfen der KI, Ihre Branche und Größenordnung richtig einzuordnen. Keine personenbezogenen Daten erforderlich.</p>
+
+      <div class="field">
+        <label class="field-label">Branche<span class="field-required">*</span></label>
+        <select class="select" id="branch">
+          <option value="">Bitte wählen…</option>
+          <option value="praxis">Praxen (Medizin / Zahn / Therapie)</option>
+          <option value="handwerk">Handwerk</option>
+          <option value="dienstleistung">Dienstleistung</option>
+          <option value="kanzlei">Kanzleien (Steuer / Recht)</option>
+          <option value="agentur">Agenturen (Marketing / IT / Beratung)</option>
+          <option value="onlinehandel">Onlinehandel / E-Commerce</option>
+          <option value="sonstige">Sonstige</option>
+        </select>
+        <div class="field-hint">Bestimmt, welche Segment-spezifischen Formulierungen genutzt werden.</div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Unternehmensgröße<span class="field-required">*</span></label>
+        <div class="chips" id="size-chips">
+          <div class="chip" data-value="1-5">1–5 Mitarbeiter</div>
+          <div class="chip" data-value="6-10">6–10</div>
+          <div class="chip" data-value="11-25">11–25</div>
+          <div class="chip" data-value="26-50">26–50</div>
+          <div class="chip" data-value="50+">50+</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Ihre Rolle<span class="field-required">*</span></label>
+        <select class="select" id="role">
+          <option value="">Bitte wählen…</option>
+          <option value="geschaeftsfuehrer">Geschäftsführer / Inhaber</option>
+          <option value="prokurist">Prokurist / COO</option>
+          <option value="office_manager">Office Manager / Assistenz</option>
+          <option value="sonstige">Sonstige</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Was kostet Sie aktuell am meisten Zeit?<span class="field-required">*</span></label>
+        <div class="chips" id="pain-chips">
+          <div class="chip" data-value="telefon">Telefonische Anfragen / Triage</div>
+          <div class="chip" data-value="email">E-Mails / schriftliche Anfragen</div>
+          <div class="chip" data-value="rechnung">Rechnungen / Buchhaltung</div>
+          <div class="chip" data-value="dokument">Dokumentenprüfung / Akten</div>
+          <div class="chip" data-value="termin">Terminplanung / Kalender</div>
+          <div class="chip" data-value="onboarding">Mitarbeiter-Onboarding</div>
+        </div>
+        <textarea class="input" id="pain-text" placeholder="Oder kurz in eigenen Worten beschreiben (max. 200 Zeichen)…"></textarea>
+        <div class="field-hint">Tipp: Je konkreter, desto besser die Auswertung. Wählen Sie einen Chip oder schreiben Sie selbst.</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="goToScreen(2)" id="btn-step-2">Weiter zur Messung →</button>
+        <button class="btn btn-ghost" onclick="goToScreen(0)">← Zurück</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- ============ SCREEN 3: ADAPTIVE MESSUNG =================== -->
+  <!-- ============================================================ -->
+  <section class="screen" id="screen-2">
+    <div class="screen-card">
+      <div class="screen-label"><span style="color: var(--accent-bright);">●</span> Schritt 3 · Adaptive Messung</div>
+      <h2 class="screen-title">Eine kurze Rückfrage — nur wenn nötig.</h2>
+      <p class="screen-desc">Damit die KI später konkrete Zeitersparnis-Szenarien berechnen kann, brauchen wir eine Größenordnung Ihrer aktuellen Auslastung. Diese Frage erscheint nur, wenn Ihre vorherige Angabe noch zu generisch ist.</p>
+
+      <div class="info-strip">
+        <span class="icon">●</span>
+        <div class="body"><strong>Deterministische Logik:</strong> Die Frage hängt von Ihrer Branchenwahl und Ihrer Pain-Eingabe ab. Bei <code>branch = praxis</code> und generischem Pain wird z. B. nach Patientenanrufen pro Tag gefragt. Bei Bedarf wird eine zweite, noch spezifischere Frage gestellt.</div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" id="adaptive-q-label">Wie viele Patientenanrufe pro Tag erreichen Ihre MFA?</label>
+        <div class="number-row">
+          <input type="number" class="input" id="adaptive-num" placeholder="0" min="0" max="9999" value="50">
+          <div class="number-unit" id="adaptive-unit">Anrufe / Tag</div>
+        </div>
+        <div class="field-hint">Beispiel aus der Praxis: 50 Patientenanrufe/Tag × 5 Min = 4,17 Std/Woche für Triage.</div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Durchschnittliche Bearbeitungsdauer pro Anfrage</label>
+        <div class="chips" id="duration-chips">
+          <div class="chip" data-value="2">~2 Min</div>
+          <div class="chip selected" data-value="5">~5 Min</div>
+          <div class="chip" data-value="10">~10 Min</div>
+          <div class="chip" data-value="15">~15 Min</div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="goToScreen(3)">Weiter zum Rechner →</button>
+        <button class="btn btn-ghost" onclick="goToScreen(1)">← Zurück</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- ============ SCREEN 4: RECHNER ============================ -->
+  <!-- ============================================================ -->
+  <section class="screen" id="screen-3">
+    <div class="screen-card">
+      <div class="screen-label"><span style="color: var(--accent-bright);">●</span> Schritt 4 · Rechner (deterministisch)</div>
+      <h2 class="screen-title">Ihre aktuelle Auslastung — berechnet, nicht geschätzt.</h2>
+      <p class="screen-desc">Der Rechner leitet aus Ihren Eingaben die aktuelle Wochenstunden-Auslastung ab. Sie wählen dann ein Szenario (wie viel Prozent Ihrer Zeit KI realistisch übernehmen könnte). Die KI erfindet nichts.</p>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">Eingaben</div>
+          <div class="metric-value">50<span class="metric-unit">/Tag</span></div>
+          <div class="metric-sub">× 5 Min = 4,17 Std/Woche</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Aktuelle Auslastung</div>
+          <div class="metric-value">4,17<span class="metric-unit">Std/Wo</span></div>
+          <div class="metric-sub">deterministisch berechnet</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Pro Jahr</div>
+          <div class="metric-value">~217<span class="metric-unit">Std</span></div>
+          <div class="metric-sub">52 Wochen × 4,17 h</div>
+        </div>
+      </div>
+
+      <h3 style="font-size: 1.05rem; margin: 2rem 0 0.5rem; color: var(--text);">Wählen Sie ein Szenario</h3>
+      <p class="screen-desc" style="margin-bottom: 1rem;">Wie viel Prozent Ihrer Zeit in diesem Prozess könnte KI realistisch übernehmen?</p>
+
+      <div class="scenario-grid" id="scenario-grid">
+        <div class="scenario" data-pct="25" onclick="selectScenario(this)">
+          <div class="scenario-pct">25<span style="font-size:1rem;color:var(--text-muted);">%</span></div>
+          <div class="scenario-label">Konservativ</div>
+          <div class="scenario-result">≈ 1,04 Std/Woche</div>
+        </div>
+        <div class="scenario selected" data-pct="50" onclick="selectScenario(this)">
+          <div class="scenario-pct">50<span style="font-size:1rem;color:var(--text-muted);">%</span></div>
+          <div class="scenario-label">Realistisch</div>
+          <div class="scenario-result">≈ 2,08 Std/Woche</div>
+        </div>
+        <div class="scenario" data-pct="75" onclick="selectScenario(this)">
+          <div class="scenario-pct">75<span style="font-size:1rem;color:var(--text-muted);">%</span></div>
+          <div class="scenario-label">Optimistisch</div>
+          <div class="scenario-result">≈ 3,13 Std/Woche</div>
+        </div>
+      </div>
+
+      <div class="eur-toggle" id="eur-toggle" onclick="toggleEur()">
+        <span class="toggle-switch"></span>
+        <span><strong>EUR-Projektion anzeigen</strong> · optional</span>
+        <input type="number" class="eur-input" id="eur-rate" placeholder="Stundensatz €" value="50" onclick="event.stopPropagation()">
+      </div>
+
+      <div class="info-strip" style="margin-top: 1.5rem;">
+        <span class="icon">●</span>
+        <div class="body"><strong>Datenschutz:</strong> Keine Ihrer Angaben werden in diesem Mockup an irgendeinen Server gesendet — alles läuft lokal in Ihrem Browser. Im echten Produkt: 24-Stunden-TTL, dann automatische Löschung. Keine Drittanbieter-Tracker.</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="goToScreen(4)">Weiter zur AI-Auswertung →</button>
+        <button class="btn btn-ghost" onclick="goToScreen(2)">← Zurück</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- ============ SCREEN 5: AI ERGEBNIS ======================== -->
+  <!-- ============================================================ -->
+  <section class="screen" id="screen-4">
+    <div class="screen-card">
+      <div class="screen-label"><span style="color: var(--accent-bright);">●</span> Schritt 5 · AI-Auswertung</div>
+      <h2 class="screen-title">Ihr persönliches AI-Potenzial — strukturiert und belegt.</h2>
+      <p class="screen-desc">Die KI hat Ihre Angaben mit unserer Portfolio-Datenbank abgeglichen und 3 konkrete Optimierungsmöglichkeiten vorgeschlagen. Jede Zahl ist an eine konkrete Berechnung oder Ihre Eingabe gebunden.</p>
+
+      <div class="classification hoch">
+        <span class="icon">●</span> AI-Potenzial: <strong>Hoch</strong> · empfohlen für die nächsten 90 Tage
+      </div>
+
+      <div class="opportunity">
+        <span class="opportunity-rank">1</span>
+        <div class="opportunity-head">
+          <div class="opportunity-title">Telefon-Triage durch KI-Assistenten automatisieren</div>
+          <div class="opportunity-meta">
+            <span class="meta-badge calc-ref">calc_a1b2c3</span>
+            <span class="meta-badge confidence">VERIFIED</span>
+          </div>
+        </div>
+        <p class="opportunity-rationale">Basierend auf Ihren ~50 Patientenanrufen pro Tag und der aktuellen Auslastung von <strong>4,17 Stunden/Woche</strong> für Triage: Eine KI-gestützte Vorqualifizierung könnte ca. <strong>2,08 Std/Woche</strong> Ihrer MFA entlasten (~109 Std/Jahr). Patientenanliegen werden automatisch nach Dringlichkeit kategorisiert und an die richtige Stelle weitergeleitet.</p>
+        <div class="opportunity-savings">≈ <strong>2,08 Std/Woche</strong> · 109 Std/Jahr · portfolio: <em>telefon_mitarbeiter</em></div>
+      </div>
+
+      <div class="opportunity">
+        <span class="opportunity-rank">2</span>
+        <div class="opportunity-head">
+          <div class="opportunity-title">Wiedervorlage-Management mit automatischen Erinnerungen</div>
+          <div class="opportunity-meta">
+            <span class="meta-badge calc-ref">calc_d4e5f6</span>
+            <span class="meta-badge confidence">VERIFIED</span>
+          </div>
+        </div>
+        <p class="opportunity-rationale">Aus Ihrer Telefon-Triage-Auslastung lässt sich ableiten, dass ein erheblicher Anteil der Anrufe Wiedervorlagen und Terminbestätigungen sind. Ein KI-System könnte <strong>~30% dieser Routine-Anrufe</strong> per SMS/E-Mail-Sequenz automatisch abwickeln und nur Eskalationen ans MFA weiterleiten.</p>
+        <div class="opportunity-savings">≈ <strong>0,62 Std/Woche</strong> · 32 Std/Jahr · portfolio: <em>telefon_mitarbeiter</em></div>
+      </div>
+
+      <div class="opportunity">
+        <span class="opportunity-rank">3</span>
+        <div class="opportunity-head">
+          <div class="opportunity-title">Strukturierte Anamnese vorab digital erfassen</div>
+          <div class="opportunity-meta">
+            <span class="meta-badge calc-ref">calc_g7h8i9</span>
+            <span class="meta-badge confidence">RANGE</span>
+          </div>
+        </div>
+        <p class="opportunity-rationale">Patienten füllen vor dem Termin einen digitalen Anamnese-Fragebogen aus (KI-generiert, individuell pro Fachrichtung). Bei <strong>~50 Anrufen/Tag</strong> wäre der Effekt auf die MFA-Zeit begrenzt, aber auf die Arztzeit pro Konsultation spürbar: ~3–5 Minuten pro Fall.</p>
+        <div class="opportunity-savings">≈ <strong>0,3 Std/Woche</strong> MFA + ~5 Std/Woche Arztzeit · portfolio: <em>wissens_mitarbeiter</em></div>
+      </div>
+
+      <div class="metrics-grid" style="margin-top: 2rem;">
+        <div class="metric-card">
+          <div class="metric-label">Gesamt-Potenzial</div>
+          <div class="metric-value">~3,0<span class="metric-unit">Std/Wo</span></div>
+          <div class="metric-sub">bei 50%-Szenario · summiert über Top 3</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Pro Jahr</div>
+          <div class="metric-value">~156<span class="metric-unit">Std</span></div>
+          <div class="metric-sub">entspricht ~6% einer Vollzeitstelle</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">EUR-Potenzial</div>
+          <div class="metric-value">~7.800<span class="metric-unit">€</span></div>
+          <div class="metric-sub">bei 50 €/Std · brutto · vor Steuern</div>
+        </div>
+      </div>
+
+      <div class="cta-box">
+        <h3>Nächster Schritt: Kostenlose 30-Minuten-Analyse besprechen</h3>
+        <p>In einem unverbindlichen 30-Minuten-Termin mit unserem Team besprechen wir Ihre Top-3-Potenziale konkret: Welche Voraussetzungen sind nötig? Welche Investition? Welche Timeline? Keine Sales-Pitch — ehrliche Ersteinschätzung.</p>
+        <button class="btn btn-primary" onclick="alert('Im echten Produkt: Odoo-CRM-Handoff mit Setter-Kontext (Magic-Link, 30-Min-TTL)')">Termin anfragen →</button>
+        <p style="margin-top: 1rem; font-size: 0.78rem; color: var(--text-dim);">Oder erstmal mehr erfahren über <a href="#" style="color: var(--text-muted); border-bottom: 1px dashed var(--border);">KI-Potenzial-Analyse → InsideDynamic Hauptseite</a></p>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="goToScreen(3)">← Zurück zum Rechner</button>
+        <button class="btn btn-secondary" onclick="goToScreen(0)">Neu starten</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p>
+    <strong>Potenzial-Scan Lite · Mockup</strong> · InsideDynamic GmbH (Mannheim) · Architektur V2<br>
+    <span class="footer-code">Next.js 14+ TypeScript · PostgreSQL 16 · Drizzle · Zod · Plausible self-hosted · Odoo CRM</span>
+  </p>
+  <p style="margin-top: 0.75rem;">
+    <a href="https://taras-polishchuk.github.io/mvp-potenzial-scan/" target="_blank" rel="noopener">CEO-Approval-Deck</a> ·
+    <a href="https://taras-polishchuk.github.io/learning-platform/" target="_blank" rel="noopener">AI Learning Platform</a> ·
+    <a href="https://taras-polishchuk.github.io/" target="_blank" rel="noopener">Portfolio</a> ·
+    <a href="https://github.com/taras-polishchuk/taras-polishchuk.github.io" target="_blank" rel="noopener">Source</a>
+  </p>
+  <p style="margin-top: 0.75rem; font-size: 0.75rem;">Mockup · alle Interaktionen laufen lokal im Browser · keine echten Server-Calls · Mockup von <a href="https://taras-polishchuk.github.io/" target="_blank" rel="noopener">Taras Polishchuk</a></p>
+</footer>
+
+<script>
+  // ====== STEP PIPELINE TAB SWITCHING ======
+  const tabs = document.querySelectorAll('.step-tab');
+  const screens = document.querySelectorAll('.screen');
+
+  function goToScreen(idx) {
+    screens.forEach(s => s.classList.remove('active'));
+    tabs.forEach(t => {
+      t.classList.remove('active');
+      t.classList.remove('done');
+    });
+    const targetScreen = document.getElementById('screen-' + idx);
+    const targetTab = document.querySelector(`.step-tab[data-target="screen-${idx}"]`);
+    if (targetScreen) targetScreen.classList.add('active');
+    if (targetTab) {
+      targetTab.classList.add('active');
+      // Mark all previous tabs as done
+      for (let i = 0; i < idx; i++) {
+        const prevTab = document.querySelector(`.step-tab[data-target="screen-${i}"]`);
+        if (prevTab) prevTab.classList.add('done');
+      }
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.target;
+      const idx = parseInt(target.split('-')[1]);
+      goToScreen(idx);
+    });
+  });
+
+  // ====== CHIP TOGGLES (single-select) ======
+  document.querySelectorAll('.chips').forEach(group => {
+    const chips = group.querySelectorAll('.chip');
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+      });
+    });
+  });
+
+  // ====== SCENARIO PICKER (Rechner) ======
+  function selectScenario(el) {
+    document.querySelectorAll('.scenario').forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  // ====== EUR TOGGLE ======
+  function toggleEur() {
+    const toggle = document.getElementById('eur-toggle');
+    toggle.classList.toggle('on');
+  }
+
+  // ====== INITIAL ADAPTIVE QUESTION (mock) ======
+  // In real product: trigger logic reads (branch, pain_input) and asks the most diagnostic Q.
+  // For mockup, we show a sensible default and let user play.
+
+</script>
+
+</body>
+</html>
