@@ -1,0 +1,16 @@
+# InsideDynamic redesign audit
+- The current site communicates strong expertise, but its Elementor structure feels template-led and visually fragmented.
+- Large empty gaps, repetitive white content blocks and generic shadows weaken hierarchy and perceived value.
+- Dense copy obscures the strongest B2B proposition: compliant, automated document and invoice workflows.
+- A leftover placeholder sentence and inconsistent font declarations reduce confidence in the current presentation.
+- The redesign keeps the exact core palette: `#141a4f`, `#007bff` and `#00d084`.
+- Cardo remains the editorial display face; Roboto handles copy and JetBrains Mono labels technical data.
+- The favicon-scale identity becomes a custom animated “ID” line mark without replacing the brand concept.
+- Option A creates the hero environment: a deep-navy SVG constellation, faint hex grid and controlled ambient light.
+- Premium motion includes staggered word reveal, SVG line drawing, ambient drift and animated gradient type.
+- Interaction includes magnetic CTAs, a lagged cursor, service-card 3D tilt and keyword letter scrambling.
+- Scroll choreography includes progress feedback, subtle hero parallax, clipped section entry and soft content reveals.
+- The compliance document draws itself on entry while restrained counters reinforce experience and conformity.
+- Continuous service and partner marquees add motion without the bounce or excess of a generic AI concept.
+- The result turns real services, Mannheim presence and GoBD expertise into a cinematic CEO-pitch narrative.
+- Reduced-motion support and responsive layouts preserve polish and usability across desktop, tablet and mobile.
