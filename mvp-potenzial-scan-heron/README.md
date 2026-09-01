@@ -1,0 +1,15 @@
+# Heron-Stil — Gestaltungsnotizen
+- Tiefes Warm-Schwarz und warmes Papier bilden den klaren Hell-Dunkel-Rhythmus der Seite.
+- Leuchtendes Heron-Orange markiert Aktionen, Status, Kennzahlen und diagnostische Hebelpunkte.
+- Zwei eingebettete SVG-Muster erzeugen Punkte- und Linienraster ohne externe Bilddateien.
+- Space Grotesk sorgt für eine geometrische, eigenständige B2B-Typografie; JetBrains Mono kennzeichnet Daten.
+- Die Hauptüberschrift skaliert fließend mit dem Viewport und setzt den Engpass kursiv in Orange ab.
+- Scharfkantige Schaltflächen reagieren mit einem versetzten, druckgrafischen Schatten.
+- Das Dossier bleibt eine begleitende Seitenfläche und übernimmt Papier, Terrakotta-Tönung und Raster.
+- Die Wizard-Schiene ist auf 300 Pixel ausgelegt und erhält eine Bauhaus-artige Kreuzmarke.
+- Der Trust-Bereich bleibt auf großen Ansichten vierspaltig und klappt kontrolliert auf zwei beziehungsweise eine Spalte um.
+- Ergebniswerte und diagnostische Hinweise verwenden Monospace-Schrift für sachliche Datenglaubwürdigkeit.
+- Dezente IntersectionObserver-Reveals unterstützen die Leserichtung, ohne den Prozess zu verlangsamen.
+- Bei 1024, 768 und 420 Pixeln wechseln Hero, Wizard, Trust-Band und Dashboard in robuste Stapellayouts.
+- Die warme, technische Gestaltung verbindet Präzision mit Zugänglichkeit für den deutschen Mittelstand.
+- Klare Hierarchie, zurückhaltende Bewegung und nachvollziehbare Datenflächen stärken den seriösen B2B-Charakter.
