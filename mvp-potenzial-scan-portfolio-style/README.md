@@ -1,8 +1,9 @@
 # Potenzial-Scan Lite — Portfolio Style variant
 
-> **Variant:** Portfolio Style (dark theme, violet primary, mint accent)
+> **Variant:** Portfolio Style v2.0 (dark theme, warm amber `#d4a017` primary)
 > **Source:** [`../mvp-potenzial-scan-de/`](../mvp-potenzial-scan-de/) — Liquid Glass (light theme, primary amber)
-> **Generated:** 2026-08-31 by Hermes (insidedynamic profile)
+> **Generated:** 2026-09-02 by Codex Mission G (replaces v1.0 violet/mint variant from 2026-08-31)
+> **SHA-256:** `d39aa52867494aee7e939a9e10446e61671afa5c2856ec700e0858aa2ee26216`
 
 ## What this is
 
@@ -17,12 +18,14 @@ surfaces, glass effects, typography) are remapped to the
 |--------|-------------|---------------------------|
 | Background | `#f2eee5` warm paper | `#0a0a0b` deep dark |
 | Surface | `#e6dfd2` light cream | `#111113` charcoal |
-| Primary | `#d4a017` warm amber | `#7c6fff` electric violet |
-| Accent | `#f0b825` bright amber | `#4eecc8` mint cyan |
+| Primary | `#d4a017` warm amber | `#d4a017` warm amber |
+| Accent | `#f0b825` bright amber | `#f0cf73` bright amber |
 | Text on bg | `#0b0b0d` deep ink | `#e8e8f0` light off-white |
 | Display font | Inter Tight | Cabinet Grotesk |
 | Body font | Inter Tight | Inter |
 | Theme | Light / warm | Dark / cool |
+
+> **Note (2026-09-02):** v1.0 had `--amber: #7c6fff` violet and `--amber-bright: #4eecc8` mint. Operator rejected as "не дуже красиво вийшло". v2.0 (Codex Mission G) restores the canonical Taras amber palette (`#d4a017` / `#f0cf73`) on the same dark `#0a0a0b` background, matching the approved Mission E (Heron-style) visual vocabulary.
 
 ## What is preserved 100%
 
