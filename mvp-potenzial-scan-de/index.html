@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Potenzial-Scan Lite — Prozessdiagnose für den Mittelstand</title>
+  <meta name="description" content="Kostenlose 5-Minuten-Diagnose eines Arbeitsprozesses für den deutschen Mittelstand: Erkennen Sie Automatisierungspotenzial und erhalten Sie einen konkreten nächsten Schritt.">
+  <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large">
+  <link rel="canonical" href="https://potenzial-scan.de/">
+  <meta property="og:title" content="Potenzial-Scan Lite — Automatisierungspotenzial in 5 Minuten">
+  <meta property="og:description" content="Strukturieren Sie Ihren Prozessengpass und erhalten Sie einen ersten umsetzbaren Schritt — ohne unnötige Komplexität.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://potenzial-scan.de/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #0b0b0d;
+      --ink-2: #151517;
+      --paper: #f2eee5;
+      --paper-2: #e6dfd2;
+      --amber: #d4a017;
+      --amber-soft: #f0cf73;
+      --white: #fffaf0;
+      --muted: #a9a398;
+      --line-dark: #363436;
+      --line-paper: #c9c0af;
+      --danger: #b84c38;
+      --success: #487052;
+      --radius: 2px;
+      --sans: "Inter Tight", Arial, sans-serif;
+      --mono: "JetBrains Mono", monospace;
+      --max: 1440px;
+      --shadow: 12px 12px 0 rgba(0,0,0,.2);
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--ink); color: var(--paper); scroll-behavior: smooth; }
+    body { margin: 0; min-height: 100vh; font-family: var(--sans); background: var(--ink); }
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; }
+    ::selection { background: var(--amber); color: var(--ink); }
+    .grain { position: fixed; inset: 0; pointer-events: none; opacity: .09; z-index: 20; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E"); }
+    .shell { width: min(var(--max), calc(100% - 48px)); margin: 0 auto; }
+    .site-head { height: 72px; border-bottom: 1px solid var(--line-dark); display: flex; align-items: center; position: relative; z-index: 3; }
+    .site-head .shell { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .brand { display: flex; align-items: center; gap: 14px; letter-spacing: -.02em; font-weight: 600; }
+    .brand-mark { width: 25px; height: 25px; border: 1px solid var(--amber); position: relative; }
+    .brand-mark::before, .brand-mark::after { content: ""; position: absolute; background: var(--amber); }
+    .brand-mark::before { width: 1px; height: 33px; left: 11px; top: -5px; transform: rotate(45deg); }
+    .brand-mark::after { width: 7px; height: 7px; left: 8px; top: 8px; }
+    .head-meta { font: 11px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .09em; }
+    .head-status { display: inline-flex; align-items: center; gap: 8px; }
+    .status-dot { width: 7px; height: 7px; background: var(--amber); }
+    main { min-height: calc(100vh - 72px); }
+    .screen { display: none; animation: reveal .38s ease both; }
+    .screen.active { display: block; }
+    @keyframes reveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    @keyframes scan { 0% { transform: translateY(0); } 50% { transform: translateY(236px); } 100% { transform: translateY(0); } }
+    @keyframes blink { 50% { opacity: .28; } }
+    .eyebrow { font: 11px var(--mono); color: var(--amber); letter-spacing: .12em; text-transform: uppercase; }
+    .hero { min-height: 650px; display: grid; grid-template-columns: 7fr 5fr; border-bottom: 1px solid var(--line-dark); }
+    .hero-copy { padding: 72px 7vw 72px 0; display: flex; flex-direction: column; justify-content: space-between; }
+    h1 { margin: 24px 0 32px; max-width: 820px; font-size: clamp(54px, 7.2vw, 112px); line-height: .88; letter-spacing: -.065em; font-weight: 600; }
+    h1 .accent { color: var(--amber); font-weight: 400; }
+    .lede { max-width: 620px; font-size: clamp(19px, 2vw, 27px); line-height: 1.35; color: #c7c0b5; letter-spacing: -.02em; }
+    .hero-action { display: flex; align-items: stretch; gap: 14px; margin-top: 50px; }
+    .btn { border: 1px solid var(--amber); border-radius: var(--radius); padding: 15px 20px; min-height: 52px; background: var(--amber); color: var(--ink); font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 22px; transition: transform .18s ease, background .18s ease, color .18s ease; }
+    .btn:hover { transform: translate(-2px,-2px); box-shadow: 4px 4px 0 var(--paper); }
+    .btn:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 3px solid var(--amber-soft); outline-offset: 3px; }
+    .btn.secondary { background: transparent; color: var(--paper); border-color: var(--line-dark); font-weight: 500; }
+    .btn.secondary:hover { border-color: var(--paper); box-shadow: none; }
+    .btn svg { width: 18px; height: 18px; }
+    .auto-note { font: 11px/1.5 var(--mono); color: var(--muted); align-self: center; }
+    .hero-dossier { background: var(--paper); color: var(--ink); padding: 42px; border-left: 1px solid var(--line-dark); position: relative; overflow: hidden; }
+    .dossier-top { display: flex; justify-content: space-between; font: 10px var(--mono); text-transform: uppercase; letter-spacing: .08em; padding-bottom: 20px; border-bottom: 1px solid var(--line-paper); }
+    .diagnostic { position: relative; height: 270px; margin: 34px 0 28px; border: 1px solid var(--ink); padding: 22px; overflow: hidden; }
+    .diagnostic-grid { position: absolute; inset: 0; background-size: 32px 32px; background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0H32M0 0V32' fill='none' stroke='%23d4ccbd' stroke-width='1'/%3E%3C/svg%3E"); opacity: .48; }
+    .trace-svg { position: relative; z-index: 1; width: 100%; height: 100%; }
+    .scan-line { position: absolute; z-index: 2; left: 0; right: 0; height: 1px; background: var(--amber); box-shadow: 0 0 14px var(--amber); animation: scan 5s ease-in-out infinite; }
+    .dossier-title { font-size: 27px; line-height: 1.06; letter-spacing: -.035em; margin: 0 0 22px; }
+    .deliverables { list-style: none; margin: 0; padding: 0; }
+    .deliverables li { display: grid; grid-template-columns: 38px 1fr; gap: 14px; padding: 15px 0; border-top: 1px solid var(--line-paper); }
+    .deliverables code { font: 11px var(--mono); color: #7c5a00; }
+    .deliverables strong { display: block; font-size: 15px; }
+    .deliverables span { color: #625e57; font-size: 13px; }
+    .trust-band { padding: 38px 0 44px; display: grid; grid-template-columns: 1.3fr repeat(3,1fr); gap: 1px; background: var(--line-dark); }
+    .trust-item { background: var(--ink); padding: 5px 28px 5px 0; min-height: 90px; }
+    .trust-item + .trust-item { padding-left: 28px; }
+    .trust-item .num { font: 12px var(--mono); color: var(--amber); display: block; margin-bottom: 12px; }
+    .trust-item strong { font-size: 17px; display: block; margin-bottom: 5px; }
+    .trust-item p { color: var(--muted); margin: 0; font-size: 13px; line-height: 1.45; }
+    .wizard-layout { min-height: 680px; display: grid; grid-template-columns: 300px 1fr; }
+    .wizard-rail { padding: 48px 36px 60px 0; border-right: 1px solid var(--line-dark); display: flex; flex-direction: column; justify-content: space-between; }
+    .progress-label { font: 11px var(--mono); color: var(--muted); }
+    .progress-big { display: block; font: 54px var(--mono); color: var(--paper); letter-spacing: -.08em; margin: 10px 0 30px; }
+    .step-map { list-style: none; padding: 0; margin: 0; }
+    .step-map li { color: #68645f; padding: 13px 0; border-top: 1px solid var(--line-dark); display: flex; gap: 12px; font-size: 13px; }
+    .step-map li.current { color: var(--paper); }
+    .step-map li.done { color: var(--amber); }
+    .step-map code { font: 10px var(--mono); padding-top: 3px; }
+    .rail-note { color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .wizard-main { padding: 52px 0 80px 7vw; max-width: 1000px; }
+    .wizard-step { display: none; }
+    .wizard-step.active { display: block; animation: reveal .32s ease both; }
+    .step-kicker { display: flex; justify-content: space-between; border-bottom: 1px solid var(--line-dark); padding-bottom: 15px; font: 11px var(--mono); color: var(--amber); text-transform: uppercase; letter-spacing: .08em; }
+    h2 { margin: 38px 0 12px; font-size: clamp(40px,5vw,68px); line-height: .98; letter-spacing: -.05em; font-weight: 600; max-width: 800px; }
+    .step-intro { color: var(--muted); font-size: 18px; line-height: 1.5; max-width: 650px; margin-bottom: 40px; }
+    .form-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; }
+    .field { display: flex; flex-direction: column; gap: 9px; }
+    .field.full { grid-column: 1 / -1; }
+    label { font: 11px var(--mono); color: #c5beb3; letter-spacing: .04em; text-transform: uppercase; }
+    input, textarea, select { width: 100%; border: 1px solid #474347; border-radius: var(--radius); background: var(--ink-2); color: var(--paper); padding: 15px 16px; min-height: 53px; }
+    textarea { min-height: 140px; resize: vertical; line-height: 1.5; }
+    select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='8'%3E%3Cpath d='m1 1 6 6 6-6' fill='none' stroke='%23d4a017'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
+    .hint { color: #777169; font-size: 12px; }
+    .choice-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .choice { position: relative; }
+    .choice input { position: absolute; opacity: 0; pointer-events: none; }
+    .choice span { display: block; border: 1px solid var(--line-dark); padding: 17px 15px; min-height: 72px; color: var(--muted); transition: .18s ease; }
+    .choice input:checked + span { border-color: var(--amber); color: var(--paper); background: #1b1810; }
+    .choice strong { display: block; color: inherit; margin-bottom: 5px; }
+    .wizard-actions { display: flex; justify-content: space-between; gap: 16px; margin-top: 40px; padding-top: 22px; border-top: 1px solid var(--line-dark); }
+    .error { color: #e27f68; font: 11px var(--mono); min-height: 16px; margin-top: 10px; }
+    .analysis-box { background: var(--paper); color: var(--ink); display: grid; grid-template-columns: 1.1fr .9fr; min-height: 390px; margin-top: 38px; }
+    .analysis-visual { padding: 34px; position: relative; border-right: 1px solid var(--line-paper); overflow: hidden; }
+    .analysis-log { padding: 34px; font: 12px/1.8 var(--mono); }
+    .analysis-log div { border-bottom: 1px solid var(--line-paper); padding: 8px 0; color: #777067; }
+    .analysis-log div.on { color: var(--ink); }
+    .analysis-log i { display: inline-block; width: 7px; height: 7px; background: var(--amber); margin-right: 10px; animation: blink 1s infinite; }
+    .meter { height: 6px; background: #cbc2b4; margin: 28px 0; }
+    .meter span { display: block; height: 100%; width: 0; background: var(--amber); transition: width .5s ease; }
+    .gate-card { margin-top: 34px; background: var(--paper); color: var(--ink); padding: 34px; box-shadow: var(--shadow); max-width: 780px; }
+    .gate-card label { color: #5d574f; }
+    .gate-card input { background: #fffaf0; color: var(--ink); border-color: var(--line-paper); }
+    .consent { display: grid; grid-template-columns: 20px 1fr; gap: 11px; margin: 22px 0; font-size: 12px; line-height: 1.5; color: #625c54; }
+    .consent input { width: 17px; height: 17px; min-height: auto; accent-color: var(--amber); }
+    .result-head { padding: 60px 0 44px; border-bottom: 1px solid var(--line-dark); display: grid; grid-template-columns: 1.5fr .5fr; align-items: end; gap: 40px; }
+    .result-head h2 { margin-bottom: 0; }
+    .score { justify-self: end; text-align: right; }
+    .score-value { font: 84px/.8 var(--mono); color: var(--amber); letter-spacing: -.09em; }
+    .score small { display: block; margin-top: 15px; font: 10px var(--mono); color: var(--muted); text-transform: uppercase; }
+    .dashboard { display: grid; grid-template-columns: 1fr 2fr; gap: 1px; background: var(--line-dark); border-bottom: 1px solid var(--line-dark); }
+    .dashboard > section { background: var(--ink); padding: 42px 36px; }
+    .summary-list { margin: 28px 0 0; }
+    .summary-row { display: flex; justify-content: space-between; padding: 15px 0; border-top: 1px solid var(--line-dark); font-size: 13px; }
+    .summary-row span { color: var(--muted); }
+    .rec { background: var(--paper); color: var(--ink); margin-top: 18px; padding: 26px; border-top: 3px solid var(--amber); }
+    .rec-head { display: grid; grid-template-columns: 44px 1fr auto; align-items: start; gap: 16px; }
+    .rec-index { font: 11px var(--mono); color: #876609; }
+    .rec h3 { margin: 0; font-size: 22px; letter-spacing: -.02em; }
+    .priority { font: 10px var(--mono); text-transform: uppercase; color: #6c645a; border: 1px solid var(--line-paper); padding: 6px 8px; }
+    .before-after { display: grid; grid-template-columns: 1fr 32px 1fr; gap: 14px; align-items: center; margin-top: 22px; }
+    .state { border: 1px solid var(--line-paper); padding: 15px; min-height: 84px; }
+    .state code { display: block; font: 10px var(--mono); color: #7a7267; margin-bottom: 8px; }
+    .state.after { border-color: #9b7a20; background: #ece0bc; }
+    .arrow { text-align: center; color: #8a6a10; }
+    .recommendations-note { font-size: 12px; color: var(--muted); margin: 16px 0 0; }
+    .contact-band { padding: 58px 0; display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: center; }
+    .contact-band h3 { font-size: 34px; margin: 0 0 8px; letter-spacing: -.03em; }
+    .contact-band p { color: var(--muted); margin: 0; }
+    footer { border-top: 1px solid var(--line-dark); padding: 27px 0 34px; color: #777169; font-size: 11px; line-height: 1.55; }
+    .footer-grid { display: grid; grid-template-columns: .7fr 1.3fr 1fr; gap: 36px; }
+    footer strong { color: var(--muted); display: block; margin-bottom: 5px; font-weight: 500; }
+    .mobile-only { display: none; }
+    @media (max-width: 900px) {
+      .shell { width: min(100% - 28px, var(--max)); }
+      .hero { grid-template-columns: 1fr; }
+      .hero-copy { padding: 55px 0; }
+      .hero-dossier { border-left: 0; }
+      .trust-band { grid-template-columns: 1fr 1fr; }
+      .trust-item, .trust-item + .trust-item { padding: 22px 18px; }
+      .wizard-layout { grid-template-columns: 1fr; }
+      .wizard-rail { padding: 24px 0; border-right: 0; border-bottom: 1px solid var(--line-dark); }
+      .step-map, .rail-note { display: none; }
+      .progress-big { font-size: 25px; margin: 4px 0 0; }
+      .wizard-main { padding: 38px 0 70px; }
+      .dashboard { grid-template-columns: 1fr; }
+      .analysis-box { grid-template-columns: 1fr; }
+      .analysis-visual { border-right: 0; border-bottom: 1px solid var(--line-paper); }
+    }
+    @media (max-width: 620px) {
+      .head-meta { display: none; }
+      h1 { font-size: 54px; }
+      .hero-action { flex-direction: column; align-items: stretch; }
+      .auto-note { align-self: flex-start; }
+      .hero-dossier { padding: 28px 20px; }
+      .trust-band, .form-grid, .choice-grid, .result-head, .contact-band, .footer-grid { grid-template-columns: 1fr; }
+      .score { justify-self: start; text-align: left; }
+      .before-after { grid-template-columns: 1fr; }
+      .arrow { transform: rotate(90deg); }
+      .rec-head { grid-template-columns: 35px 1fr; }
+      .priority { grid-column: 2; justify-self: start; }
+      .dashboard > section { padding: 34px 20px; }
+      .mobile-only { display: inline; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+    /* LUMINOUS / independent surface pass */
+    :root {
+      --paper:#faf6ee;--paper-2:#f3ecdc;--paper-3:#ebe1c8;--ink:#1a1a1f;--ink-2:#4a4a52;--ink-3:#8a8a92;
+      --glass-tint-amber:rgba(212,160,23,.16);--glass-tint-sky:rgba(108,156,211,.14);--glass-tint-rose:rgba(212,142,142,.12);
+      --amber:#d4a017;--amber-bright:#f0b825;--amber-deep:#a07708;--amber-soft:#f0cf73;--white:#fffdf8;
+      --muted:#74737b;--line-dark:rgba(49,48,53,.12);--line-paper:rgba(74,74,82,.14);--glass-border:rgba(255,255,255,.68);
+      --glass-shadow-soft:0 8px 32px rgba(26,26,31,.08),0 2px 8px rgba(26,26,31,.04);
+      --glass-shadow-deep:0 24px 64px rgba(26,26,31,.12),0 4px 16px rgba(26,26,31,.06);
+      --glass-inner-highlight:inset 0 1px 0 rgba(255,255,255,.72);--radius:16px;--max:1440px;--shadow:var(--glass-shadow-deep);
+    }
+    html{background:var(--paper);color:var(--ink)}
+    body{background:var(--paper);color:var(--ink);position:relative;min-height:100vh;overflow-x:hidden}
+    body:before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.28;background-image:radial-gradient(rgba(26,26,31,.17) .55px,transparent .55px);background-size:7px 7px;mask-image:linear-gradient(to bottom,black,transparent 75%)}
+    .ambient-field{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+    .ambient-field .glow{position:absolute;border-radius:50%;filter:blur(120px);opacity:.28;will-change:transform}
+    .ambient-field .amber{width:520px;height:520px;top:-12%;left:-9%;background:radial-gradient(circle,#d4a017,transparent 65%);animation:drift-a 96s ease-in-out infinite alternate}
+    .ambient-field .sky{width:620px;height:620px;bottom:-18%;right:-12%;background:radial-gradient(circle,#6c9cd3,transparent 65%);animation:drift-b 112s ease-in-out infinite alternate}
+    .ambient-field .rose{width:420px;height:420px;top:52%;left:50%;background:radial-gradient(circle,#d48e8e,transparent 65%);animation:drift-c 126s ease-in-out infinite alternate}
+    .grain{display:none}.site-head,main,footer{position:relative;z-index:1}
+    .site-head{height:82px;border:0;background:rgba(250,246,238,.48);backdrop-filter:blur(28px) saturate(150%);-webkit-backdrop-filter:blur(28px) saturate(150%);box-shadow:0 1px 0 rgba(255,255,255,.75),0 8px 30px rgba(26,26,31,.035)}
+    .brand-mark{border-color:var(--amber);border-radius:7px;transform:rotate(3deg);box-shadow:0 5px 18px rgba(212,160,23,.18)}
+    .brand-mark:after{border-radius:2px}.head-meta{color:var(--ink-3)}.status-dot{border-radius:50%;box-shadow:0 0 0 5px rgba(212,160,23,.12);animation:status-pulse 3.2s ease-in-out infinite}
+    .screen{animation:glass-in .6s cubic-bezier(.2,.8,.2,1) both}.eyebrow{color:var(--amber-deep)}
+    .hero{min-height:700px;grid-template-columns:7fr 5fr;border:0;gap:28px;padding:42px 0 22px}
+    .hero-copy{padding:58px 5vw 52px 10px}.hero-copy:before{content:"POTENZIAL / 01";font:10px var(--mono);letter-spacing:.14em;color:var(--ink-3);position:absolute;transform:rotate(-90deg) translateX(-100%);transform-origin:left top;margin-left:-27px}
+    h1{color:var(--ink);font-size:clamp(56px,7vw,108px);line-height:.89}.lede{color:var(--ink-2);max-width:680px}.accent{color:var(--amber-deep)!important;text-shadow:0 8px 32px rgba(212,160,23,.16)}
+    .btn{display:inline-flex;align-items:center;gap:14px;padding:15px 24px;min-height:52px;border-radius:16px;font-weight:600;border:1px solid var(--glass-border);background:linear-gradient(180deg,rgba(255,255,255,.78),rgba(255,255,255,.46));backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);box-shadow:var(--glass-shadow-soft),var(--glass-inner-highlight);color:var(--ink);transition:transform .28s cubic-bezier(.2,.8,.2,1),box-shadow .28s ease,background .28s ease}
+    .btn:hover{transform:translateY(-1px) scale(1.01);box-shadow:var(--glass-shadow-deep),var(--glass-inner-highlight)}.btn:active{transform:scale(.99)}
+    .btn:not(.secondary){background:linear-gradient(180deg,var(--amber-bright),var(--amber));border-color:rgba(212,160,23,.55)}.btn:not(.secondary):hover{background:linear-gradient(180deg,var(--amber),var(--amber-deep));box-shadow:0 0 28px rgba(212,160,23,.32),var(--glass-shadow-soft),var(--glass-inner-highlight)}
+    .btn.secondary{color:var(--ink);border-color:var(--glass-border);background:linear-gradient(180deg,rgba(255,255,255,.7),rgba(255,255,255,.38))}.btn.secondary:hover{border-color:white;box-shadow:var(--glass-shadow-deep)}.auto-note{color:var(--ink-3)}
+    .hero-dossier,.trust-item,.wizard-rail,.gate-card,.rec,footer{background:linear-gradient(180deg,rgba(255,255,255,.67),rgba(255,255,255,.34));backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%);border:1px solid var(--glass-border);box-shadow:var(--glass-shadow-soft),var(--glass-inner-highlight)}
+    .hero-dossier{color:var(--ink);padding:42px;border-radius:28px;overflow:hidden;box-shadow:var(--glass-shadow-deep),var(--glass-inner-highlight);animation:glass-in .9s .12s both}
+    .hero-dossier:before{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.52) 48%,transparent 64%);background-size:250% 100%;animation:shimmer 9s linear infinite;pointer-events:none}
+    .dossier-top{border-color:var(--line-paper);color:var(--ink-2)}.diagnostic{border:1px solid rgba(255,255,255,.58);border-radius:18px;background:linear-gradient(135deg,rgba(212,160,23,.1),rgba(108,156,211,.1));box-shadow:inset 0 1px 0 rgba(255,255,255,.8);backdrop-filter:blur(12px);overflow:hidden}
+    .diagnostic:before,.analysis-visual:before{content:"";position:absolute;width:210px;height:210px;left:45%;top:18%;background:radial-gradient(circle,rgba(212,160,23,.32),transparent 66%);filter:blur(35px);animation:orb-breathe 12s ease-in-out infinite alternate}
+    .diagnostic-grid{background-image:linear-gradient(rgba(26,26,31,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(26,26,31,.055) 1px,transparent 1px);background-size:28px 28px;opacity:1}.trace-svg path:first-child{stroke:var(--ink);stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:600;stroke-dashoffset:600;animation:draw-path 3.5s ease-out .35s forwards}.trace-svg circle{fill:var(--amber);filter:drop-shadow(0 0 6px rgba(212,160,23,.55));animation:score-in 1s ease-out 2.8s both,glow-pulse 2.5s ease-in-out 3.8s infinite}.scan-line{top:0;background:linear-gradient(90deg,transparent,var(--amber),transparent);animation:scan-luminous 4.8s ease-in-out infinite;box-shadow:0 0 15px rgba(212,160,23,.5)}
+    .deliverables li{border-color:var(--line-paper)}.deliverables span{color:var(--ink-2)}
+    .trust-band{background:none;gap:16px;padding:26px 0 54px}.trust-item,.trust-item+.trust-item{padding:30px 28px;min-height:150px;border-radius:22px;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}.trust-item:hover{transform:translateY(-3px);box-shadow:var(--glass-shadow-deep),var(--glass-inner-highlight)}.trust-item .num{color:var(--amber-deep);font-size:11px;letter-spacing:.08em}.trust-item p{color:var(--ink-2)}
+    .wizard-layout{grid-template-columns:300px 1fr;gap:34px;padding-top:38px;padding-bottom:48px}.wizard-rail{padding:48px 36px 60px;border:0;border-radius:24px;margin-bottom:auto;position:sticky;top:110px}.progress-label,.rail-note{color:var(--ink-3)}.progress-big{color:var(--ink)}.step-map li{color:var(--ink-3);border-color:var(--line-paper)}.step-map li.current{color:var(--ink);font-weight:600}.step-map li.done{color:var(--amber-deep)}
+    .wizard-main{padding:52px 2vw 80px 3vw}.step-kicker{border-color:var(--line-paper);color:var(--amber-deep)}.step-intro{color:var(--ink-2)}label{color:var(--ink-2)}.hint{color:var(--ink-3)}
+    input,textarea,select{background:linear-gradient(180deg,rgba(255,255,255,.68),rgba(255,255,255,.34));color:var(--ink);border:1px solid var(--glass-border);backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);border-radius:14px;padding:16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.78),0 2px 8px rgba(26,26,31,.04);transition:border-color .22s,box-shadow .22s,transform .22s}input:focus-visible,textarea:focus-visible,select:focus-visible{border-color:var(--amber);outline:0;box-shadow:inset 0 1px 0 white,0 0 0 3px rgba(212,160,23,.2),0 4px 14px rgba(212,160,23,.14);transform:translateY(-1px)}
+    .choice span{border:1px solid var(--glass-border);border-radius:16px;color:var(--ink-2);background:rgba(255,255,255,.35);box-shadow:var(--glass-inner-highlight)}.choice input:checked+span{border-color:var(--amber);color:var(--ink);background:linear-gradient(145deg,rgba(255,244,211,.8),rgba(212,160,23,.13));box-shadow:0 0 0 3px rgba(212,160,23,.09),var(--glass-inner-highlight)}.wizard-actions{border-color:var(--line-paper)}
+    .analysis-box{color:var(--ink);background:transparent;grid-template-columns:1.1fr .9fr;gap:16px}.analysis-visual,.analysis-log{border:1px solid var(--glass-border);border-radius:22px;background:linear-gradient(180deg,rgba(255,240,200,.58),rgba(212,160,23,.15));backdrop-filter:blur(20px) saturate(150%);box-shadow:var(--glass-shadow-soft),var(--glass-inner-highlight)}.analysis-visual{border-right:1px solid var(--glass-border)}.analysis-log{background:linear-gradient(180deg,rgba(255,255,255,.65),rgba(255,255,255,.34))}.analysis-log div{border-color:var(--line-paper);color:var(--ink-3)}.analysis-log div.on{color:var(--ink);animation:log-in .45s ease both}.analysis-log i{border-radius:50%}.meter{height:7px;border-radius:7px;background:rgba(26,26,31,.1);overflow:hidden}.meter span{background:linear-gradient(90deg,var(--amber-deep),var(--amber-bright));border-radius:7px;box-shadow:0 0 14px rgba(212,160,23,.35)}
+    .gate-card{color:var(--ink);border-radius:24px}.gate-card input{background:rgba(255,255,255,.48);color:var(--ink);border-color:var(--glass-border)}.gate-card label,.consent{color:var(--ink-2)}
+    .result-head{border-color:var(--line-paper)}.score{animation:score-in 1s cubic-bezier(.2,.8,.2,1) both}.score-value{color:var(--amber-deep);text-shadow:0 10px 34px rgba(212,160,23,.2)}
+    .dashboard{grid-template-columns:1.6fr 1.4fr;gap:22px;background:none;border:0;padding:24px 0}.dashboard>section{background:linear-gradient(180deg,rgba(255,255,255,.48),rgba(255,255,255,.24));border:1px solid var(--glass-border);border-radius:24px;padding:42px 36px;box-shadow:var(--glass-shadow-soft),var(--glass-inner-highlight);backdrop-filter:blur(20px)}.dashboard>section p[style]{color:var(--ink-2)!important}.summary-row{border-color:var(--line-paper)}.summary-row span,.recommendations-note{color:var(--ink-3)}
+    .rec{color:var(--ink);border-top:3px solid var(--amber);border-radius:18px;padding:26px;transition:transform .32s cubic-bezier(.2,.8,.2,1),box-shadow .32s ease;opacity:0;animation:card-in .7s cubic-bezier(.2,.8,.2,1) forwards}.rec:nth-of-type(2){animation-delay:.12s}.rec:nth-of-type(3){animation-delay:.24s}.rec:hover{transform:translateY(-2px);box-shadow:var(--glass-shadow-deep),var(--glass-inner-highlight);border-top-color:var(--amber-bright)}.priority{color:var(--ink-2);border-color:var(--line-paper);border-radius:8px}.state{border-color:var(--line-paper);border-radius:13px;background:rgba(255,255,255,.25)}.state.after{border-color:rgba(212,160,23,.42);background:rgba(240,207,115,.23)}
+    .contact-band{margin:20px 0 50px;padding:42px;border:1px solid var(--glass-border);border-radius:24px;background:linear-gradient(110deg,rgba(255,255,255,.6),rgba(255,244,211,.38));box-shadow:var(--glass-shadow-soft),var(--glass-inner-highlight);backdrop-filter:blur(20px)}.contact-band p{color:var(--ink-2)}
+    footer{margin:0 24px 24px;padding:30px;border-radius:22px;color:var(--ink-3)}footer strong{color:var(--ink-2)}
+    @keyframes drift-a{from{transform:translate(0,0) scale(1)}to{transform:translate(55px,38px) scale(1.07)}}
+    @keyframes drift-b{from{transform:translate(0,0) scale(1)}to{transform:translate(-62px,-46px) scale(.94)}}
+    @keyframes drift-c{from{transform:translate(-50%,0) scale(1)}to{transform:translate(calc(-50% + 42px),58px) scale(1.1)}}
+    @keyframes glass-in{from{opacity:0;filter:blur(6px);transform:translateY(12px)}to{opacity:1;filter:blur(0);transform:none}}
+    @keyframes shimmer{from{background-position:-150% 0}to{background-position:150% 0}}
+    @keyframes draw-path{from{stroke-dashoffset:600}to{stroke-dashoffset:0}}
+    @keyframes scan-luminous{0%{transform:translateY(-2px);opacity:0}10%{opacity:.85}90%{opacity:.85}100%{transform:translateY(268px);opacity:0}}
+    @keyframes glow-pulse{0%,100%{filter:drop-shadow(0 0 6px rgba(212,160,23,.5))}50%{filter:drop-shadow(0 0 15px rgba(212,160,23,.95))}}
+    @keyframes score-in{0%{opacity:0;transform:scale(.96)}60%{opacity:1;transform:scale(1.02)}100%{transform:scale(1)}}
+    @keyframes log-in{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+    @keyframes card-in{from{opacity:0;transform:translateY(20px) scale(.98)}to{opacity:1;transform:none}}
+    @keyframes orb-breathe{from{transform:translate(-18px,-8px) scale(.9)}to{transform:translate(22px,12px) scale(1.12)}}
+    @keyframes status-pulse{0%,100%{box-shadow:0 0 0 5px rgba(212,160,23,.1)}50%{box-shadow:0 0 0 9px rgba(212,160,23,.03)}}
+    @keyframes blink{50%{opacity:.18}}
+    /* Pre-intelligence dossier: a companion surface, never an overlay. */
+    .wizard-layout{grid-template-columns:260px minmax(0,1fr) 330px;max-width:1540px}
+    .wizard-main{min-width:0;padding-left:1vw;padding-right:1vw}
+    .intel-panel{display:none;align-self:start;position:sticky;top:110px;border:1px solid var(--glass-border);border-radius:22px;padding:24px;background:linear-gradient(155deg,rgba(255,255,255,.72),rgba(255,250,235,.38));backdrop-filter:blur(28px) saturate(150%);-webkit-backdrop-filter:blur(28px) saturate(150%);box-shadow:var(--glass-shadow-deep),var(--glass-inner-highlight);overflow:hidden}
+    .intel-panel.enabled{display:block;animation:intel-enter .72s cubic-bezier(.2,.8,.2,1) both}
+    .intel-panel:before{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 25%,rgba(255,255,255,.48) 48%,transparent 68%);background-size:250% 100%;animation:intel-sheen 11s linear infinite;pointer-events:none}
+    .intel-head{position:relative;display:flex;justify-content:space-between;gap:16px;padding-bottom:17px;border-bottom:1px solid var(--line-paper);font:10px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+    .intel-state{color:var(--amber-deep)}.intel-company{position:relative;margin:20px 0 6px;font-size:22px;line-height:1.08;letter-spacing:-.03em}.intel-domain{margin:0 0 20px;color:var(--ink-3);font:10px var(--mono)}
+    .intel-loading{display:none;padding:18px 0}.intel-panel.loading .intel-loading{display:block}.intel-panel.loading .intel-content{display:none}
+    .intel-skeleton{height:11px;margin:12px 0;border-radius:8px;background:linear-gradient(90deg,rgba(212,160,23,.08),rgba(255,255,255,.78),rgba(212,160,23,.08));background-size:220% 100%;animation:intel-loading 1.6s ease-in-out infinite}.intel-skeleton:nth-child(2){width:76%}.intel-skeleton:nth-child(3){width:88%}
+    .intel-content{display:none}.intel-panel.ready .intel-content,.intel-panel.unavailable .intel-content{display:block;animation:intel-reveal .55s ease both}
+    .intel-facts{display:grid;grid-template-columns:1fr 1fr;margin:18px 0;border-top:1px solid var(--line-paper);border-bottom:1px solid var(--line-paper)}.intel-fact{padding:14px 8px 14px 0}.intel-fact+ .intel-fact{padding-left:14px;border-left:1px solid var(--line-paper)}.intel-fact span{display:block;color:var(--ink-3);font:9px var(--mono);text-transform:uppercase;margin-bottom:6px}.intel-fact strong{font-size:14px}
+    .intel-section{margin-top:20px}.intel-section h3{margin:0 0 10px;font:10px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--amber-deep)}.intel-processes{display:flex;flex-wrap:wrap;gap:7px}.intel-processes span{border:1px solid rgba(212,160,23,.25);border-radius:8px;padding:7px 9px;background:rgba(240,207,115,.12);font-size:11px}.intel-copy{font-size:12px;line-height:1.55;color:var(--ink-2);margin:0}.intel-source{margin:18px 0 0;padding-top:14px;border-top:1px solid var(--line-paper);font:9px/1.5 var(--mono);color:var(--ink-3)}
+    @keyframes intel-enter{from{opacity:0;transform:translateX(18px) scale(.98);filter:blur(5px)}to{opacity:1;transform:none;filter:none}}
+    @keyframes intel-loading{0%{background-position:100% 0}100%{background-position:-120% 0}}
+    @keyframes intel-reveal{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+    @keyframes intel-sheen{from{background-position:-160% 0}to{background-position:160% 0}}
+    @media(max-width:1320px){.wizard-layout{grid-template-columns:240px minmax(0,1fr) 300px;gap:20px}.intel-panel{padding:20px}}
+    @media(max-width:1120px){.wizard-layout{grid-template-columns:250px minmax(0,1fr)}.intel-panel{grid-column:2;position:relative;top:auto;margin:0 1vw 34px}.wizard-main{grid-column:2;grid-row:1}.wizard-rail{grid-row:1 / span 2}}
+    @media(max-width:1200px){h1{font-size:clamp(54px,7.5vw,88px)}.hero-copy{padding-right:3vw}.hero-dossier{padding:34px}.trust-item,.trust-item+.trust-item{padding:26px 22px}}
+    @media(max-width:900px){.hero{grid-template-columns:1fr}.trust-band{grid-template-columns:1fr 1fr}.wizard-layout{grid-template-columns:1fr}.wizard-rail{grid-row:auto;position:relative;top:auto;margin:0;padding:24px}.wizard-main,.intel-panel{grid-column:1;grid-row:auto}.intel-panel{margin:0 0 28px}.analysis-box,.result-head,.dashboard{grid-template-columns:1fr}.wizard-main{padding-left:0}.hero-copy:before{display:none}}
+    @media(max-width:760px){.hero{padding-top:20px}.hero-copy{padding-top:38px}.dossier-title{font-size:24px}.contact-band{padding:32px}.wizard-layout{gap:10px}}
+    @media(max-width:620px){.trust-band,.form-grid,.choice-grid,.before-after{grid-template-columns:1fr}.arrow{transform:rotate(90deg)}.hero-dossier{padding:26px 20px}.contact-band{margin-bottom:28px;padding:26px 20px}.footer-grid{grid-template-columns:1fr}.analysis-visual,.analysis-log{padding:24px}.dashboard>section{padding:30px 20px}}
+    /* German copy-fit pass: preserve the composition while allowing longer compounds to wrap cleanly. */
+    h1{max-width:900px;font-size:clamp(48px,6.4vw,96px);line-height:.92}
+    .dossier-title{font-size:25px;line-height:1.12}
+    .trust-item strong{font-size:16px;line-height:1.2}.trust-item p{font-size:12.5px}
+    .step-map li{font-size:12px;line-height:1.35;overflow-wrap:anywhere}.step-map code{flex:0 0 auto}
+    .rec h3{font-size:20px;line-height:1.15}.priority{white-space:nowrap}
+    .footer-grid{grid-template-columns:.65fr 1.15fr 1.2fr;gap:30px}
+    @media(max-width:1320px){h1{font-size:clamp(46px,6.1vw,82px)}.rec-head{grid-template-columns:40px 1fr}.priority{grid-column:2;justify-self:start}}
+    @media(max-width:900px){.footer-grid{grid-template-columns:1fr 1fr}.footer-grid>div:first-child{grid-column:1/-1}.step-kicker{gap:18px;flex-wrap:wrap}}
+    @media(max-width:620px){h2{font-size:clamp(35px,10vw,52px);line-height:1.02}.footer-grid{grid-template-columns:1fr}.footer-grid>div:first-child{grid-column:auto}.dossier-top{gap:14px;flex-wrap:wrap}}
+    @media(max-width:420px){.shell{width:calc(100% - 20px)}h1{font-size:clamp(40px,12vw,48px);line-height:.96;letter-spacing:-.055em}.lede{font-size:18px}.site-head{height:70px}.hero-action{margin-top:34px}.diagnostic{height:230px;margin:24px 0}.trust-item,.trust-item+.trust-item{padding:24px 20px}.wizard-rail{border-radius:18px}.rec{padding:20px}.contact-band h3{font-size:27px;line-height:1.12}footer{margin:0 10px 10px;padding:24px 18px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+  </style>
+</head>
+<body>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Potenzial-Scan Lite","url":"https://potenzial-scan.de/","applicationCategory":"BusinessApplication","operatingSystem":"Web","provider":{"@type":"Organization","name":"InsideDynamic GmbH"},"description":"Schnelldiagnose des Automatisierungspotenzials eines Geschäftsprozesses."}</script>
+  <div class="ambient-field" aria-hidden="true"><div class="glow amber"></div><div class="glow sky"></div><div class="glow rose"></div></div>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="site-head">
+    <div class="shell">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>InsideDynamic GmbH</span></div>
+      <div class="head-meta"><span class="head-status"><span class="status-dot"></span> Potenzial-Scan Lite / DE / 01</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="screen active" id="intro" aria-labelledby="intro-title">
+      <div class="shell">
+        <div class="hero">
+          <div class="hero-copy">
+            <div>
+              <div class="eyebrow">Prozess-Schnelldiagnose · ca. 5 Minuten</div>
+              <h1 id="intro-title">Finden Sie Ihren <span class="accent">Engpass</span>, bevor Sie in Automatisierung investieren.</h1>
+              <p class="lede">Beschreiben Sie einen Arbeitsprozess. Wir strukturieren die Reibungsverluste, bewerten das Automatisierungspotenzial und zeigen einen ersten umsetzbaren Schritt — ohne Show rund um „magische KI“.</p>
+            </div>
+            <div class="hero-action">
+              <button class="btn" type="button" data-action="start">Bewertung starten <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.5"/></svg></button>
+              <button class="btn secondary" type="button" data-action="method">So funktioniert die Methode</button>
+              <span class="auto-note" id="autoNote">Automatischer Start in <b id="countdown">15</b> s · <button type="button" id="pauseAuto" style="border:0;background:none;color:inherit;padding:0;text-decoration:underline">abbrechen</button></span>
+            </div>
+          </div>
+          <aside class="hero-dossier" aria-label="Vorschau des Ergebnisses">
+            <div class="dossier-top"><span>Diagnose-Dossier</span><span>Entwurf / 01</span></div>
+            <div class="diagnostic" aria-hidden="true">
+              <div class="diagnostic-grid"></div><div class="scan-line"></div>
+              <svg class="trace-svg" viewBox="0 0 420 220" preserveAspectRatio="none"><path d="M0 165 L48 165 L76 91 L114 91 L142 142 L188 142 L225 44 L260 44 L290 116 L335 116 L365 70 L420 70" fill="none" stroke="#0b0b0d" stroke-width="3"/><circle cx="225" cy="44" r="7" fill="#d4a017"/><path d="M225 44V12M225 12h90" stroke="#8a6a10" stroke-width="1"/><text x="236" y="9" font-family="monospace" font-size="9">HEBELPUNKT</text></svg>
+            </div>
+            <h2 class="dossier-title">Das Ergebnis ist kein „gut oder schlecht“, sondern eine Karte für Ihre nächste Entscheidung.</h2>
+            <ul class="deliverables">
+              <li><code>01</code><div><strong>Potenzialindex</strong><span>Nachvollziehbare Bewertung anhand von 4 Kriterien.</span></div></li>
+              <li><code>02</code><div><strong>3 Empfehlungen</strong><span>Mit Ist-Zustand und Zielbild.</span></div></li>
+              <li><code>03</code><div><strong>Nächster Praxistest</strong><span>Klein, überprüfbar und unverbindlich.</span></div></li>
+            </ul>
+          </aside>
+        </div>
+        <div class="trust-band" id="method">
+          <div class="trust-item"><span class="num">PRINZIP</span><strong>Erst der Prozess. Dann die Technologie.</strong><p>Die Lösung beginnt beim operativen Problem, nicht bei einer Liste von Tools.</p></div>
+          <div class="trust-item"><span class="num">01 / FOKUS</span><strong>Ein Prozess</strong><p>Ein klarer Fokus liefert konkretere Ergebnisse und entlastet Ihr Team.</p></div>
+          <div class="trust-item"><span class="num">02 / DATEN</span><strong>EU / Deutschland</strong><p>Datenübermittlung und Rechtsgrundlage werden vor dem Absenden erläutert.</p></div>
+          <div class="trust-item"><span class="num">03 / KONTROLLE</span><strong>Kein automatisierter Vertrieb</strong><p>Ihre Kontaktdaten nutzen wir nur für das angeforderte Ergebnis und die Beratung.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="wizard" aria-label="Bewertungsassistent">
+      <div class="shell wizard-layout">
+        <aside class="wizard-rail">
+          <div><span class="progress-label">DOSSIER-FORTSCHRITT</span><span class="progress-big"><b id="progressNum">01</b> / 05</span>
+            <ol class="step-map" id="stepMap"><li class="current"><code>01</code> Unternehmenskontext</li><li><code>02</code> Prozessbeschreibung</li><li><code>03</code> Ansprechperson</li><li><code>04</code> Analyse</li><li><code>05</code> Ergebnis</li></ol>
+          </div>
+          <p class="rail-note">Sie können zum vorherigen Schritt zurückkehren. Der Entwurf bleibt nur während dieser Sitzung in diesem Browser gespeichert.</p>
+        </aside>
+        <div class="wizard-main">
+          <form id="scanForm" novalidate>
+            <div class="wizard-step active" data-step="1">
+              <div class="step-kicker"><span>01 · Kontext</span><span>≈ 45 Sekunden</span></div>
+              <h2>Setzen Sie den Prozess in den richtigen Rahmen.</h2><p class="step-intro">Der Kontext verhindert, dass wir ein komplexes System empfehlen, wo eine klare Regel oder eine einfache Datenverknüpfung genügt.</p>
+              <div class="form-grid">
+                <div class="field"><label for="company">Unternehmensname</label><input id="company" name="company" value="Müller Präzisionsteile GmbH" required></div>
+                <div class="field"><label for="industry">Branche</label><select id="industry" name="industry" required><option value="">Branche auswählen</option><option selected>Industrielle Fertigung</option><option>Großhandel</option><option>Logistik</option><option>Professionelle Dienstleistungen</option><option>Bauwesen</option></select></div>
+                <div class="field"><label for="size">Mitarbeiterzahl</label><select id="size" name="size" required><option>10–49</option><option selected>50–249</option><option>250–499</option></select></div>
+                <div class="field"><label for="role">Ihre Rolle</label><select id="role" name="role" required><option selected>Operative Leitung</option><option>Inhaber / Geschäftsführung</option><option>IT / Digitalisierung</option><option>Bereichsleitung</option></select></div>
+              </div>
+              <div class="error" aria-live="polite"></div><div class="wizard-actions"><span></span><button class="btn" type="button" data-next>Weiter zum Prozess →</button></div>
+            </div>
+
+            <div class="wizard-step" data-step="2">
+              <div class="step-kicker"><span>02 · Prozess</span><span>≈ 2 Minuten</span></div>
+              <h2>Beschreiben Sie, wo die Arbeit ins Stocken gerät.</h2><p class="step-intro">Ein konkretes Beispiel ist hilfreicher als der allgemeine Wunsch nach „mehr Automatisierung“.</p>
+              <div class="form-grid">
+                <div class="field full"><label for="processName">Prozessname</label><input id="processName" name="processName" value="Bearbeitung eingehender Kalkulationsanfragen" required></div>
+                <div class="field full"><label for="processDesc">Was geschieht derzeit?</label><textarea id="processDesc" name="processDesc" required>Anfragen gehen per E-Mail in unterschiedlichen Formaten ein. Ein Mitarbeiter überträgt die Positionen manuell ins ERP, klärt fehlende Parameter und leitet die Anfrage an die Produktionsplanung weiter.</textarea><span class="hint">Geben Sie keine personenbezogenen Kundendaten oder Geschäftsgeheimnisse ein.</span></div>
+                <div class="field full"><label>Haupthindernis</label><div class="choice-grid"><label class="choice"><input type="radio" name="bottleneck" value="Manuelle Datenübertragung" checked><span><strong>Manuelle Übertragung</strong>Kopieren zwischen E-Mail, Excel und ERP</span></label><label class="choice"><input type="radio" name="bottleneck" value="Warten auf Entscheidungen"><span><strong>Wartezeiten</strong>Freigaben oder Übergaben zwischen Rollen</span></label><label class="choice"><input type="radio" name="bottleneck" value="Fehler und Nacharbeit"><span><strong>Nacharbeit</strong>Unvollständige Daten oder wiederholte Bearbeitung</span></label></div></div>
+                <div class="field"><label for="frequency">Häufigkeit</label><select id="frequency" name="frequency"><option>Mehrmals monatlich</option><option>Mehrmals wöchentlich</option><option selected>Täglich</option><option>Mehrmals täglich</option></select></div>
+                <div class="field"><label for="systems">Beteiligte Systeme</label><input id="systems" name="systems" value="Outlook, Excel, SAP Business One"></div>
+              </div>
+              <div class="error" aria-live="polite"></div><div class="wizard-actions"><button class="btn secondary" type="button" data-back>← Zurück</button><button class="btn" type="button" data-next>Weiter zum Kontakt →</button></div>
+            </div>
+
+            <div class="wizard-step" data-step="3">
+              <div class="step-kicker"><span>03 · Kontakt</span><span>≈ 30 Sekunden</span></div>
+              <h2>Wer kann den Kontext näher erläutern?</h2><p class="step-intro">Den Namen benötigen wir zur Personalisierung des Dossiers. E-Mail-Adresse und Telefonnummer fragen wir erst vor der Ausgabe des vollständigen Ergebnisses ab.</p>
+              <div class="form-grid"><div class="field"><label for="firstName">Vorname</label><input id="firstName" name="firstName" value="Anna" required></div><div class="field"><label for="position">Position</label><input id="position" name="position" value="Leiterin Operations" required></div></div>
+              <div class="error" aria-live="polite"></div><div class="wizard-actions"><button class="btn secondary" type="button" data-back>← Zurück</button><button class="btn" type="button" data-next>Analyse starten →</button></div>
+            </div>
+
+            <div class="wizard-step" data-step="4">
+              <div class="step-kicker"><span>04 · Analyse</span><span>Tab bitte geöffnet lassen</span></div>
+              <h2>Wir zerlegen den Prozess in seine Hebelpunkte.</h2>
+              <div class="analysis-box"><div class="analysis-visual"><div class="eyebrow" style="color:#876609">Live-Diagnosespur</div><svg class="trace-svg" viewBox="0 0 420 220" preserveAspectRatio="none"><path id="liveTrace" d="M0 168 L70 168 L105 112 L155 112 L202 55 L252 55 L295 132 L345 132 L380 86 L420 86" fill="none" stroke="#0b0b0d" stroke-width="3"/><circle cx="202" cy="55" r="7" fill="#d4a017"/></svg><div class="meter"><span id="meterFill"></span></div><strong id="analysisPercent">0% verarbeitet</strong></div><div class="analysis-log" id="analysisLog"><div><i></i>Prozessbeschreibung normalisieren</div><div><i></i>Manuelle Übergaben erkennen</div><div><i></i>Wiederholbarkeit bewerten</div><div><i></i>Empfehlungen erstellen</div></div></div>
+              <div class="wizard-actions"><span class="hint">Im Prototyp dauert dies normalerweise nur wenige Sekunden.</span></div>
+            </div>
+
+            <div class="wizard-step" data-step="5">
+              <div class="step-kicker"><span>05 · Ergebnis</span><span>Ergebnis ist bereit</span></div>
+              <h2>Ihr Dossier ist fertig. Wohin dürfen wir es senden?</h2><p class="step-intro">Geben Sie Ihre geschäftliche E-Mail-Adresse und Telefonnummer an, um das vollständige Ergebnis zu öffnen. Beide Angaben sind erforderlich; Ihre Einwilligung können Sie jederzeit widerrufen.</p>
+              <div class="gate-card"><div class="form-grid"><div class="field"><label for="email">Geschäftliche E-Mail *</label><input id="email" type="email" name="email" placeholder="anna@unternehmen.de" required></div><div class="field"><label for="phone">Geschäftliche Telefonnummer *</label><input id="phone" type="tel" name="phone" placeholder="+49 30 1234567" required></div></div><label class="consent"><input id="consent" type="checkbox" required><span>Ich willige ein, dass die InsideDynamic GmbH meine eingegebenen Daten zur Erstellung und Zusendung der Bewertung sowie für eine einmalige Kontaktaufnahme zum Ergebnis verarbeitet. Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO. Die Einwilligung kann jederzeit widerrufen werden.</span></label><div class="error" aria-live="polite"></div><button class="btn" type="submit">Mein Dossier öffnen →</button></div>
+              <div class="wizard-actions"><button class="btn secondary" type="button" data-back>← Angaben prüfen</button></div>
+            </div>
+          </form>
+        </div>
+        <aside class="intel-panel loading" id="intelPanel" aria-live="polite" aria-label="Unternehmensdossier" hidden>
+          <div class="intel-head"><span>Unternehmensdossier</span><span class="intel-state" id="intelState">Quellensuche</span></div>
+          <h2 class="intel-company" id="intelCompany">Müller Präzisionsteile GmbH</h2>
+          <p class="intel-domain" id="intelDomain">mueller-praezisionsteile.de</p>
+          <div class="intel-loading" id="intelLoading"><div class="intel-skeleton"></div><div class="intel-skeleton"></div><div class="intel-skeleton"></div><p class="intel-copy">Der Agent gleicht öffentliche Quellen ab, während Sie den Prozess beschreiben.</p></div>
+          <div class="intel-content" id="intelContent">
+            <div class="intel-facts"><div class="intel-fact"><span>Branche</span><strong id="intelIndustry">Präzisionsmetallbearbeitung</strong></div><div class="intel-fact"><span>Gegründet / Team</span><strong id="intelScale">1998 · ≈ 120</strong></div></div>
+            <div class="intel-section"><h3>Mögliche Prozessbereiche</h3><div class="intel-processes" id="intelProcesses"><span>CAD/CAM</span><span>CNC-Fertigung</span><span>Qualitätssicherung</span><span>Anfragekalkulation</span><span>Logistik</span></div></div>
+            <div class="intel-section"><h3>Öffentliche Positionierung</h3><p class="intel-copy" id="intelStance">Serien- und kundenspezifische Präzisionsteile für den Maschinenbau; mit Fokus auf Rückverfolgbarkeit, Qualität und digitale Produktionsplanung.</p></div>
+            <p class="intel-source" id="intelSource">Öffentliche Quellen · Angaben müssen bestätigt werden · keine Analyse personenbezogener Daten</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="screen" id="results" aria-labelledby="result-title">
+      <div class="shell">
+        <div class="result-head"><div><div class="eyebrow">Dossier abgeschlossen · <span id="resultCompany">Müller Präzisionsteile GmbH</span></div><h2 id="result-title">Potenzial ist vorhanden — beginnen Sie bei der Qualität der Eingangsdaten.</h2></div><div class="score"><div class="score-value">72<span style="font-size:.35em">/100</span></div><small>Potenzialindex · Richtwert</small></div></div>
+        <div class="dashboard">
+          <section><div class="eyebrow">Kurzfazit</div><p style="font-size:22px;line-height:1.35;margin:28px 0;color:#d5cec3">Der Prozess ist stark wiederholbar. Die Automatisierung sollte jedoch nicht im ERP beginnen, sondern bei einer strukturierten Erfassung der Anfragen.</p><div class="summary-list"><div class="summary-row"><span>Prozess</span><strong id="summaryProcess">Anfragenbearbeitung</strong></div><div class="summary-row"><span>Haupthindernis</span><strong id="summaryBottleneck">Manuelle Datenübertragung</strong></div><div class="summary-row"><span>Häufigkeit</span><strong id="summaryFrequency">Täglich</strong></div><div class="summary-row"><span>Aussagesicherheit</span><strong>Mittel</strong></div></div><p class="recommendations-note">Der Index ist eine diagnostische Orientierung, keine Prognose des finanziellen Ergebnisses. Für einen Business Case müssen die tatsächlichen Mengen und Zeiten geprüft werden.</p></section>
+          <section><div class="eyebrow">Empfohlene Reihenfolge</div>
+            <article class="rec"><div class="rec-head"><span class="rec-index">R–01</span><h3>Eingehende Anfragen standardisieren</h3><span class="priority">Erster Schritt</span></div><div class="before-after"><div class="state"><code>IST-ZUSTAND</code>Parameter treffen in E-Mails und Anhängen in unterschiedlichen Formaten ein.</div><div class="arrow">→</div><div class="state after"><code>ZIELBILD</code>Ein einheitliches Formular prüft technische Pflichtfelder vor der Übergabe.</div></div></article>
+            <article class="rec"><div class="rec-head"><span class="rec-index">R–02</span><h3>Doppelte Dateneingabe vermeiden</h3><span class="priority">Nach dem Test</span></div><div class="before-after"><div class="state"><code>IST-ZUSTAND</code>Ein Mitarbeiter überträgt Positionen aus E-Mail oder Excel manuell ins ERP.</div><div class="arrow">→</div><div class="state after"><code>ZIELBILD</code>Bestätigte Felder erzeugen per kontrolliertem Import einen Datensatzentwurf.</div></div></article>
+            <article class="rec"><div class="rec-head"><span class="rec-index">R–03</span><h3>Ausnahmen zwei Wochen lang erfassen</h3><span class="priority">Risikokontrolle</span></div><div class="before-after"><div class="state"><code>IST-ZUSTAND</code>Es fehlen Daten dazu, welche Anfragen den größten Klärungsbedarf verursachen.</div><div class="arrow">→</div><div class="state after"><code>ZIELBILD</code>Ein Ausnahmeprotokoll zeigt, was automatisiert werden kann und was beim Experten bleiben sollte.</div></div></article>
+          </section>
+        </div>
+        <div class="contact-band"><div><h3>Prüfen wir die Annahmen anhand Ihrer Daten?</h3><p>30 Minuten zu Ihrem Prozess, den Grenzen des Piloten und einem klaren Abbruchkriterium.</p></div><button class="btn" id="contactBtn">Kontakt aufnehmen <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.5"/></svg></button></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer-grid"><div><strong>InsideDynamic GmbH</strong>Potenzial-Scan Lite · Bewertungsprototyp</div><div><strong>Datenschutz und Rechtsgrundlage</strong>Die eingegebenen Kontaktdaten werden auf Grundlage Ihrer Einwilligung gemäß Art. 6 Abs. 1 lit. a DSGVO verarbeitet. Geben Sie keine personenbezogenen Daten Dritter oder Geschäftsgeheimnisse ein.</div><div><strong>Datenstandort und Lebenszyklus</strong>Die Daten werden in der EU / Deutschland verarbeitet. Kontaktdaten werden bis zum Abschluss der angefragten Kontaktaufnahme oder bis zum Widerruf der Einwilligung gespeichert und anschließend gemäß Löschkonzept gelöscht. Anfrage: datenschutz@insidedynamic.de</div></div>
+  </footer>
+
+  <script>
+    (() => {
+      // Global build flag. When false, dossier code exits before any network work.
+      const ENABLE_DOSSIER = true;
+      const MOCK_DOSSIER = {
+        industry: 'Präzisionsmetallbearbeitung', founded: 1998, employees: '≈ 120',
+        processes: ['CAD/CAM', 'CNC-Fertigung', 'Qualitätssicherung', 'Anfragekalkulation', 'Logistik'],
+        automation_stance: 'Serien- und kundenspezifische Präzisionsteile für den Maschinenbau; mit Fokus auf Rückverfolgbarkeit, Qualität und digitale Produktionsplanung.',
+        sources: ['Unternehmenswebsite', 'Öffentliches Unternehmensprofil']
+      };
+      const screens = { intro: document.querySelector('#intro'), wizard: document.querySelector('#wizard'), results: document.querySelector('#results') };
+      const steps = [...document.querySelectorAll('.wizard-step')];
+      const mapItems = [...document.querySelectorAll('#stepMap li')];
+      const form = document.querySelector('#scanForm');
+      const intelPanel = document.querySelector('#intelPanel');
+      const urlParams = new URLSearchParams(window.location.search);
+      let step = 1, timer, seconds = 15, analysisTimers = [], dossierStarted = false;
+
+      function campaignBucket(value) {
+        if (!value) return 0;
+        return [...value].reduce((sum, char) => ((sum * 31) + char.charCodeAt(0)) >>> 0, 0) % 2;
+      }
+      function dossierEligibility() {
+        // PRODUCTION HOOK: mirror all four guards on the server before calling Perplexity.
+        if (!ENABLE_DOSSIER || urlParams.get('nomedia') === '1' || urlParams.get('dm') === '0') return false;
+        if (localStorage.getItem('potenzial:dossier-optout') === '1') return false;
+        const hasCampaign = Boolean(urlParams.get('dm'));
+        const forced = urlParams.get('nomedia') === '0';
+        return forced || !hasCampaign || campaignBucket(urlParams.get('dm')) === 0;
+      }
+      function prospect() {
+        const email = (urlParams.get('email') || '').trim().slice(0, 254);
+        const company = (urlParams.get('company') || form.elements.company.value || '').trim().slice(0, 160);
+        const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+        return { email: emailValid ? email : '', company, domain: emailValid ? email.split('@')[1].toLowerCase() : '' };
+      }
+      // ============ PRODUCTION HOOKS ============
+      // Replace this function with real call to backend. Never expose a Perplexity key in the browser.
+      async function fetchDossier(email, company) {
+        // PRODUCTION HOOK: replace with POST /api/v1/dossier, body { email, company }.
+        // Returns: { industry, founded, employees, processes[], automation_stance, sources[] }
+        // Backend response: Cache-Control: private, max-age=86400
+        await new Promise(resolve => setTimeout(resolve, 1450));
+        return MOCK_DOSSIER;
+      }
+      // ========================================
+      async function dossierCacheKey(email, company) {
+        // PRODUCTION HOOK: server must independently HMAC the normalized tuple; this browser hash is only a PII-reduction measure.
+        const bytes = new TextEncoder().encode(`${email.toLowerCase()}|${company.toLowerCase()}`);
+        const digest = await crypto.subtle.digest('SHA-256', bytes);
+        return `potenzial:dossier:${[...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, '0')).join('')}`;
+      }
+      function renderDossier(data, meta = {}) {
+        intelPanel.classList.remove('loading', 'unavailable'); intelPanel.classList.add('ready');
+        document.querySelector('#intelState').textContent = meta.cached ? 'Gespeicherte Suche' : 'In öffentlichen Quellen gefunden';
+        document.querySelector('#intelIndustry').textContent = data.industry || '[Daten nicht verfügbar]';
+        document.querySelector('#intelScale').textContent = `${data.founded || '[—]'} · ${data.employees || '[—]'}`;
+        document.querySelector('#intelProcesses').replaceChildren(...(data.processes || []).map(value => { const el = document.createElement('span'); el.textContent = value; return el; }));
+        document.querySelector('#intelStance').textContent = data.automation_stance || '[Daten nicht verfügbar]';
+      }
+      async function beginDossier() {
+        if (dossierStarted || !dossierEligibility()) return;
+        const data = prospect();
+        // An invalid campaign email means no request and no dossier, by design.
+        if (urlParams.has('email') && !data.email) return;
+        dossierStarted = true; intelPanel.hidden = false; intelPanel.classList.add('enabled', 'loading');
+        document.querySelector('#intelCompany').textContent = data.company || 'Ihr Unternehmen';
+        document.querySelector('#intelDomain').textContent = data.domain || 'Suche nach Unternehmensname';
+        if (data.email) form.elements.email.value = data.email;
+        try {
+          const cacheKey = await dossierCacheKey(data.email, data.company);
+          const cached = JSON.parse(localStorage.getItem(cacheKey) || 'null');
+          if (cached && Date.now() - cached.timestamp < 86400000) { renderDossier(cached.value, { cached: true }); return; }
+          const dossier = await fetchDossier(data.email, data.company);
+          localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), value: dossier }));
+          renderDossier(dossier);
+        }
+        catch (error) {
+          // PRODUCTION HOOK: report a non-PII error code to observability.
+          renderDossier({ processes: [], automation_stance: '[Daten nicht verfügbar]' });
+          intelPanel.classList.add('unavailable');
+          document.querySelector('#intelState').textContent = 'Quellen vorübergehend nicht verfügbar';
+        }
+      }
+
+      function showScreen(name) {
+        Object.values(screens).forEach(el => el.classList.remove('active'));
+        screens[name].classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      function start() { clearInterval(timer); showScreen('wizard'); setStep(1); beginDossier(); }
+      function setStep(next) {
+        step = Math.max(1, Math.min(5, next));
+        steps.forEach(el => el.classList.toggle('active', Number(el.dataset.step) === step));
+        mapItems.forEach((el, i) => { el.classList.toggle('current', i + 1 === step); el.classList.toggle('done', i + 1 < step); });
+        document.querySelector('#progressNum').textContent = String(step).padStart(2, '0');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (step === 4) runAnalysis();
+      }
+      function validateCurrent() {
+        const current = steps[step - 1];
+        const required = [...current.querySelectorAll('[required]')];
+        const invalid = required.find(el => !el.checkValidity());
+        const error = current.querySelector('.error');
+        if (invalid) { error.textContent = 'Bitte füllen Sie alle Pflichtfelder korrekt aus.'; invalid.focus(); return false; }
+        error.textContent = ''; return true;
+      }
+      function runAnalysis() {
+        analysisTimers.forEach(clearTimeout); analysisTimers = [];
+        const meter = document.querySelector('#meterFill'), percent = document.querySelector('#analysisPercent');
+        const logs = [...document.querySelectorAll('#analysisLog div')];
+        meter.style.width = '0'; percent.textContent = '0% verarbeitet'; logs.forEach(x => x.classList.remove('on'));
+        [18, 46, 74, 100].forEach((value, i) => analysisTimers.push(setTimeout(() => {
+          meter.style.width = value + '%'; percent.textContent = value + '% verarbeitet'; logs[i].classList.add('on');
+          if (value === 100) analysisTimers.push(setTimeout(() => setStep(5), 650));
+        }, 700 + i * 700)));
+      }
+      function populateResults() {
+        const val = name => form.elements[name]?.value || '—';
+        document.querySelector('#resultCompany').textContent = val('company');
+        document.querySelector('#summaryProcess').textContent = val('processName');
+        document.querySelector('#summaryBottleneck').textContent = val('bottleneck');
+        document.querySelector('#summaryFrequency').textContent = val('frequency');
+      }
+      document.querySelectorAll('[data-action="start"]').forEach(b => b.addEventListener('click', start));
+      document.querySelector('[data-action="method"]').addEventListener('click', () => document.querySelector('#method').scrollIntoView({behavior:'smooth'}));
+      document.querySelectorAll('[data-next]').forEach(b => b.addEventListener('click', () => { if (validateCurrent()) setStep(step + 1); }));
+      document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => setStep(step === 5 ? 3 : step - 1)));
+      form.addEventListener('submit', e => { e.preventDefault(); if (!validateCurrent()) return; populateResults(); showScreen('results'); });
+      document.querySelector('#contactBtn').addEventListener('click', () => { window.location.href = 'mailto:kontakt@insidedynamic.de?subject=Potenzial-Scan%20Lite%20—%20Gespräch'; });
+      document.querySelector('#pauseAuto').addEventListener('click', () => { clearInterval(timer); document.querySelector('#autoNote').textContent = 'Automatischer Start abgebrochen'; });
+      timer = setInterval(() => { seconds -= 1; document.querySelector('#countdown').textContent = seconds; if (seconds <= 0) start(); }, 1000);
+    })();
+  </script>
+</body>
+</html>
