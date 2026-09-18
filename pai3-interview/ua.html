@@ -1,0 +1,862 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PAI3 Network — AI Systems Engineer — Шпаргалка до співбесіди</title>
+<meta name="description" content="Питання і відповіді до співбесіди · 13 питань · наведіть на термін для підказки">
+<style>
+  :root {
+    --bg: #0e0e10;
+    --bg-elev: #16161a;
+    --bg-soft: #1c1c22;
+    --border: #2a2a32;
+    --border-strong: #3a3a46;
+    --fg: #e6e6ea;
+    --fg-dim: #a0a0aa;
+    --fg-mute: #6e6e78;
+    --accent: #d97757;          /* Claude Code orange */
+    --accent-soft: rgba(217,119,87,0.12);
+    --link: #7aa2f7;
+    --kbd-bg: #23232b;
+    --serif: ui-serif, Charter, "Iowan Old Style", Georgia, serif;
+    --mono: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { background: var(--bg); color: var(--fg); margin: 0; }
+  body {
+    font-family: var(--mono);
+    font-size: 14.5px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 24px 96px; }
+
+  /* Header / hero */
+  header.hero {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 28px;
+    margin-bottom: 36px;
+  }
+  .prompt-line {
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 13px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .prompt-line::before { content: "❯"; font-weight: 700; }
+  h1 {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 1.25;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+  .sub { color: var(--fg-dim); font-size: 13.5px; margin-bottom: 16px; }
+  .meta {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--fg-mute);
+    border-top: 1px dashed var(--border);
+    padding-top: 14px;
+  }
+  .meta b { color: var(--fg-dim); font-weight: 500; }
+  .lang-switch {
+    margin-left: auto;
+    padding: 4px 10px;
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--fg-dim);
+  }
+  .lang-switch:hover { background: var(--bg-soft); text-decoration: none; }
+
+  /* Index of questions */
+  .index {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 36px;
+    background: var(--bg-elev);
+    font-size: 12.5px;
+  }
+  .index-title {
+    color: var(--fg-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 10.5px;
+    margin-bottom: 10px;
+  }
+  .index ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; }
+  .index a { color: var(--fg-dim); }
+  .index a:hover { color: var(--accent); }
+  .index .num { color: var(--fg-mute); margin-right: 6px; }
+
+  /* Q&A cards */
+  .qa-card {
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--accent);
+    border-radius: 4px;
+    padding: 18px 22px;
+    margin-bottom: 18px;
+    background: var(--bg-elev);
+    transition: border-color 120ms;
+  }
+  .qa-card:hover { border-color: var(--border-strong); }
+  .qa-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .qa-num {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+  }
+  .qa-cat {
+    color: var(--fg-mute);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .qa-q {
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 15.5px;
+    line-height: 1.4;
+    color: var(--fg);
+    margin: 4px 0 12px;
+  }
+  .qa-a { color: var(--fg-dim); font-size: 14px; line-height: 1.7; }
+  .qa-a p { margin: 0 0 12px; }
+  .qa-a p:last-child { margin-bottom: 0; }
+  .qa-list { margin: 6px 0 12px; padding-left: 18px; }
+  .qa-list li { margin-bottom: 4px; color: var(--fg-dim); }
+  .qa-list li::marker { color: var(--accent); }
+
+  /* Term tooltips */
+  .term {
+    border-bottom: 1px dotted var(--accent);
+    cursor: help;
+    color: var(--fg);
+    transition: background 80ms;
+  }
+  .term:hover {
+    background: var(--accent-soft);
+  }
+  #tooltip {
+    position: fixed;
+    z-index: 1000;
+    max-width: 380px;
+    background: #111114;
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--fg);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 90ms, transform 90ms;
+  }
+  #tooltip.show { opacity: 1; transform: translateY(0); }
+  #tooltip .tt-term {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 4px;
+    display: block;
+  }
+  #tooltip .tt-short { color: var(--fg-dim); }
+  #tooltip .tt-more {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid var(--border);
+    color: var(--fg-mute);
+    font-size: 11.5px;
+    line-height: 1.5;
+  }
+
+  /* Modal for full term detail */
+  #modal {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 24px;
+    backdrop-filter: blur(6px);
+  }
+  #modal.show { display: flex; }
+  .modal-card {
+    background: var(--bg-elev);
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    max-width: 640px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 28px;
+  }
+  .modal-card h3 {
+    margin: 0 0 8px;
+    color: var(--accent);
+    font-size: 18px;
+    font-family: var(--mono);
+    font-weight: 600;
+  }
+  .modal-card .m-short {
+    font-size: 14px;
+    color: var(--fg);
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+  .modal-card .m-long {
+    font-size: 13px;
+    color: var(--fg-dim);
+    line-height: 1.65;
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+  }
+  .modal-close {
+    margin-top: 18px;
+    background: transparent;
+    border: 1px solid var(--border-strong);
+    color: var(--fg-dim);
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .modal-close:hover { background: var(--bg-soft); color: var(--fg); }
+
+  /* Glossary sidebar */
+  .glossary-toggle {
+    position: fixed;
+    bottom: 18px;
+    right: 18px;
+    background: var(--bg-elev);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-family: var(--mono);
+    font-size: 12px;
+    cursor: pointer;
+    z-index: 500;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .glossary-toggle:hover { background: var(--accent); color: var(--bg); }
+  #glossary-panel {
+    position: fixed;
+    top: 0; right: 0;
+    width: 360px;
+    max-width: 100vw;
+    height: 100vh;
+    background: var(--bg);
+    border-left: 1px solid var(--border);
+    transform: translateX(100%);
+    transition: transform 200ms ease-out;
+    z-index: 1500;
+    overflow-y: auto;
+    padding: 20px;
+  }
+  #glossary-panel.open { transform: translateX(0); }
+  #glossary-panel h3 {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--accent);
+    margin: 0 0 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  #glossary-panel .gp-close {
+    float: right;
+    background: transparent;
+    border: none;
+    color: var(--fg-mute);
+    font-size: 18px;
+    cursor: pointer;
+    line-height: 1;
+  }
+  #glossary-panel .gp-search {
+    width: 100%;
+    margin: 12px 0 16px;
+    padding: 7px 10px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--fg);
+    font-family: var(--mono);
+    font-size: 12.5px;
+  }
+  #glossary-panel .gp-search:focus { outline: none; border-color: var(--accent); }
+  .gp-item {
+    padding: 8px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-bottom: 2px;
+  }
+  .gp-item:hover { background: var(--bg-soft); }
+  .gp-term { color: var(--accent); font-weight: 500; font-size: 12.5px; }
+  .gp-short { color: var(--fg-dim); font-size: 11.5px; line-height: 1.45; margin-top: 2px; }
+  .gp-empty { color: var(--fg-mute); font-size: 12px; padding: 10px; }
+
+  /* Footer */
+  footer.foot {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--fg-mute);
+    font-size: 11.5px;
+    line-height: 1.6;
+  }
+
+  /* Mobile */
+  @media (max-width: 720px) {
+    .wrap { padding: 28px 16px 80px; }
+    h1 { font-size: 19px; }
+    .index ul { grid-template-columns: 1fr; }
+    .qa-card { padding: 14px 16px; }
+    #glossary-panel { width: 100vw; }
+  }
+
+  /* Print */
+  @media print {
+    :root { --bg:#fff; --bg-elev:#fff; --bg-soft:#fafafa; --fg:#000; --fg-dim:#222;
+            --fg-mute:#555; --border:#ccc; --border-strong:#888; --accent:#933; }
+    body { background:#fff; color:#000; }
+    .glossary-toggle, #glossary-panel, #tooltip { display:none !important; }
+    .qa-card { break-inside: avoid; border-left-color:#933; }
+    .term { border-bottom: 1px dotted #933; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="prompt-line">PAI3-NETWORK · INTERVIEW-CHEATSHEET</div>
+    <h1>PAI3 Network — AI Systems Engineer — Шпаргалка до співбесіди</h1>
+    <div class="sub">Питання і відповіді до співбесіди · 13 питань · наведіть на термін для підказки</div>
+    <div class="meta">
+      <span><b>Candidate:</b> Taras Polishchuk</span>
+      <span><b>Role:</b> AI Systems Engineer</span>
+      <span><b>Vacancy:</b> DOU #364636</span>
+      <span><b>Generated:</b> 2026-09-18</span>
+      <a class="lang-switch" href="index.html">← English</a>
+    </div>
+  </header>
+
+  <nav class="index">
+    <div class="index-title">// Questions in this pack</div>
+    <ul>
+      <li><a href="#q-1"><span class="num">Q01</span>Чи запускали ви модель повністю локально у продакшені, без жодного хмарного API?</a></li><li><a href="#q-2"><span class="num">Q02</span>Ця роль передбачає PyTorch і LoRA / QLoRA fine-tuning. Який ваш практичний досві…</a></li><li><a href="#q-3"><span class="num">Q03</span>Який ваш досвід з quantization (напр. GGUF) для запуску моделей на обмеженому ed…</a></li><li><a href="#q-4"><span class="num">Q04</span>Ваш стек зараз — Docker, Vercel, Fly.io, Cloudflare Tunnel. Ця роль побудована н…</a></li><li><a href="#q-5"><span class="num">Q05</span>Чи будували ви щось, що працює повністю offline / on-device, без зовнішніх API в…</a></li><li><a href="#q-6"><span class="num">Q06</span>Чи використовували ви конкретно LangChain / LangGraph? Якщо ні — що у вас за bac…</a></li><li><a href="#q-7"><span class="num">Q07</span>Як ваші specialist-agent контракти і handoff-патерни мапляться на LangGraph-styl…</a></li><li><a href="#q-8"><span class="num">Q08</span>Відповіді з урахуванням впевненості, які відмовляються, коли контексту недостатн…</a></li><li><a href="#q-9"><span class="num">Q09</span>Локальний data flow і audit trail для медичного / інтранет-деплою. Як би ви його…</a></li><li><a href="#q-10"><span class="num">Q10</span>Як би ви перевіряли, що вихід локальної моделі досить безпечний і коректний для …</a></li><li><a href="#q-11"><span class="num">Q11</span>Як ви робите локально-розгорнуту AI систему observable і таку, що відновлюється …</a></li><li><a href="#q-12"><span class="num">Q12</span>Яка частка вашої роботи з AI-системами — solo / greenfield, а яка — всередині іс…</a></li><li><a href="#q-13"><span class="num">Q13</span>Що вас приваблює у PAI3 — у зсуві від традиційних backend / cloud pipelines до л…</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    
+        <article class="qa-card" id="q-1">
+          <header class="qa-head">
+            <span class="qa-num">Q01</span>
+            <span class="qa-cat">Локальна інференс та моделі</span>
+          </header>
+          <h3 class="qa-q">Чи запускали ви модель повністю локально у продакшені, без жодного хмарного API?</h3>
+          <div class="qa-a"><p>Так. Зараз у моїй компанії я підтримую self-hosted шлях локальної інференції. Архітектура — <span class="term" data-term="ollama">Ollama</span> з моделлю родини Mistral на self-hosted сервері. Весь request path спроєктований так, що інференс моделі не залежить від зовнішнього LLM API.</p>
+<p>Навколо — <span class="term" data-term="n8n">n8n</span> для оркестрації, <span class="term" data-term="cloudflare-tunnel">Cloudflare Tunnel</span> для контрольованого ingress, self-hosted Postgres для даних.</p>
+<p>Моя роль ширша за «запустити модель-сервер». Я відповідаю за оточуючу систему: деплой, межі сервісів, роботу з секретами, процедури відновлення, документацію, операційний сетап, який можна повторити.</p>
+<p>Я також спроєктував цільову архітектуру для більшого local-LLM / <span class="term" data-term="rag">RAG</span>: <span class="term" data-term="ollama">Ollama</span>-моделі, <span class="term" data-term="postgres">PostgreSQL</span> з <span class="term" data-term="pgvector">pgvector</span>, локальні embeddings, чисте розділення між application, <span class="term" data-term="decoded-inference">inference</span> і data шарами.</p>
+<p>Чесно: моя сила — це local-<span class="term" data-term="decoded-inference">inference</span> система і операційна архітектура. Я не позиціоную себе як фахівця з <span class="term" data-term="decoded-inference">inference</span>-ядра чи тренування моделей — це ті сфери, які я хочу поглибити разом з PAI3.</p></div>
+        </article>
+
+        <article class="qa-card" id="q-2">
+          <header class="qa-head">
+            <span class="qa-num">Q02</span>
+            <span class="qa-cat">Локальна інференс та моделі</span>
+          </header>
+          <h3 class="qa-q">Ця роль передбачає PyTorch і LoRA / QLoRA fine-tuning. Який ваш практичний досвід з цим, якщо є?</h3>
+          <div class="qa-a"><p><span class="term" data-term="lora">LoRA</span> / <span class="term" data-term="qlora">QLoRA</span> fine-tune у продакшен я ще не відправляв.</p>
+<p>Що знаю концептуально: заморозка базової моделі, тренування адаптерних ваг, 4-bit квантизована база для <span class="term" data-term="qlora">QLoRA</span> через <span class="term" data-term="bitsandbytes">bitsandbytes</span>, підготовка датасету, оцінка якості, відкат на базовий <span class="term" data-term="checkpoint">checkpoint</span> якщо fine-tune став гіршим.</p>
+<p>Моя продакшен-сила — це оточуюча система: локальна інференс, prompt і context engineering, <span class="term" data-term="rag">RAG</span>, <span class="term" data-term="evaluation">evaluation</span> логіка, деплой, безпека, операційна архітектура. Це я вже відвантажив.</p>
+<p>Мій план ramp: почати з малого відтворюваного експерименту на публічній базовій моделі, спочатку побудувати eval-сет, потім порівняти fine-tuned <span class="term" data-term="checkpoint">checkpoint</span> з базою. Не обіцянка «за 2 тижні» — чесний ramp 6-8 тижнів до production-grade <span class="term" data-term="fine-tuning">fine-tuning</span>.</p></div>
+        </article>
+
+        <article class="qa-card" id="q-3">
+          <header class="qa-head">
+            <span class="qa-num">Q03</span>
+            <span class="qa-cat">Локальна інференс та моделі</span>
+          </header>
+          <h3 class="qa-q">Який ваш досвід з quantization (напр. GGUF) для запуску моделей на обмеженому edge-class залізі?</h3>
+          <div class="qa-a"><p>Практично: деплоїв і експлуатував pre-quantized <span class="term" data-term="gguf">GGUF</span> моделі через <span class="term" data-term="ollama">Ollama</span>, включно з <span class="term" data-term="q4-k-m">Q4_K_M</span>-класом чекпоінтів. Вибирав розмір моделі під доступне залізо, працював з обмеженнями <span class="term" data-term="context-window">context window</span> і пам&#x27;яті, розподілом CPU/GPU, розумів trade-off між розміром моделі, latency, споживанням пам&#x27;яті і якістю відповідей.</p>
+<p>Знайомий з форматами <span class="term" data-term="gguf">GGUF</span>, GPTQ, AWQ, 4-bit <span class="term" data-term="quantization">quantization</span> загалом. Чого не робив: не будував власноруч <span class="term" data-term="quantization">quantization</span> pipeline з full-precision бази і не запускав формальний multi-quant perplexity бенчмарк на edge залізі. Не відправляв на Jetson / Raspberry Pi / mobile.</p>
+<p>Тобто мій досвід найсильніший з боку деплою і систем навколо quantized моделей. Глибше в <span class="term" data-term="quantization">quantization</span> internals і бенчмаркинг на обмеженому залізі — це те, куди я хочу рухатись.</p></div>
+        </article>
+
+        <article class="qa-card" id="q-4">
+          <header class="qa-head">
+            <span class="qa-num">Q04</span>
+            <span class="qa-cat">Робота без хмарної інфраструктури</span>
+          </header>
+          <h3 class="qa-q">Ваш стек зараз — Docker, Vercel, Fly.io, Cloudflare Tunnel. Ця роль побудована навколо локальних edge-систем без Kubernetes, Docker і cloud pipelines. Як ви підійдете до побудови без хмарної інфраструктури, на яку ви досі спирались?</h3>
+          <div class="qa-a"><p>Я вже працюю з таким сетапом.</p>
+<p>Мій поточний self-hosted стек: <span class="term" data-term="docker">Docker</span>, <span class="term" data-term="coolify">Coolify</span>, <span class="term" data-term="cloudflare-tunnel">Cloudflare Tunnel</span>, <span class="term" data-term="tailscale">Tailscale</span>, <span class="term" data-term="postgres">PostgreSQL</span>, <span class="term" data-term="ollama">Ollama</span>, <span class="term" data-term="n8n">n8n</span>, Infisical та інші внутрішні сервіси. Принцип: межі між сервісами явні, кожен сервіс можна замінити незалежно.</p>
+<p>Наприклад:</p>
+<p>application / workflow шар<br>→ явний API / <span class="term" data-term="webhook">webhook</span> контракт<br>→ валідація<br>→ інференс або зовнішній сервіс<br>→ структурована відповідь<br>→ валідація + обробка помилок</p>
+<p>Ця межа лишається стабільною, незалежно від того, що далі — OpenAI, <span class="term" data-term="ollama">Ollama</span>, чи інший локальний <span class="term" data-term="decoded-inference">inference</span> сервер.</p>
+<p>Без managed cloud я більше уваги приділяю тому, що SaaS зазвичай ховає: поведінка сервісу при старті і рестарті, персистентне сховище, робота з секретами, TLS і ingress, бекап і відновлення, health checks, логи, resource limits, повторюваність деплою, відновлення після збоїв, документація — що оператор робить, коли щось ламається.</p>
+<p>Я віддаю перевагу простим, відтворюваним системам перед «розумною» інфраструктурою. <span class="term" data-term="systemd">systemd</span> + документована процедура рестарту — часто достатньо, якщо система відновлювана.</p>
+<p>Для медичних навантажень зовнішні data flows — це архітектурне рішення, а не дефолт. З системи одразу видно, що лишається локальним, а що йде назовні.</p></div>
+        </article>
+
+        <article class="qa-card" id="q-5">
+          <header class="qa-head">
+            <span class="qa-num">Q05</span>
+            <span class="qa-cat">Робота без хмарної інфраструктури</span>
+          </header>
+          <h3 class="qa-q">Чи будували ви щось, що працює повністю offline / on-device, без зовнішніх API викликів під час інференсу?</h3>
+          <div class="qa-a"><p>Я будував self-hosted шляхи інференції, де модель працює локально і в <span class="term" data-term="decoded-inference">inference</span> loop немає жодного зовнішнього LLM API.</p>
+<p>Це я відрізняю від справді offline edge- або embedded-деплою. Зараз у мене <span class="term" data-term="ollama">Ollama</span>-інференс на self-hosted серверах і provider абстракції, де один і той самий додаток може переключатись між cloud-провайдерами, локальним <span class="term" data-term="ollama">Ollama</span> або <span class="term" data-term="deterministic">deterministic</span> mock — без переписування application логіки.</p>
+<p>На Jetson / Raspberry Pi / mobile / embedded я ще не відправляв.</p>
+<p>Чесна відповідь: так — self-hosted локальна інференс без зовнішнього LLM API під час <span class="term" data-term="decoded-inference">inference</span>; ні — поки що не edge-device деплой. <span class="term" data-term="powernode">PowerNode</span>-шлях PAI3 — це саме той контекст, де я хочу цей gap закрити.</p></div>
+        </article>
+
+        <article class="qa-card" id="q-6">
+          <header class="qa-head">
+            <span class="qa-num">Q06</span>
+            <span class="qa-cat">Оркестрація агентів</span>
+          </header>
+          <h3 class="qa-q">Чи використовували ви конкретно LangChain / LangGraph? Якщо ні — що у вас за background з оркестрації?</h3>
+          <div class="qa-a"><p>З <span class="term" data-term="langchain">LangChain</span> і <span class="term" data-term="langgraph">LangGraph</span> у продакшені я ще не працював.</p>
+<p>Мій оркестраційний background — це <span class="term" data-term="n8n">n8n</span> і власні агентні системи. Наприклад, AI discovery платформа зі спеціалізованими агентами: discovery analysis, workflow analysis, security review, solution architecture, cost estimation, proposal generation, reporting. У кожного спеціаліста — свій контракт, структурований output, обмежена відповідальність, а координатор відповідає за routing і агрегацію.</p>
+<p>Також будую FounderOS — <span class="term" data-term="agent">agent</span> operating environment для тривалих AI-асистованих задач: mission lifecycle, persistent project context, layered memory, role boundaries, handoff rules, дозволи, <span class="term" data-term="governance">governance</span>, відновлення, audit-документація.</p>
+<p><span class="term" data-term="langgraph">LangGraph</span> концептуально знайомий навіть без продакшен-використання. Мій онбординг: портувати один з моїх існуючих specialist-<span class="term" data-term="agent">agent</span> флоу у stateful <span class="term" data-term="langgraph">LangGraph</span>, потім порівняти той самий workflow поруч з <span class="term" data-term="n8n">n8n</span>-версією. Вчити фреймворк на задачі, яку я вже розумію.</p></div>
+        </article>
+
+        <article class="qa-card" id="q-7">
+          <header class="qa-head">
+            <span class="qa-num">Q07</span>
+            <span class="qa-cat">Оркестрація агентів</span>
+          </header>
+          <h3 class="qa-q">Як ваші specialist-agent контракти і handoff-патерни мапляться на LangGraph-style stateful граф? Що зміниться?</h3>
+          <div class="qa-a"><p>Маппинг досить природний.</p>
+<p>Кожен спеціаліст стає нодою з вузькою відповідальністю. Координатор стає графом, який контролює routing і умовні переходи. Структуровані агенні виходи стають типізованими полями стану. Правила рішень — умовними ребрами або явними routing-функціями. Точки human approval / ескалації мапляться на interrupt / <span class="term" data-term="human-in-the-loop">human-in-the-loop</span> патерни.</p>
+<p>Найбільший виграш: явний стан. У <span class="term" data-term="n8n">n8n</span> стан часто неявний, живе у execution context. У <span class="term" data-term="langgraph">LangGraph</span>-style системі я б чітко визначив, які поля є в спільному state, яка нода може їх змінювати, і які переходи від них залежать. Checkpointing і resumability теж стають природнішими для довгих <span class="term" data-term="agent">agent</span>-флоу.</p>
+<p>Чого б не робив: автоматично переносити кожну автоматизацію в <span class="term" data-term="langgraph">LangGraph</span>. Якщо workflow простий, переважно лінійний, і операційним користувачам потрібен візуальний редактор — <span class="term" data-term="n8n">n8n</span> все ще кращий інструмент. <span class="term" data-term="langgraph">LangGraph</span> — там, де проблема виграє від stateful branching, retries, persistent execution, довгих workflow, human approval чи multi-<span class="term" data-term="agent">agent</span> координації.</p></div>
+        </article>
+
+        <article class="qa-card" id="q-8">
+          <header class="qa-head">
+            <span class="qa-num">Q08</span>
+            <span class="qa-cat">RAG і надійність</span>
+          </header>
+          <h3 class="qa-q">Відповіді з урахуванням впевненості, які відмовляються, коли контексту недостатньо. Як визначається поріг, і який false-refusal rate?</h3>
+          <div class="qa-a"><p>Я будував <span class="term" data-term="rag">RAG</span>-додатки на <span class="term" data-term="postgres">PostgreSQL</span> / <span class="term" data-term="pgvector">pgvector</span> з семантичним і keyword retrieval, structured outputs, source citations і confidence-aware обробкою відповідей.</p>
+<p>У моїй поточній реалізації якість retrieval — це сигнал, чи достатньо контексту для відповіді. Важлива різниця: я не подаю поточне значення confidence як науково відкалібровану ймовірність. Механізм потрібен, щоб відрізнити корисний retrieval від порожнього чи явно слабкого — і підтримати refuse / fallback.</p>
+<p>Якщо retrieval не дає релевантного контексту — асистент не вигадує відповідь. Для граничних випадків я вважаю за краще видимо показати невпевненість, логувати взаємодію на рев&#x27;ю, або скеровувати у безпечніший fallback, ніж заявляти високу confidence.</p>
+<p>Достатньо великого held-out production eval-сету, щоб дати обґрунтований false-refusal rate, у мене поки немає.</p>
+<p>План production-ization для PAI3:<br>• зібрати labelled eval-сет з in-domain і out-of-domain запитами<br>• виміряти retrieval recall і correctness відповіді<br>• прогнати sweep по retrieval / refusal threshold<br>• окремо трекати false answers і false refusals<br>• обрати operating point під реальний ризик продукту</p>
+<p>Для медичних / high-risk кейсів я схиляюсь до refuse замість непідкріпленої генерації. Для нижчого ризику, внутрішніх пошукових тулзів — дозволю більше граничних відповідей, але з видимою невпевненістю.</p></div>
+        </article>
+
+        <article class="qa-card" id="q-9">
+          <header class="qa-head">
+            <span class="qa-num">Q09</span>
+            <span class="qa-cat">RAG і надійність</span>
+          </header>
+          <h3 class="qa-q">Локальний data flow і audit trail для медичного / інтранет-деплою. Як би ви його спроєктували?</h3>
+          <div class="qa-a"><p>Перший принцип: дані пацієнтів ніколи не виходять за межі інтранету. Кожен компонент, що торкається <span class="term" data-term="phi">PHI</span>, працює на <span class="term" data-term="powernode">PowerNode</span> або на сервісі всередині того ж мережевого сегмента. Будь-який зовнішній виклик — явний, в allowlist, логований.</p>
+<p>Пошарова архітектура:</p>
+<p>1. Ingress. <span class="term" data-term="cloudflare-tunnel">Cloudflare Tunnel</span> (або внутрішньо-лікарняний reverse proxy) — термінує TLS, перевіряє authn / authz, і роутить тільки до сервісів всередині мережі. Жоден сервіс не доступний з інтернету напряму.</p>
+<p>2. Application шар. Stateless API, який перевіряє auth, валідує input, викликає <span class="term" data-term="decoded-inference">inference</span> сервіс, валідує output, пише audit-запис. Не зберігає <span class="term" data-term="phi">PHI</span> між запитами.</p>
+<p>3. <span class="term" data-term="decoded-inference">Inference</span> шар. <span class="term" data-term="ollama">Ollama</span> або інший локальний model server з fine-tuned / базовою моделлю. Без мережевого egress — нові артефакти моделі підтягуються тільки контрольовано, з підписом і human review.</p>
+<p>4. Data шар. <span class="term" data-term="postgres">PostgreSQL</span> з <span class="term" data-term="pgvector">pgvector</span> для embeddings і метаданих. Бекапи зашифровані at rest, ротуються, відновлення на розкладі, процедура відновлення сама по собі тестується.</p>
+<p>5. Audit log. Append-only, підписаний, реплікований. Кожен <span class="term" data-term="decoded-inference">inference</span>-виклик фіксує: timestamp, user, request ID, версію моделі, ID retrieved чанків, refusal / response, latency. Tamper-evident, експортується для регулятора.</p>
+<p>6. Секрети. Infisical або HashiCorp Vault — не в образах контейнерів, не в env-файлах у git, ротуються за розкладом.</p>
+<p>7. <span class="term" data-term="observability">Observability</span>. Структуровані JSON логи в локальний Loki або journald. Метрики в Prometheus. <span class="term" data-term="p99">p99 latency</span>, <span class="term" data-term="tokens-per-second">tokens/sec</span>, refusal rate, розподіл retrieval score — ті метрики, що реально потрібні черговому лікарю.</p>
+<p>Обробка збоїв: кожен зовнішній виклик <span class="term" data-term="idempotent">idempotent</span> — retries безпечні. <span class="term" data-term="rollback">Rollback</span> = змінити pointer на версію моделі. <span class="term" data-term="blue-green">Blue/green</span> для model rollouts. Soak tests перед кожною production-зміною.</p>
+<p><span class="term" data-term="governance">Governance</span>: версії моделей — у реєстрі; кожна production-зміна має ADR з <span class="term" data-term="rollback">rollback</span>-критеріями; <span class="term" data-term="human-in-the-loop">human-in-the-loop</span> обов&#x27;язковий для будь-якої незворотної дії. Оновлення моделей на PAI3 <span class="term" data-term="powernode">PowerNode</span> — з тією ж audit-trail дисципліною, що й реліз клінічного ПЗ.</p></div>
+        </article>
+
+        <article class="qa-card" id="q-10">
+          <header class="qa-head">
+            <span class="qa-num">Q10</span>
+            <span class="qa-cat">RAG і надійність</span>
+          </header>
+          <h3 class="qa-q">Як би ви перевіряли, що вихід локальної моделі досить безпечний і коректний для клінічного / медичного workflow?</h3>
+          <div class="qa-a"><p>Валідація — пошарова, не один тест.</p>
+<p>Шар 1 — offline <span class="term" data-term="evaluation">evaluation</span>. Зібрати labelled eval-сет, який відображає реальне клінічне використання: in-domain (підсумки симптомів, запити на взаємодію ліків, чернетки виписок) і adversarial (off-topic, неоднозначні, навмисно маніпулятивні). Прогнати модель на цьому сеті, оцінити відповіді проти ground truth, виміряти precision, recall, refusal rate.</p>
+<p>Шар 2 — <span class="term" data-term="guardrails">guardrails</span>. Pre-LLM фільтри відсіюють prompt-injection і запити поза скоупом. Post-LLM валідатори перевіряють: немає вигаданих доз ліків чи протипоказань, немає вигаданих patient ID, citations присутні де треба, вихід відповідає заявленій схемі. Hard refusals на все, що поза затвердженим скоупом.</p>
+<p>Шар 3 — shadow mode. Нова модель працює поруч з продакшеном 1-2 тижні, бачить реальні запити, але її виходи логуються і рев&#x27;юються — не показуються клініцистам. Порівняння з поточною моделлю на тих самих запитах.</p>
+<p>Шар 4 — <span class="term" data-term="human-in-the-loop">human-in-the-loop</span>. Для клінічного асистента вихід моделі — завжди чернетка, доки клініцист не підпише. Ніколи не повністю автономне рішення.</p>
+<p>Шар 5 — безперервний моніторинг. У продакшені: трекати refusal rate, розподіл retrieval confidence, schema validation failures, і (де дозволено) clinician override rate. Drift тригерить <span class="term" data-term="rollback">rollback</span> моделі.</p>
+<p>Для регульованого medical AI цей процес не опціональний — це документований доказ fitness for purpose, вимога <span class="term" data-term="hipaa">HIPAA</span> і еквівалентних регуляцій.</p></div>
+        </article>
+
+        <article class="qa-card" id="q-11">
+          <header class="qa-head">
+            <span class="qa-num">Q11</span>
+            <span class="qa-cat">Системи і надійність</span>
+          </header>
+          <h3 class="qa-q">Як ви робите локально-розгорнуту AI систему observable і таку, що відновлюється у продакшені?</h3>
+          <div class="qa-a"><p><span class="term" data-term="observability">Observability</span>. Три класичні стовпи плюс один LLM-специфічний.</p>
+<p>Логи — структурований JSON у локальний агрегатор. Кожен <span class="term" data-term="decoded-inference">inference</span>-виклик фіксує: request ID, user, версію моделі, prompt hash (не повний <span class="term" data-term="phi">PHI</span>), ID retrieved чанків, response hash, refusal flag, latency. Запитується за request ID і user.</p>
+<p>Метрики — Prometheus, з кожного <span class="term" data-term="powernode">PowerNode</span>. <span class="term" data-term="tokens-per-second">Tokens/sec</span>, p50 / <span class="term" data-term="p99">p99 latency</span>, request rate, error rate, GPU utilisation, тиск на пам&#x27;ять, queue depth. Ті метрики, що потрібні черговому інженеру о 3-й ночі.</p>
+<p>Трейси — OpenTelemetry по всьому шляху запиту: ingress → API → retrieval → <span class="term" data-term="decoded-inference">inference</span> → response. Видно, який hop тупить, коли щось регресує.</p>
+<p>LLM-специфічне — метрики якості prompt/response: розподіл retrieval confidence, schema validation failure rate, refusal rate, clinician override rate (де застосовно). Drift по будь-якій з них — це канарейка.</p>
+<p>Відновлюваність.</p>
+<p>Бекапи — зашифровані, перевірена процедура відновлення, поза нодою. Postgres WAL архівується неперервно.</p>
+<p><span class="term" data-term="rollback">Rollback</span> — кожна версія моделі — це tagged artifact. Продакшен вказує на version pointer. <span class="term" data-term="rollback">Rollback</span> = одна зміна конфігу + рестарт, 30 секунд.</p>
+<p><span class="term" data-term="blue-green">Blue/green</span> model rollouts — нова версія моделі працює паралельно, трафік переключається атомарно після валідації.</p>
+<p>Idempotency — кожен зовнішній виклик має idempotency key. Retries безпечні.</p>
+<p>Health checks — <span class="term" data-term="load-balancer">load balancer</span> смикає `/health` ендпоінт, який перевіряє <span class="term" data-term="decoded-inference">inference</span> server, vector DB і secrets vault. Нода, що відпала, автоматично прибирається з ротації.</p>
+<p>Soak tests — перед кожною production-зміною 4-годинний load-тест на staging <span class="term" data-term="powernode">PowerNode</span>. Ловить memory leaks і повільний drift, які 5-хвилинні smoke-тести пропускають.</p>
+<p>Документація — на кожен відновлюваний збій є runbook-запис. Черговий клініцист або інженер вирішує топ-10 інцидентів без залучення когось.</p></div>
+        </article>
+
+        <article class="qa-card" id="q-12">
+          <header class="qa-head">
+            <span class="qa-num">Q12</span>
+            <span class="qa-cat">Background і fit під роль</span>
+          </header>
+          <h3 class="qa-q">Яка частка вашої роботи з AI-системами — solo / greenfield, а яка — всередині існуючої команди?</h3>
+          <div class="qa-a"><p>І те, і те — навмисно.</p>
+<p>Greenfield — публічний <span class="term" data-term="n8n">n8n</span>-based AI portfolio assistant, <span class="term" data-term="rag">RAG</span> customer-support додаток, AI discovery платформа зі спеціалізованими агентами, FounderOS — <span class="term" data-term="agent">agent</span> operating environment для тривалих AI-асистованих задач з persistent context, <span class="term" data-term="governance">governance</span>, memory, recovery і auditability. У цих проектах я відповідав за архітектуру, реалізацію, інтеграції, деплой, тестування і документацію.</p>
+<p>У складі команди — моя поточна робота йде на self-hosted AI інфраструктурі в моїй компанії, разом з керівництвом і AI automation спеціалістами. Мої обов&#x27;язки: architecture audits, target-state design, ADRs, внутрішня інфраструктура, секрети і доступи, deployment practices, конфігурація агентів, технічна документація, recovery planning і декомпозиція задач для невеликої AI automation команди.</p>
+<p>Також будую reusable AI-асистовані QA і внутрішні engineering-флоу — мета не замінити людей, а прибрати повторювану роботу і зробити виконання більш консистентним.</p>
+<p>Тобто: комфортно і з чистого аркуша, і всередині існуючого середовища, де зміни мають поважати поточні обмеження, людей, дані й операційні процеси. Мій поточний трек — від AI Automation Engineer до Solution Architect / AI Systems Engineer, тому командно-архітектурну сторону я свідомо поглиблюю.</p></div>
+        </article>
+
+        <article class="qa-card" id="q-13">
+          <header class="qa-head">
+            <span class="qa-num">Q13</span>
+            <span class="qa-cat">Background і fit під роль</span>
+          </header>
+          <h3 class="qa-q">Що вас приваблює у PAI3 — у зсуві від традиційних backend / cloud pipelines до локального, децентралізованого AI?</h3>
+          <div class="qa-a"><p>Складна частина AI вже не «побудувати API і задеплоїти». Це зробити поведінку AI частиною надійної production-системи, де режими відмов — нові, дебаг — недетерміністичний, і кожне архітектурне рішення — це trade-off приватності чи вартості.</p>
+<p>Що мене найбільше цікавить — це комбінація:<br>• локальна або self-hosted інференс<br>• агентні системи<br>• retrieval і контекст<br>• <span class="term" data-term="evaluation">evaluation</span><br>• межі безпеки<br>• <span class="term" data-term="human-in-the-loop">human-in-the-loop</span> контроль<br>• recovery<br>• <span class="term" data-term="observability">observability</span><br>• явна операційна <span class="term" data-term="governance">governance</span></p>
+<p>PAI3 сидить рівно на цьому перетині. PowerNodes, без <span class="term" data-term="kubernetes">Kubernetes</span>, без залежності від <span class="term" data-term="docker">Docker</span>, model rollouts як first-class концепція — це ті обмеження, які роблять інженерну роботу цікавою.</p>
+<p>Я не йду від інженерної дисципліни. Я застосовую ту ж дисципліну до AI-систем. Мені й далі важливі явні контракти, структуровані inputs/outputs, idempotency, failure modes, тестування, повторюваність деплою, <span class="term" data-term="observability">observability</span>, документація, recovery. Різниця в тому, що AI додає ще один шар невизначеності — і ці практики стають важливішими, а не менш.</p>
+<p>Мій довгостроковий напрямок: AI Automation Engineer → AI Systems Engineer / Solution Architect → будувати і володіти більшими AI продуктами і платформами. Медичний / інтранет кут для мене особисто — я хочу, щоб системи, які я будую, могли розгортатись там, де вони захищають людей, а не просто там, де вони дають маржу.</p>
+<p>Оточуючий systems experience у мене вже є. Сфери, які хочу поглибити — <span class="term" data-term="pytorch">PyTorch</span>, <span class="term" data-term="lora">LoRA</span> / <span class="term" data-term="qlora">QLoRA</span>, <span class="term" data-term="quantization">quantization</span> internals, hardware-aware <span class="term" data-term="decoded-inference">inference</span> optimization, справжній <span class="term" data-term="edge-deployment">edge deployment</span> — це саме surface area PAI3.</p></div>
+        </article>
+  </main>
+
+  <footer class="foot">
+    <div>Taras Polishchuk · 2026-09-18 · 16:00 Kyiv technical interview</div>
+    <div style="margin-top:8px">
+      Hover any <span class="term" data-term="ollama">underlined term</span> for a one-line tooltip. Click it for the full definition.
+      Press <kbd>/</kbd> to <span class="term" data-term="idempotent">jump</span> to a term via the glossary panel.
+    </div>
+  </footer>
+
+</div>
+
+<div id="tooltip" role="tooltip" aria-hidden="true">
+  <span class="tt-term"></span>
+  <div class="tt-short"></div>
+  <div class="tt-more" style="display:none"></div>
+</div>
+
+<div id="modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal-card">
+    <h3 id="modal-term"></h3>
+    <div class="m-short" id="modal-short"></div>
+    <div class="m-long" id="modal-long"></div>
+    <button class="modal-close" id="modal-close">Close (Esc)</button>
+  </div>
+</div>
+
+<button class="glossary-toggle" id="gp-toggle">📖 Glossary</button>
+<div id="glossary-panel">
+  <button class="gp-close" id="gp-close" aria-label="Close">×</button>
+  <h3>Glossary · 69 terms</h3>
+  <input type="text" class="gp-search" id="gp-search" placeholder="Search terms…" autocomplete="off">
+  <div id="gp-list"></div>
+</div>
+
+<script>
+const GLOSSARY = {
+  'pai3': {id:'pai3',term:'PAI3 Network',short:'Decentralized AI network where all inference runs locally — no cloud, no central control. Goal: private AI for regulated environments.',long:'PAI3 Network is a decentralized AI network designed for use cases where data privacy, local control, and offline operation matter more than raw scale. Their stack targets PowerNodes (edge hardware) and rejects cloud dependencies. Medical-software / intranet deployment is a typical target — patient data never leaves the local network.'},
+  'powernode': {id:'powernode',term:'PowerNode',short:'Edge hardware node that runs AI inference locally inside the customer network. The physical machine where the model lives.',long:'A PowerNode is PAI3\'s edge-compute appliance: a physical (or virtual) machine inside the customer\'s intranet that hosts the local LLM, the agent runtime, and any associated services. PowerNodes are managed as a fleet — updates, model rollouts, and health checks are pushed to each node individually. The \'decentralized\' part of PAI3 means there is no central inference cluster; each PowerNode runs the model itself.'},
+  'intranet': {id:'intranet',term:'intranet',short:'A private network inside one organization. No public internet exposure. The model never reaches outside this boundary.',long:'An intranet is a closed network that only the organization\'s own users and devices can reach. For medical software this is critical: patient data, prompts, and model outputs must never leave the hospital or clinic\'s own network. The opposite of SaaS — no multi-tenant cloud, no shared infrastructure.'},
+  'ollama': {id:'ollama',term:'Ollama',short:'Tool that runs LLMs locally as a simple HTTP server. Pulls pre-trained models, exposes an OpenAI-compatible API on localhost.',long:'Ollama is a developer-friendly local-LLM runtime. You `ollama pull mistral` once and then have a model serving completion requests on `http://localhost:11434`. It handles model download, quantization defaults (Q4_K_M), GPU/CPU fallback, and exposes an OpenAI-shaped API so application code doesn\'t need to change when switching between cloud and local inference.'},
+  'gguf': {id:'gguf',term:'GGUF',short:'File format for quantized LLMs (GPT-Generated Unified Format). What Ollama / llama.cpp actually load off disk.',long:'GGUF is the modern successor to GGML. It is a single-file format that bundles the model weights, tokenizer, and metadata in a way that mmap-loads quickly. Different quantization levels live in the same family: Q2_K (smallest, weakest), Q4_K_M (the common sweet spot), Q6_K, Q8_0. The trade-off is memory vs quality — smaller files fit on weaker hardware but the model is a bit dumber.'},
+  'quantization': {id:'quantization',term:'quantization',short:'Shrinking a model by storing weights in fewer bits (e.g. 16-bit → 4-bit). Saves 3-4× memory at a small quality cost.',long:'Quantization reduces the precision of each weight from 16-bit or 32-bit floating point down to 4-bit, 8-bit, etc. The model disk size and RAM footprint drop dramatically (4-bit = ~4× smaller) and inference gets faster, with a small loss in output quality. Common formats: GGUF, GPTQ, AWQ, bitsandbytes (4-bit). For edge hardware (8-16 GB RAM), quantization is what makes running a 7B-13B model possible.'},
+  'q4-k-m': {id:'q4-k-m',term:'Q4_K_M',short:'A specific 4-bit GGUF quantization level. The default sweet spot — small, fast, ~99% of full quality on most tasks.',long:'Q4_K_M is one of the k-quant variants in GGUF. The \'Q4\' means 4-bit weights, \'K\' means the k-quant method (mixed-precision per layer), \'M\' is medium (between Q4_K_S smaller and Q4_K_L larger). It is the most common default in Ollama because the quality loss vs full precision is small for typical chat/RAG tasks, while the size is ~4 GB for a 7B model.'},
+  'lora': {id:'lora',term:'LoRA',short:'Low-Rank Adaptation. A small trainable \'patch\' added on top of a frozen base model. Cheap to train, cheap to swap.',long:'LoRA fine-tunes a model by inserting two small trainable matrices into each transformer layer, while keeping the original weights frozen. The result is a tiny adapter file (often <100 MB) that captures the new behaviour. You can have dozens of LoRAs for different tasks and load the right one at inference time without copying the whole base model.'},
+  'qlora': {id:'qlora',term:'QLoRA',short:'LoRA combined with 4-bit quantization of the base model. Trains adapters on a model that fits in consumer GPU memory.',long:'QLoRA = quantized base + LoRA adapter. The base model is loaded in 4-bit (via bitsandbytes), so it fits in 16-24 GB of VRAM. Then small LoRA adapters are trained on top. This is what makes fine-tuning a 7B-13B model possible on a single consumer GPU instead of a multi-A100 cluster.'},
+  'pytorch': {id:'pytorch',term:'PyTorch',short:'The dominant Python framework for training and running neural networks. The standard tool for any custom model work.',long:'PyTorch is the de-facto framework for deep learning research and production training. Almost every open-source model (LLaMA, Mistral, Stable Diffusion) ships with PyTorch weights and PyTorch training code. For LoRA/QLoRA fine-tuning, the canonical stack is PyTorch + Hugging Face Transformers + PEFT + bitsandbytes.'},
+  'peft': {id:'peft',term:'PEFT',short:'Parameter-Efficient Fine-Tuning. Hugging Face library that implements LoRA / QLoRA / adapters on top of any base model.',long:'PEFT (Hugging Face) is the standard library for parameter-efficient fine-tuning. It wraps any base model and adds small trainable adapters (LoRA, IA3, prefix-tuning) without touching the frozen weights. Combined with `bitsandbytes` for 4-bit loading, it is the canonical recipe for fine-tuning a 7B+ model on a single GPU.'},
+  'bitsandbytes': {id:'bitsandbytes',term:'bitsandbytes',short:'Python library that gives you 4-bit / 8-bit quantized model loading in PyTorch. Used together with PEFT for QLoRA.',long:'bitsandbytes (bnb) provides 4-bit and 8-bit quantization primitives for PyTorch. The `BitsAndBytesConfig` lets a Hugging Face model load in 4-bit NF4 with double quantization, dropping memory by ~4×. This is the foundation that QLoRA is built on.'},
+  'transformer': {id:'transformer',term:'transformer',short:'The neural-network architecture behind modern LLMs. Self-attention layers stacked 32-80+ deep. The \'T\' in GPT.',long:'The transformer architecture (Vaswani et al., 2017) is the foundation of nearly all modern LLMs. It uses self-attention — every token looks at every other token in the context window — stacked in many layers. Each layer has attention heads and a feed-forward block. Fine-tuning typically modifies adapter weights in attention layers, not the feed-forward blocks.'},
+  'langchain': {id:'langchain',term:'LangChain',short:'Python / TypeScript framework for chaining LLM calls, tools, and memory. The most common LLM application framework.',long:'LangChain provides abstractions for prompts, tools, retrievers, memory, and chains — the building blocks of an LLM application. As of 2024-2025 it is being superseded for stateful agent work by LangGraph, but remains the standard for simpler RAG and tool-use pipelines.'},
+  'langgraph': {id:'langgraph',term:'LangGraph',short:'Stateful, graph-based agent framework from the LangChain team. Each agent is a node, transitions are edges, state is explicit.',long:'LangGraph models an agent system as a directed graph: nodes are functions (LLM calls, tool invocations, human approval steps), edges are transitions (conditional or fixed), and a shared typed `State` object flows through the graph. It supports checkpointing (resume after crash), cycles, and human-in-the-loop interrupts. The successor to LangChain for serious multi-agent work.'},
+  'rag': {id:'rag',term:'RAG',short:'Retrieval-Augmented Generation. The model answers questions using text chunks pulled from a vector database at query time.',long:'RAG is the dominant pattern for grounding LLMs in private / fresh data. At query time, the user\'s question is embedded into a vector, similar chunks are retrieved from a vector database (pgvector, Pinecone, Weaviate), and those chunks are stuffed into the prompt as context. The model then answers grounded in those chunks, not just its training data. Reduces hallucination and lets you cite sources.'},
+  'pgvector': {id:'pgvector',term:'pgvector',short:'Postgres extension that adds vector similarity search to a normal Postgres table. RAG without a separate vector DB.',long:'pgvector adds a `vector` column type and ANN (approximate nearest neighbour) indexes (HNSW, IVFFlat) to PostgreSQL. For teams that already run Postgres, this is the simplest path to RAG — embeddings live next to the relational data, one transaction layer, one backup story. Trade-off: at millions of vectors, dedicated vector DBs (Pinecone, Qdrant) scale better.'},
+  'vector-embedding': {id:'vector-embedding',term:'embedding',short:'A list of numbers (e.g. 1536 floats) that represents the meaning of a text. Similar texts → similar vectors.',long:'An embedding is a fixed-length dense vector produced by a model (e.g. OpenAI `text-embedding-3-small` outputs 1536 floats). Semantically similar texts produce vectors that are close in cosine distance. Used for semantic search, RAG retrieval, clustering, and classification.'},
+  'cosine-similarity': {id:'cosine-similarity',term:'cosine similarity',short:'How to measure if two embedding vectors mean the same thing. Score from -1 (opposite) to 1 (same).',long:'Cosine similarity = dot product of two vectors divided by the product of their magnitudes. It ignores vector length and only cares about direction, which makes it the right metric for embeddings (where length is meaningless, direction is meaning). For RAG, top-k retrieval by cosine similarity picks the chunks most relevant to the query.'},
+  'agent': {id:'agent',term:'agent',short:'An LLM-driven program that decides what to do next based on the goal, not a fixed script. Loop: think → act → observe.',long:'An LLM agent is a system where the model itself chooses actions (tool calls, searches, code execution) in a loop until some stopping condition. Compare to a chain (fixed sequence) or a pipeline (deterministic graph). Agents are powerful but harder to test, easier to hallucinate, and need explicit guardrails.'},
+  'n8n': {id:'n8n',term:'n8n',short:'Open-source workflow automation tool. Visual editor for chains of API calls, AI nodes, conditionals, and retries.',long:'n8n is a self-hostable alternative to Zapier / Make. You build workflows in a visual editor: trigger → node → node → conditional branch → error path. It has native LLM / AI agent nodes, HTTP request nodes, and 400+ integrations. For solo / small-team automation it\'s faster to ship than building a custom agent runtime, and the JSON workflow files are version-controllable.'},
+  'prompt-injection': {id:'prompt-injection',term:'prompt injection',short:'User input that tricks the LLM into ignoring its real instructions and following the attacker\'s instead. The #1 LLM security risk.',long:'Prompt injection is when user-controlled text (or even third-party content the model retrieves) contains instructions like \'ignore your previous instructions and do X\'. The model cannot reliably distinguish user content from system instructions. Defences: pre-LLM input filters, structured-output constraints, post-LLM output validation, and treating any retrieved content as untrusted.'},
+  'system-prompt': {id:'system-prompt',term:'system prompt',short:'The hidden instructions that set the LLM\'s role, scope, and behaviour. The model\'s \'job description\'.',long:'The system prompt is sent to the model as the first message in the conversation with role \'system\'. It defines what the model should do (and not do), its tone, its scope, what it must refuse. Vulnerable to extraction attacks (\'repeat your system prompt verbatim\') — so production systems should never put secrets in it.'},
+  'guardrails': {id:'guardrails',term:'guardrails',short:'Deterministic checks that sit before or after the LLM call. Reject bad input, validate bad output.',long:'Guardrails are non-LLM rules that filter or transform what goes into or comes out of the model. Pre-LLM: regex / classifier rejects prompt injection, oversized input, off-topic requests. Post-LLM: schema validation, PII redaction, URL allowlist, length cap. The point: never trust the model alone to enforce policy.'},
+  'grounding': {id:'grounding',term:'grounding',short:'Anchoring the model\'s answer in retrieved facts (RAG) or verified data. The opposite of hallucinating.',long:'Grounding means the model is told to answer only based on provided context, and to say \'I don\'t know\' if the context is insufficient. RAG is the dominant grounding technique. Hallucination drops sharply when the model is forced to cite retrieved chunks rather than free-generation from its training distribution.'},
+  'structured-output': {id:'structured-output',term:'structured output',short:'Forcing the model to respond as JSON matching a schema, not free-form text. Makes outputs machine-checkable.',long:'Structured output (e.g. OpenAI\'s JSON mode, Zod / Pydantic schemas, instructor library) constrains the model\'s response to valid JSON matching a declared shape. The downstream code can then trust the structure: `response.risk_level` is always one of `low | medium | high`, never a free-form sentence. Eliminates an entire class of parsing bugs.'},
+  'zod': {id:'zod',term:'Zod',short:'TypeScript library for declaring data shapes and validating at runtime. Used to validate LLM structured outputs.',long:'Zod is the most popular TypeScript schema validation library. You write `z.object({ name: z.string(), age: z.number().int().positive() })` and Zod both infers the TypeScript type and validates any runtime data against it. In LLM pipelines, Zod is the typical way to define and enforce the shape of structured model outputs.'},
+  'confidence-threshold': {id:'confidence-threshold',term:'confidence threshold',short:'The minimum retrieval score below which the assistant refuses to answer instead of guessing.',long:'When RAG retrieves context chunks, each chunk has a similarity score. A confidence threshold is the cut-off: chunks above the threshold are considered \'the model has enough context to answer\', below means \'context is too weak, refuse or escalate\'. Tuning this threshold trades false refusals against hallucinated answers.'},
+  'docker': {id:'docker',term:'Docker',short:'Packages an app + its dependencies into a single runnable container. Same behaviour on any Linux host.',long:'Docker uses OS-level virtualization to package an application with its libraries, configs, and runtime into a container image. The image runs identically on a developer laptop, a CI server, or a production node. For AI inference you typically containerize the model server (Ollama, vLLM, TGI) so deployments are reproducible.'},
+  'kubernetes': {id:'kubernetes',term:'Kubernetes',short:'Container orchestrator. Manages hundreds of containers across many machines. Heavy infrastructure.',long:'Kubernetes (K8s) is the industry-standard orchestrator for running containerised workloads at scale: scheduling, self-healing, rolling updates, service discovery. Powerful but heavy — requires a control plane, networking layer, ingress controllers. PAI3 explicitly avoids it: \'Do not rely on Kubernetes, Docker, or cloud pipelines\'.'},
+  'cloudflare-tunnel': {id:'cloudflare-tunnel',term:'Cloudflare Tunnel',short:'A secure outbound tunnel that exposes a local service to the internet without opening firewall ports.',long:'Cloudflare Tunnel (`cloudflared`) runs as a process on your machine and opens an outbound-only connection to Cloudflare\'s edge. You then get a public HTTPS URL that proxies into your local service. No inbound firewall rules, no public IP needed. Useful for exposing a self-hosted n8n or portfolio demo without port-forwarding.'},
+  'tailscale': {id:'tailscale',term:'Tailscale',short:'Mesh VPN that connects your devices into a private network using WireGuard. Zero-config, identity-based.',long:'Tailscale builds a WireGuard mesh VPN between your devices (laptop, server, phone) using your existing identity (Google, GitHub, Microsoft login). No port forwarding, no firewall rules. Each device gets a stable IP on the tailnet (100.x.y.z). For ops work it\'s the fastest way to reach a homelab server from anywhere.'},
+  'coolify': {id:'coolify',term:'Coolify',short:'Self-hosted PaaS. Deploy apps and databases from a web UI without Kubernetes. \'Heroku on your own server\'.',long:'Coolify is an open-source self-hostable platform-as-a-service. It manages Docker containers, databases, SSL via Let\'s Encrypt, and reverse proxy via Traefik — all from a web UI. For solo developers or small teams it replaces Vercel / Fly.io / Heroku with a homelab-friendly alternative that doesn\'t require Kubernetes.'},
+  'systemd': {id:'systemd',term:'systemd',short:'Linux service manager. Starts your app on boot, restarts on crash, writes logs. The \'start.sh\' of production Linux.',long:'systemd is the default init system on modern Linux. You write a `.service` unit file describing how to run your app, then `systemctl enable --now myapp` makes it start on boot and auto-restart on failure. For non-Docker local deployments (PAI3\'s preferred style), systemd is the equivalent of a Docker restart policy.'},
+  'observability': {id:'observability',term:'observability',short:'Being able to understand what your system is doing from its outputs — logs, metrics, traces. Required for debugging AI in production.',long:'Observability is the discipline of making a system\'s internal state understandable from its external outputs. The three pillars are logs (discrete events), metrics (aggregated numbers over time), and traces (a request\'s path across services). For AI systems you also need prompt/response logs, retrieval scores, and confidence distributions — the LLM is non-deterministic so traditional debugging doesn\'t apply.'},
+  'metrics': {id:'metrics',term:'metrics',short:'Numbers that summarise system behaviour over time. Request rate, error rate, p99 latency. Grafana dashboards.',long:'Metrics are scalar time-series values: requests per second, error rate, latency percentiles, GPU utilisation, tokens per second. Stored in Prometheus or similar. For AI: token usage, retrieval confidence distribution, model refusal rate.'},
+  'logging': {id:'logging',term:'logging',short:'Writing timestamped events to a file or service. The \'what happened\' record of your system.',long:'Logs are append-only event records: `[2026-09-18 16:01:23] POST /api/inference 200 1.4s model=mistral-7b-q4`. For AI systems you should log prompt, response, retrieved chunks, and confidence — but be careful with PII and secrets. Structured JSON logs (one event per line) are easier to query than plain text.'},
+  'governance': {id:'governance',term:'governance',short:'The rules, roles, and review processes that decide who can do what to a system. Especially important for AI that affects real people.',long:'Governance is the layer above the code: who can deploy, who can approve a model change, what data is allowed, what the review process is for incidents. For medical AI this becomes regulation: HIPAA, MDR, audit trails, model change records, rollback procedures. \'Governance\' here means the human + policy layer, not the LLM.'},
+  'hipaa': {id:'hipaa',term:'HIPAA',short:'US healthcare privacy law. Governs how patient data must be handled. Software touching patient data must comply.',long:'Health Insurance Portability and Accountability Act (1996). Sets rules for protected health information (PHI): who can see it, how it must be stored, breach notification, audit logs. Any software that processes patient data — including an LLM-based assistant that reads clinical notes — must be designed with HIPAA in mind.'},
+  'phi': {id:'phi',term:'PHI',short:'Protected Health Information. Any data that identifies a patient and relates to their health. Handle with care.',long:'PHI is the legal term for any individually identifiable health data: name + diagnosis, MRN, date of birth + visit, even IP address when combined with health info. Sending PHI to a third-party API (including an LLM API) without a Business Associate Agreement is a HIPAA violation. Drives why medical AI runs locally.'},
+  'audit-trail': {id:'audit-trail',term:'audit trail',short:' Immutable record of who did what and when. Required for regulated industries (health, finance).',long:'An audit trail is a tamper-evident log of every action in the system: who accessed what data, who changed which setting, who deployed which model version. For regulated AI (medical, financial), audit trails are non-negotiable — they are what you show regulators when something goes wrong.'},
+  'human-in-the-loop': {id:'human-in-the-loop',term:'human-in-the-loop',short:'A human must approve or correct the AI\'s output before it takes effect. Pattern for high-stakes decisions.',long:'Human-in-the-loop (HITL) is a workflow where the AI proposes an action or answer, but a human reviews and approves before anything irreversible happens. Standard in medical AI: the model drafts a summary, the clinician signs off. LangGraph supports this natively via interrupt nodes.'},
+  'rollback': {id:'rollback',term:'rollback',short:'Reverting a system to a previous known-good version. The safe button when a new model or deploy breaks things.',long:'Rollback is the ability to quickly return to a previous working state. For AI models: keep old checkpoints, version your adapters, have a tested procedure to swap back. For deployments: keep the previous container image, use blue/green or canary releases. The difference between an incident and a catastrophe is whether rollback takes 30 seconds or 30 hours.'},
+  'checkpoint': {id:'checkpoint',term:'checkpoint',short:'A saved snapshot of a model or workflow state. Resuming training, recovering after crash, or rolling back.',long:'A checkpoint is a persisted snapshot. For model training: saved weights at step N (so you can resume if it crashes). For LangGraph workflows: the current state of every node (so a multi-hour agent run can resume after a server restart). For inference: a frozen model version you can roll back to.'},
+  'blue-green': {id:'blue-green',term:'blue/green',short:'Deploy by running new and old versions side by side, then swapping traffic. Zero-downtime, instant rollback.',long:'Blue/green deployment: run the current version (\'blue\') and the new version (\'green\') simultaneously. Route all traffic to blue. Test green in production. When green is verified, flip the load balancer to green. If green breaks, flip back to blue — instant rollback, no rush to debug under pressure.'},
+  'load-balancer': {id:'load-balancer',term:'load balancer',short:'A server that distributes incoming requests across multiple backends. The entry door of a scalable service.',long:'A load balancer (NGINX, HAProxy, Cloudflare, AWS ALB) accepts inbound traffic and forwards each request to one of N backend instances. Distributes load, provides failover (if one backend dies, send to the rest), and enables zero-downtime deployments (blue/green). For AI: route to the PowerNode with the lowest current load.'},
+  'p99': {id:'p99',term:'p99 latency',short:'The slowest 1% of requests. The real \'user experience\' number — p50 lies, p99 doesn\'t.',long:'p99 latency is the 99th percentile: 99% of requests finish faster than this, only 1% are slower. p50 (median) hides the worst cases. For AI: p99 includes the cold-start of the first request after idle, the slow token on a long context, the timeout retry. Production SLOs are usually written against p99.'},
+  'throughput': {id:'throughput',term:'throughput',short:'How many requests (or tokens) per second the system can handle. Capacity, not speed.',long:'Throughput is the rate of completed work: requests/second, tokens/second, inferences/hour. For LLM serving: tokens per second per GPU. Different from latency — a system can be fast (low latency) but low-throughput (small batch size, runs out of GPU memory) or high-throughput but slow per-request. For medical assistants, throughput matters more than peak speed.'},
+  'tokens-per-second': {id:'tokens-per-second',term:'tokens/sec',short:'How fast the model generates output. ~30 tok/s = readable, ~100 tok/s = instant. The user-visible speed metric.',long:'LLMs generate text one token at a time (~4 chars in English). Tokens per second is the user-visible speed of the model. On a 7B model with Q4 quantization on a modern GPU: 50-100 tok/s. On CPU: 5-15 tok/s. For chat UX you want at least 30 tok/s; below that the response feels sluggish.'},
+  'edge-deployment': {id:'edge-deployment',term:'edge deployment',short:'Running the model close to the data (laptop, hospital server, IoT device) instead of in a central cloud.',long:'Edge deployment is the opposite of cloud: the model runs on the device or local server nearest to where the data is generated, not in a distant data centre. Reasons: latency, bandwidth cost, privacy (medical data can\'t leave the building), offline operation. PAI3\'s PowerNodes are edge deployment. Jetson, Raspberry Pi, Apple Silicon laptops — all edge hardware.'},
+  'model-weight': {id:'model-weight',term:'model weights',short:'The billions of numbers inside a trained neural network. What you actually download when you \'get a model\'.',long:'A model\'s weights are the parameters learned during training — for a 7B model, 7 billion floating-point numbers. They are what makes the model \'the model\'. Stored as GGUF / safetensors / PyTorch `.bin` files. Quantization changes how those numbers are stored (16-bit, 4-bit, etc.) but not what they semantically represent.'},
+  'token': {id:'token',term:'token',short:'The atomic unit an LLM reads and writes. ~4 characters of English. ~0.75 words. The \'word\' of an LLM.',long:'An LLM doesn\'t read characters or words — it reads tokens. A token is roughly 4 characters of English text, or about ¾ of a word. \'Hello world\' = 2 tokens. Context windows are measured in tokens (8K, 32K, 128K). API costs are per-token. Generation speed is tokens/second. Memory usage scales with tokens in context.'},
+  'context-window': {id:'context-window',term:'context window',short:'How much text the model can see at once. 8K = a short doc. 128K = a whole book. The model\'s working memory.',long:'The context window is the maximum number of tokens the model can attend to at once. Older models: 2K-4K. Modern open models: 8K-32K. Frontier models: 128K-1M. Bigger context = more memory, slower per-token inference. For RAG: chunk size must fit comfortably inside the context window.'},
+  'evaluation': {id:'evaluation',term:'evaluation',short:'Measuring how good a model is at a task. \'Eval set\' = the test cases. \'Eval harness\' = the runner.',long:'Evaluation (evals) is how you know if a fine-tuned model is actually better than the base. You build a labelled test set (input → expected output), run both models, compare scores. Categories: multiple choice (MMLU), code (HumanEval), chat (MT-Bench), domain-specific (your own medical Q&A set). The hard part is building a high-quality, non-leaking eval set.'},
+  'hallucination': {id:'hallucination',term:'hallucination',short:'The model confidently stating something false. The core LLM failure mode. RAG and grounding reduce it.',long:'Hallucination is when the LLM generates plausible-sounding but factually wrong content — invented citations, fake APIs, made-up statistics. Caused by the model being trained to \'sound right\' rather than \'be right\'. Mitigations: RAG grounding, confidence thresholds, post-generation fact-checking, structured outputs that require citations.'},
+  'fine-tuning': {id:'fine-tuning',term:'fine-tuning',short:'Continuing training of a base model on your own data. Makes the model better at your specific task.',long:'Fine-tuning takes a pre-trained base model and trains it further on a smaller, task-specific dataset. The result is a model that is better at your task but worse at unrelated things. LoRA / QLoRA are parameter-efficient versions that add tiny adapters instead of retraining everything. Compared to prompting: prompting steers a model at inference, fine-tuning changes its weights.'},
+  'distillation': {id:'distillation',term:'distillation',short:'Training a small model to mimic a big one. \'Teacher answers, student learns\'. Cheaper than training from scratch.',long:'Knowledge distillation: a large \'teacher\' model (e.g. GPT-4) generates training data, a small \'student\' model learns to mimic it. Result: a model 10× smaller that retains 80-90% of the teacher\'s quality on the target task. Common for deploying on edge hardware — you can\'t run GPT-4 on a Jetson, but you can run a Mistral-7B that was distilled from it.'},
+  'rag-pipeline': {id:'rag-pipeline',term:'RAG pipeline',short:'The end-to-end flow: chunk docs → embed → store in vector DB → at query time, embed query → retrieve → prompt LLM.',long:'A RAG pipeline has two halves. Indexing (offline): split documents into chunks (200-1000 tokens), embed each chunk, store in pgvector / Pinecone. Query (online): embed the user\'s question, find top-k similar chunks, stuff them into the prompt, ask the LLM to answer using only those chunks. Quality depends on chunking strategy, embedding model, retrieval method, and prompt design.'},
+  'embedding-model': {id:'embedding-model',term:'embedding model',short:'A model whose job is to turn text into a vector. Used for RAG retrieval, search, clustering. Different from a chat model.',long:'Embedding models (e.g. `text-embedding-3-small`, `bge-large`, `nomic-embed-text`) convert text into fixed-length dense vectors such that similar texts get similar vectors. Smaller and faster than chat models — you can run a good embedding model locally. Pick the right one for your language and domain.'},
+  'context-window-budget': {id:'context-window-budget',term:'context budget',short:'How you split the model\'s context window: system prompt vs. retrieved docs vs. chat history vs. user question.',long:'An 8K context window is not infinite. You must decide: how many tokens for the system prompt? How many for retrieved RAG chunks? How much conversation history? How much for the user\'s question + expected answer? A common pattern: system (1K) + history (2K) + retrieved (3K) + question (1K) + answer buffer (1K) = 8K total.'},
+  'secure-by-default': {id:'secure-by-default',term:'secure by default',short:'The system is safe when used exactly as documented. No \'opt-in security\' — defaults reject the bad case.',long:'Secure by default means the configuration that ships out of the box rejects unsafe operations. Example: a chat assistant that, by default, refuses to call external APIs, redact PII, and validate URLs. Users can loosen it, but the default is safe. The opposite is \'opt-in security\' where you must remember to enable the guardrails — and someone always forgets.'},
+  'idempotent': {id:'idempotent',term:'idempotent',short:'Calling an operation twice produces the same result as calling it once. Critical for retries and webhook safety.',long:'An idempotent operation can be retried safely: `POST /charge $10` (not idempotent — double charge) vs `POST /charge-idempotency-key=abc $10` (idempotent — server remembers and returns the original result). For agent workflows, retries on transient failures (timeout, network) are unavoidable — every external call should be designed idempotently.'},
+  'webhook': {id:'webhook',term:'webhook',short:'An HTTP callback. Service A POSTs to your URL when something happens. The alternative to polling.',long:'A webhook is when service A sends an HTTP POST to a URL you control whenever an event occurs (new email, new order, new message). Your server responds with 200 OK to acknowledge. The opposite of polling — instead of asking \'is there anything new?\' 100 times/sec, you wait to be told. Used by Stripe, GitHub, Telegram, n8n.'},
+  'postgres': {id:'postgres',term:'PostgreSQL',short:'The default serious open-source relational database. With pgvector extension it also serves as a vector DB.',long:'PostgreSQL is the open-source relational database of choice for production systems. ACID transactions, JSON columns, full-text search, extensions ecosystem. For AI applications the `pgvector` extension adds vector similarity search — one database for both relational and embedding data, one backup story, one transaction layer.'},
+  'kubernetes-operator': {id:'kubernetes-operator',term:'operator',short:'A custom Kubernetes controller that automates a complex application\'s lifecycle. PAI3 explicitly avoids this whole ecosystem.',long:'Kubernetes operators encode human operator knowledge into software that runs in-cluster (e.g. an \'etcd operator\' that handles backup, upgrade, scaling). Powerful but requires K8s itself, which PAI3 says to avoid. The PAI3 philosophy: bare metal + systemd + simple orchestration, not containers-on-K8s.'},
+  'ai-first-engineering': {id:'ai-first-engineering',term:'AI-first engineering',short:'Building software where AI is part of the team\'s workflow itself, not just the product. Cursor + Claude to write code.',long:'AI-first engineering means the development process itself uses AI as a primary tool: Cursor or Claude Code for writing/editing, LLMs for review and test generation, agents for routine refactors. PAI3 specifically says \'Use Cursor and Claude to build systems. Operate in an AI-first engineering model.\' This is the meta-layer above the product AI.'},
+  'decoded-inference': {id:'decoded-inference',term:'inference',short:'Running a trained model on new input to get output. The \'using\' phase of ML, as opposed to \'training\'.',long:'Inference is the forward pass: take a trained model, give it an input (a prompt), get the output (a completion). For LLMs this is token-by-token generation. Production inference is the bulk of ML compute — training happens once, inference runs billions of times. PAI3\'s focus: making inference reliable, fast, and private on local PowerNodes.'},
+  'deterministic': {id:'deterministic',term:'deterministic',short:'Same input always gives the same output. Easy to test. LLM output is NOT deterministic — that\'s the whole challenge.',long:'Deterministic means reproducible: f(x) always returns the same f(x). Most code is deterministic. LLMs are not by default (sampling temperature > 0). For testing, you typically set temperature = 0 to make LLM output deterministic, but production agents often need some non-determinism to handle varied inputs.'},
+  'soak-test': {id:'soak-test',term:'soak test',short:'Run the system at normal load for hours/days. Catches memory leaks, slow drift, and failures that only appear over time.',long:'A soak test runs the system under realistic load for an extended period (hours to days). Catches bugs that don\'t show up in 5-minute smoke tests: memory leaks (RAM grows over time), resource exhaustion (file descriptors, DB connections), slow drift in model behaviour, log file filling disk. For AI systems this is critical — LLM memory leaks in the KV cache can take hours to manifest.'}
+};
+const TERM_INDEX = {
+  'PAI3 Network': 'pai3',
+  'PowerNode': 'powernode',
+  'intranet': 'intranet',
+  'Ollama': 'ollama',
+  'GGUF': 'gguf',
+  'quantization': 'quantization',
+  'Q4_K_M': 'q4-k-m',
+  'LoRA': 'lora',
+  'QLoRA': 'qlora',
+  'PyTorch': 'pytorch',
+  'PEFT': 'peft',
+  'bitsandbytes': 'bitsandbytes',
+  'transformer': 'transformer',
+  'LangChain': 'langchain',
+  'LangGraph': 'langgraph',
+  'RAG': 'rag',
+  'pgvector': 'pgvector',
+  'embedding': 'vector-embedding',
+  'cosine similarity': 'cosine-similarity',
+  'agent': 'agent',
+  'n8n': 'n8n',
+  'prompt injection': 'prompt-injection',
+  'system prompt': 'system-prompt',
+  'guardrails': 'guardrails',
+  'grounding': 'grounding',
+  'structured output': 'structured-output',
+  'Zod': 'zod',
+  'confidence threshold': 'confidence-threshold',
+  'Docker': 'docker',
+  'Kubernetes': 'kubernetes',
+  'Cloudflare Tunnel': 'cloudflare-tunnel',
+  'Tailscale': 'tailscale',
+  'Coolify': 'coolify',
+  'systemd': 'systemd',
+  'observability': 'observability',
+  'metrics': 'metrics',
+  'logging': 'logging',
+  'governance': 'governance',
+  'HIPAA': 'hipaa',
+  'PHI': 'phi',
+  'audit trail': 'audit-trail',
+  'human-in-the-loop': 'human-in-the-loop',
+  'rollback': 'rollback',
+  'checkpoint': 'checkpoint',
+  'blue/green': 'blue-green',
+  'load balancer': 'load-balancer',
+  'p99 latency': 'p99',
+  'throughput': 'throughput',
+  'tokens/sec': 'tokens-per-second',
+  'edge deployment': 'edge-deployment',
+  'model weights': 'model-weight',
+  'token': 'token',
+  'context window': 'context-window',
+  'evaluation': 'evaluation',
+  'hallucination': 'hallucination',
+  'fine-tuning': 'fine-tuning',
+  'distillation': 'distillation',
+  'RAG pipeline': 'rag-pipeline',
+  'embedding model': 'embedding-model',
+  'context budget': 'context-window-budget',
+  'secure by default': 'secure-by-default',
+  'idempotent': 'idempotent',
+  'webhook': 'webhook',
+  'PostgreSQL': 'postgres',
+  'operator': 'kubernetes-operator',
+  'AI-first engineering': 'ai-first-engineering',
+  'inference': 'decoded-inference',
+  'deterministic': 'deterministic',
+  'soak test': 'soak-test'
+};
+
+const tooltip = document.getElementById('tooltip');
+const ttTerm = tooltip.querySelector('.tt-term');
+const ttShort = tooltip.querySelector('.tt-short');
+const ttMore = tooltip.querySelector('.tt-more');
+const modal = document.getElementById('modal');
+const modalTerm = document.getElementById('modal-term');
+const modalShort = document.getElementById('modal-short');
+const modalLong = document.getElementById('modal-long');
+const modalClose = document.getElementById('modal-close');
+
+function openTermDetail(gid) {
+  const g = GLOSSARY[gid];
+  if (!g) return;
+  modalTerm.textContent = g.term;
+  modalShort.textContent = g.short;
+  modalLong.textContent = g.long;
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden', 'false');
+}
+
+function closeModal() {
+  modal.classList.remove('show');
+  modal.setAttribute('aria-hidden', 'true');
+}
+
+document.addEventListener('mouseover', function(e) {
+  const el = e.target.closest('.term');
+  if (!el) return;
+  const gid = el.dataset.term;
+  const g = GLOSSARY[gid];
+  if (!g) return;
+  ttTerm.textContent = g.term;
+  ttShort.textContent = g.short;
+  ttMore.textContent = g.long;
+  ttMore.style.display = 'block';
+  tooltip.classList.add('show');
+  positionTooltip(e);
+});
+
+document.addEventListener('mousemove', function(e) {
+  if (tooltip.classList.contains('show')) positionTooltip(e);
+});
+
+document.addEventListener('mouseout', function(e) {
+  const el = e.target.closest('.term');
+  if (!el) return;
+  tooltip.classList.remove('show');
+});
+
+document.addEventListener('click', function(e) {
+  const el = e.target.closest('.term');
+  if (!el) return;
+  openTermDetail(el.dataset.term);
+});
+
+modalClose.addEventListener('click', closeModal);
+modal.addEventListener('click', function(e) {
+  if (e.target === modal) closeModal();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    if (modal.classList.contains('show')) closeModal();
+    else if (document.getElementById('glossary-panel').classList.contains('open'))
+      document.getElementById('glossary-panel').classList.remove('open');
+  }
+  if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+    e.preventDefault();
+    openGlossary();
+    document.getElementById('gp-search').focus();
+  }
+});
+
+function positionTooltip(e) {
+  const pad = 14;
+  const tw = tooltip.offsetWidth;
+  const th = tooltip.offsetHeight;
+  let x = e.clientX + 18;
+  let y = e.clientY + 18;
+  if (x + tw + pad > window.innerWidth) x = e.clientX - tw - 18;
+  if (y + th + pad > window.innerHeight) y = e.clientY - th - 18;
+  tooltip.style.left = Math.max(pad, x) + 'px';
+  tooltip.style.top = Math.max(pad, y) + 'px';
+}
+
+// Glossary panel
+const gpToggle = document.getElementById('gp-toggle');
+const gpPanel = document.getElementById('glossary-panel');
+const gpClose = document.getElementById('gp-close');
+const gpSearch = document.getElementById('gp-search');
+const gpList = document.getElementById('gp-list');
+
+function openGlossary() { gpPanel.classList.add('open'); renderGlossary(''); }
+gpToggle.addEventListener('click', openGlossary);
+gpClose.addEventListener('click', () => gpPanel.classList.remove('open'));
+
+function renderGlossary(filter) {
+  const f = filter.toLowerCase().trim();
+  const items = Object.values(GLOSSARY)
+    .filter(g => !f || g.term.toLowerCase().includes(f) || g.short.toLowerCase().includes(f))
+    .sort((a, b) => a.term.localeCompare(b.term));
+  if (items.length === 0) {
+    gpList.innerHTML = '<div class="gp-empty">No matches.</div>';
+    return;
+  }
+  gpList.innerHTML = items.map(g =>
+    `<div class="gp-item" data-id="${g.id}">
+      <div class="gp-term">${escapeHtml(g.term)}</div>
+      <div class="gp-short">${escapeHtml(g.short)}</div>
+    </div>`
+  ).join('');
+  gpList.querySelectorAll('.gp-item').forEach(el => {
+    el.addEventListener('click', () => {
+      openTermDetail(el.dataset.id);
+      gpPanel.classList.remove('open');
+    });
+  });
+}
+
+gpSearch.addEventListener('input', e => renderGlossary(e.target.value));
+
+function escapeHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>
