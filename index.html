@@ -1987,6 +1987,11 @@ button.project-link-ai:focus-visible {
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
 
+      <a href="./pai3-interview/" class="blog-link" style="margin-left:8px; border-color:rgba(217,119,6,0.35); background:rgba(217,119,6,0.08);" aria-label="PAI3 Edge AI Interview Manual">
+        <span style="color:#fbbf24;">⚡ PAI3 Edge AI</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+
     </article>
   </section>
 
@@ -2065,6 +2070,26 @@ window.ANALYTICS_CONFIG = Object.assign({
 // padStart(2, '0') handles the visual numbering, and the AI Assistant hint on
 // the homepage auto-syncs to the AI Assistant's current id.
 const PROJECTS = [
+  {
+    id: 15,
+    section: "AI & Automation",
+    name: "PAI3 Network — Edge AI & Medical Intranet Preparation",
+    featured: true,
+    desc: "Technical interview cheatsheet and deep dive on decentralized Edge AI, local LLMs on PowerNodes, medical intranet architecture, GGUF Q4_K_M quantization, LoRA/QLoRA, HIPAA/PHI data flows, and LangGraph orchestration. Built in Claude Code dark terminal aesthetic with 69 interactive tooltips.",
+    tags: ["Edge AI", "Local LLMs", "Medical AI", "Intranet", "GGUF", "HIPAA", "LangGraph", "Claude Code"],
+    gradient: "linear-gradient(135deg, #181411 0%, #302015 50%, #0d0a08 100%)",
+    emoji: "⚡",
+    link: "./pai3-interview/",
+    longDescription: `<p><strong>PAI3 Network Edge AI & Medical Intranet Preparation</strong> is an interactive engineering manual and interview cheatsheet built in the Claude Code minimalist terminal aesthetic.</p>
+<h4>Key Focus Areas</h4>
+<ul>
+  <li><strong>Edge Inference on PowerNodes</strong> — Bare-metal Linux & systemd without Kubernetes, Ollama HTTP runtime, GGUF quantization (Q4_K_M sweet spot), memory footprint estimation.</li>
+  <li><strong>Medical Intranet & Data Governance</strong> — Air-gapped networks, HIPAA / PHI boundaries, zero cloud leaks, tamper-evident audit trails.</li>
+  <li><strong>Model Validation & Clinical Safety</strong> — RAG grounding, confidence thresholds with refusal mechanisms, clinical evaluation sets, human-in-the-loop signoff.</li>
+  <li><strong>Interactive Tooltip Engine</strong> — 69 technical terms annotated with plain-language hover cards and modal breakdowns.</li>
+</ul>
+<p><strong>Live Pages:</strong> <a href="./pai3-interview/" target="_blank" rel="noopener noreferrer">English Version</a> · <a href="./pai3-interview/ua.html" target="_blank" rel="noopener noreferrer">Українська версія</a></p>`
+  },
   {
     id: 1,
     section: "AI & Automation",
