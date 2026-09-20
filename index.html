@@ -1987,11 +1987,6 @@ button.project-link-ai:focus-visible {
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
 
-      <a href="./pai3-interview/" class="blog-link" style="margin-left:8px; border-color:rgba(217,119,6,0.35); background:rgba(217,119,6,0.08);" aria-label="PAI3 Edge AI Interview Manual">
-        <span style="color:#fbbf24;">⚡ PAI3 Edge AI</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-
     </article>
   </section>
 
@@ -2009,16 +2004,6 @@ button.project-link-ai:focus-visible {
     </p>
   </section>
 
-  <section id="featured-founderos" aria-label="Featured: FounderOS marketing site">
-    <div class="featured-card" style="border:1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; background: rgba(255,255,255,0.02); display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center;">
-      <div>
-        <span class="mono" style="font-size: 10px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase;">New · Featured</span>
-        <h3 style="margin: 8px 0 6px;">FounderOS — premium bilingual (DE/EN) marketing site</h3>
-        <p style="margin: 0; color: var(--ink-muted);">SvelteKit 2 · Svelte 5 · Liquid Glass-inspired design · interactive live demo · no JS animation libs (pure CSS/SVG). Built for paid DACH B2B traffic. <a href="https://taras-polishchuk.github.io/founderos-marketing/" style="color: var(--accent);">Open live site →</a> · <a href="https://github.com/taras-polishchuk/founderos-marketing" style="color: var(--accent);">source</a></p>
-      </div>
-      <a href="https://taras-polishchuk.github.io/founderos-marketing/" class="btn-primary" style="text-decoration: none; padding: 12px 22px; border-radius: 999px; background: var(--accent); color: #1a1714; font-weight: 500; font-size: 0.9rem;">Live preview →</a>
-    </div>
-  </section>
 </main>
 
 <!-- Projects Overlay -->
@@ -2081,26 +2066,6 @@ window.ANALYTICS_CONFIG = Object.assign({
 // padStart(2, '0') handles the visual numbering, and the AI Assistant hint on
 // the homepage auto-syncs to the AI Assistant's current id.
 const PROJECTS = [
-  {
-    id: 15,
-    section: "AI & Automation",
-    name: "PAI3 Network — Edge AI & Medical Intranet Preparation",
-    featured: true,
-    desc: "Technical interview cheatsheet and deep dive on decentralized Edge AI, local LLMs on PowerNodes, medical intranet architecture, GGUF Q4_K_M quantization, LoRA/QLoRA, HIPAA/PHI data flows, and LangGraph orchestration. Built in Claude Code dark terminal aesthetic with 69 interactive tooltips.",
-    tags: ["Edge AI", "Local LLMs", "Medical AI", "Intranet", "GGUF", "HIPAA", "LangGraph", "Claude Code"],
-    gradient: "linear-gradient(135deg, #181411 0%, #302015 50%, #0d0a08 100%)",
-    emoji: "⚡",
-    link: "./pai3-interview/",
-    longDescription: `<p><strong>PAI3 Network Edge AI & Medical Intranet Preparation</strong> is an interactive engineering manual and interview cheatsheet built in the Claude Code minimalist terminal aesthetic.</p>
-<h4>Key Focus Areas</h4>
-<ul>
-  <li><strong>Edge Inference on PowerNodes</strong> — Bare-metal Linux & systemd without Kubernetes, Ollama HTTP runtime, GGUF quantization (Q4_K_M sweet spot), memory footprint estimation.</li>
-  <li><strong>Medical Intranet & Data Governance</strong> — Air-gapped networks, HIPAA / PHI boundaries, zero cloud leaks, tamper-evident audit trails.</li>
-  <li><strong>Model Validation & Clinical Safety</strong> — RAG grounding, confidence thresholds with refusal mechanisms, clinical evaluation sets, human-in-the-loop signoff.</li>
-  <li><strong>Interactive Tooltip Engine</strong> — 69 technical terms annotated with plain-language hover cards and modal breakdowns.</li>
-</ul>
-<p><strong>Live Pages:</strong> <a href="./pai3-interview/" target="_blank" rel="noopener noreferrer">English Version</a> · <a href="./pai3-interview/ua.html" target="_blank" rel="noopener noreferrer">Українська версія</a></p>`
-  },
   {
     id: 1,
     section: "AI & Automation",
