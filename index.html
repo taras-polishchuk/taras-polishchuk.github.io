@@ -2489,6 +2489,33 @@ fetch response → chat panel UI</code></pre>
     gradient: "linear-gradient(135deg, #2e0a1a 0%, #5c1f3a 50%, #200122 100%)",
     emoji: "🐧",
     link: "https://taras-polishchuk.github.io/ubuntu-cheatsheet/"
+  },
+  {
+    id: 15,
+    section: "AI & Automation",
+    name: "portfolio-agent-hardening",
+    desc: "A production n8n AI workflow hardened against 11 documented threat vectors, with 54 automated regression tests covering the architecture invariants that hold across versions.",
+    tags: ["n8n", "AI Security", "Prompt Injection", "Python", "Regression Tests", "Open Source"],
+    gradient: "linear-gradient(135deg, #0a1a1a 0%, #134e4a 50%, #0a1a1a 100%)",
+    emoji: "🛡️",
+    link: "https://github.com/taras-polishchuk/portfolio-agent-hardening",
+    longDescription: `<p><strong>portfolio-agent-hardening</strong> is the publicly released, sanitized artifact of the production n8n AI workflow that powers the AI Portfolio Assistant on this site. Eight shipped workflow versions (v2..v9), 54 pytest regression tests, complete redaction of every internal identifier (workflow IDs, webhook UUIDs, credentials, n8n encryption keys, salary numbers, private hostnames).</p>
+
+<h4>Defense layers</h4>
+<ul>
+  <li><strong>Pre-LLM guard</strong> — sessionId validation, input length cap, off-topic denylist, prompt-injection regex</li>
+  <li><strong>System message armor</strong> — narrow role binding, identity lock, KB-grounded URLs, no instruction leak</li>
+  <li><strong>Post-LLM guard</strong> — identity-claim override, instruction-leak detection, URL whitelist, output length cap</li>
+</ul>
+
+<h4>Tests</h4>
+<ul>
+  <li><strong>54 pytest tests</strong> covering architecture invariants, system message, pre/post-LLM guards, KB redaction</li>
+  <li><strong>11 documented threat vectors</strong> with named defenses (prompt injection, identity hijack, instruction leak, off-topic redirect, credential extraction, and six more)</li>
+</ul>
+
+<p><strong>Repo:</strong> <a href="https://github.com/taras-polishchuk/portfolio-agent-hardening" target="_blank" rel="noopener noreferrer">github.com/taras-polishchuk/portfolio-agent-hardening</a></p>
+<p><strong>Release:</strong> <a href="https://github.com/taras-polishchuk/portfolio-agent-hardening/releases/tag/v1.0.0" target="_blank" rel="noopener noreferrer">v1.0.0</a></p>`
   }
 ];
 
