@@ -20,7 +20,7 @@
   // can read which build is loaded. Bump it whenever the widget changes
   // in a user-visible way, AND whenever STORAGE_KEY / STORAGE_RATE_KEY /
   // STORAGE_COUNT_KEY schema changes — that triggers a flush-and-restart.
-  const WIDGET_VERSION = '2.0.7';
+  const WIDGET_VERSION = '2.1.0';
   const STORAGE_VERSION_KEY = 'taras-ai-widget-version';
 
   // If the on-disk widget version differs from the running version, nuke
@@ -136,45 +136,71 @@
   }
 
   /* ---------- styles (injected, scoped under #ai-assistant-root) ---------- */
-  const CSS = `
+const CSS = `
   #ai-assistant-root { all: initial; }
   #ai-assistant-root * { box-sizing: border-box; }
+  #ai-assistant-root {
+    --g-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --g-accent: #0a84ff;
+    --g-accent-2: #0071e3;
+    --g-text: #f5f5f7;
+    --g-text-2: rgba(245, 245, 247, 0.72);
+    --g-text-3: rgba(245, 245, 247, 0.45);
+    --g-glass: rgba(28, 28, 30, 0.62);
+    --g-glass-strong: rgba(44, 44, 46, 0.72);
+    --g-border: rgba(255, 255, 255, 0.18);
+    --g-highlight: rgba(255, 255, 255, 0.42);
+    --g-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    --g-ease: cubic-bezier(0.28, 0, 0.22, 1);
+  }
 
+  /* Liquid Glass FAB */
   .ai-fab {
     position: fixed;
-    right: 24px;
-    bottom: 24px;
+    right: 20px;
+    bottom: 20px;
     z-index: 9998;
-    width: 60px;
-    height: 60px;
+    width: 58px;
+    height: 58px;
     border-radius: 9999px;
-    background: linear-gradient(135deg, #7c6fff 0%, #4eecc8 100%);
-    border: none;
+    background: var(--g-glass);
+    border: 1px solid var(--g-border);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
     cursor: pointer;
-    box-shadow: 0 8px 32px rgba(124, 111, 255, 0.35), 0 2px 8px rgba(0,0,0,0.4);
-    transition: transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 180ms ease;
+    box-shadow: inset 0 1px 0 var(--g-highlight), 0 10px 30px rgba(0, 0, 0, 0.35);
+    transition: transform 220ms var(--g-ease), box-shadow 220ms var(--g-ease), background 150ms;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #0a0a0b;
-    font-family: inherit;
+    color: #fff;
+    font-family: var(--g-font);
   }
-  .ai-fab:hover { transform: scale(1.07); box-shadow: 0 12px 40px rgba(124, 111, 255, 0.5); }
-  .ai-fab:focus-visible { outline: 2px solid #4eecc8; outline-offset: 4px; }
+  .ai-fab::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.28), rgba(255,255,255,0) 55%);
+    pointer-events: none;
+  }
+  .ai-fab:hover { transform: scale(1.06); background: var(--g-glass-strong); box-shadow: inset 0 1px 0 var(--g-highlight), 0 14px 36px rgba(0, 0, 0, 0.4), 0 0 0 6px rgba(10, 132, 255, 0.12); }
+  .ai-fab:active { transform: scale(0.96); }
+  .ai-fab:focus-visible { outline: none; box-shadow: inset 0 1px 0 var(--g-highlight), 0 0 0 4px rgba(10, 132, 255, 0.45); }
   .ai-fab[aria-expanded="true"] { transform: rotate(90deg); }
 
   .ai-fab-badge {
     position: absolute;
     top: -2px;
     right: -2px;
-    background: #4eecc8;
-    color: #0a0a0b;
+    background: var(--g-accent);
+    color: #fff;
     font-size: 10px;
     font-weight: 700;
     line-height: 1;
     padding: 4px 6px;
     border-radius: 9999px;
-    box-shadow: 0 0 0 2px #0a0a0b;
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.6);
     pointer-events: none;
   }
   .ai-fab-badge[hidden] { display: none; }
@@ -183,107 +209,112 @@
      then fades. Recruiters learn the fab is interactive, not a decorative orb. */
   .ai-fab-label {
     position: fixed;
-    right: 96px;
-    bottom: 36px;
+    right: 90px;
+    bottom: 31px;
     z-index: 9997;
-    background: rgba(17, 17, 19, 0.95);
-    color: #e8e8f0;
+    background: var(--g-glass);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    color: var(--g-text);
     font-size: 13px;
     font-weight: 500;
-    padding: 8px 14px;
+    padding: 9px 14px;
     border-radius: 9999px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--g-border);
+    box-shadow: inset 0 1px 0 var(--g-highlight), 0 8px 24px rgba(0, 0, 0, 0.35);
     pointer-events: none;
     opacity: 0;
     transform: translateX(8px);
-    transition: opacity 0.4s ease, transform 0.4s ease;
+    transition: opacity 0.4s var(--g-ease), transform 0.4s var(--g-ease);
     white-space: nowrap;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: var(--g-font);
   }
   .ai-fab-label.visible { opacity: 1; transform: translateX(0); }
-  .ai-fab-label::after {
-    content: '';
-    position: absolute;
-    right: -6px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 0; height: 0;
-    border-top: 6px solid transparent;
-    border-bottom: 6px solid transparent;
-    border-left: 6px solid rgba(17, 17, 19, 0.95);
-  }
+  .ai-fab-label::after { content: none; }
 
+  /* Glass panel */
   .ai-panel {
     position: fixed;
-    right: 24px;
-    bottom: 100px;
+    right: 20px;
+    bottom: 92px;
     z-index: 9999;
-    width: min(380px, calc(100vw - 32px));
-    height: min(620px, calc(100vh - 130px));
-    background: #111113;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(124, 111, 255, 0.08);
+    width: min(390px, calc(100vw - 32px));
+    height: min(640px, calc(100vh - 120px));
+    background: var(--g-glass);
+    -webkit-backdrop-filter: blur(36px) saturate(190%);
+    backdrop-filter: blur(36px) saturate(190%);
+    border: 1px solid var(--g-border);
+    border-radius: 26px;
+    box-shadow: inset 0 1px 0 var(--g-highlight), inset 0 -1px 0 rgba(255,255,255,0.06), var(--g-shadow);
     display: flex;
     flex-direction: column;
     overflow: hidden;
     opacity: 0;
-    transform: translateY(12px) scale(0.98);
+    transform: translateY(14px) scale(0.98);
     pointer-events: none;
-    transition: opacity 180ms ease, transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    color: #e8e8f0;
+    transition: opacity 220ms var(--g-ease), transform 260ms var(--g-ease);
+    font-family: var(--g-font);
+    color: var(--g-text);
+    -webkit-font-smoothing: antialiased;
   }
   .ai-panel[data-open="true"] {
     opacity: 1;
     transform: translateY(0) scale(1);
     pointer-events: auto;
   }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .ai-panel, .ai-fab, .ai-fab-label { background: rgba(28, 28, 30, 0.96); }
+  }
 
   .ai-header {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 14px 16px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-    background: linear-gradient(180deg, rgba(124, 111, 255, 0.08) 0%, rgba(124, 111, 255, 0) 100%);
+    padding: 14px 14px 14px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 100%);
   }
   .ai-header-avatar {
     width: 36px;
     height: 36px;
     border-radius: 9999px;
-    background: linear-gradient(135deg, #7c6fff 0%, #4eecc8 100%);
+    background: linear-gradient(145deg, #3a8dff 0%, #0a84ff 60%, #0060df 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 4px 12px rgba(10, 132, 255, 0.35);
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
     font-size: 14px;
-    color: #0a0a0b;
+    color: #fff;
     flex-shrink: 0;
   }
   .ai-header-meta { flex: 1; min-width: 0; }
   .ai-book {
     flex-shrink: 0;
-    padding: 7px 12px;
+    padding: 7px 13px;
     border-radius: 9999px;
-    background: linear-gradient(135deg, #7c6fff 0%, #4eecc8 100%);
-    color: #0a0a0b;
+    background: #fff;
+    color: #1d1d1f;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 600;
     text-decoration: none;
     white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    transition: transform 150ms var(--g-ease), background 150ms;
   }
-  .ai-book:focus-visible { outline: 2px solid #4eecc8; outline-offset: 2px; }
+  .ai-book:hover { background: #f5f5f7; }
+  .ai-book:active { transform: scale(0.96); }
+  .ai-book:focus-visible { outline: none; box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.45); }
   .ai-header-title {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
     line-height: 1.2;
     margin: 0;
+    letter-spacing: -0.01em;
   }
   .ai-header-status {
     font-size: 11px;
-    color: #4eecc8;
+    color: var(--g-text-2);
     margin: 2px 0 0 0;
     display: flex;
     align-items: center;
@@ -294,25 +325,27 @@
     width: 6px;
     height: 6px;
     border-radius: 9999px;
-    background: #4eecc8;
-    box-shadow: 0 0 8px #4eecc8;
+    background: #30d158;
+    box-shadow: 0 0 0 3px rgba(48, 209, 88, 0.22);
   }
   .ai-header-status[data-state="error"] { color: #ff6b6b; }
-  .ai-header-status[data-state="error"]::before { background: #ff6b6b; box-shadow: 0 0 8px #ff6b6b; }
+  .ai-header-status[data-state="error"]::before { background: #ff453a; box-shadow: 0 0 0 3px rgba(255, 69, 58, 0.22); }
   .ai-close {
-    background: none;
-    border: none;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.10);
     cursor: pointer;
-    padding: 6px;
-    border-radius: 8px;
-    color: rgba(232, 232, 240, 0.6);
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border-radius: 9999px;
+    color: var(--g-text-2);
     transition: background 150ms, color 150ms;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  .ai-close:hover { background: rgba(255, 255, 255, 0.06); color: #e8e8f0; }
-  .ai-close:focus-visible { outline: 2px solid #7c6fff; outline-offset: 2px; }
+  .ai-close:hover { background: rgba(255, 255, 255, 0.16); color: #fff; }
+  .ai-close:focus-visible { outline: none; box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.45); }
 
   .ai-messages {
     flex: 1;
@@ -320,24 +353,25 @@
     padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
   }
   .ai-messages::-webkit-scrollbar { width: 6px; }
   .ai-messages::-webkit-scrollbar-track { background: transparent; }
-  .ai-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+  .ai-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 3px; }
 
   .ai-msg {
-    max-width: 88%;
+    max-width: 86%;
     padding: 10px 14px;
-    border-radius: 14px;
-    font-size: 14px;
-    line-height: 1.5;
+    border-radius: 18px;
+    font-size: 15px;
+    line-height: 1.4;
     word-wrap: break-word;
     overflow-wrap: anywhere;
     white-space: pre-wrap;
-    animation: ai-msg-in 220ms cubic-bezier(0.16, 1, 0.3, 1);
+    letter-spacing: -0.01em;
+    animation: ai-msg-in 240ms var(--g-ease);
   }
   @keyframes ai-msg-in {
     from { opacity: 0; transform: translateY(6px); }
@@ -346,36 +380,39 @@
 
   .ai-msg-user {
     align-self: flex-end;
-    background: linear-gradient(135deg, #7c6fff 0%, #6a5fef 100%);
+    background: linear-gradient(180deg, #2b8fff 0%, #0a84ff 100%);
     color: #fff;
-    border-bottom-right-radius: 4px;
+    border-bottom-right-radius: 6px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.3);
   }
 
   .ai-msg-bot {
     align-self: flex-start;
-    background: #1c1c21;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    color: #e8e8f0;
-    border-bottom-left-radius: 4px;
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    color: var(--g-text);
+    border-bottom-left-radius: 6px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.14);
   }
 
   .ai-msg-error {
     align-self: flex-start;
-    background: rgba(255, 107, 107, 0.1);
-    border: 1px solid rgba(255, 107, 107, 0.25);
-    color: #ff8a8a;
-    border-bottom-left-radius: 4px;
+    background: rgba(255, 69, 58, 0.14);
+    border: 1px solid rgba(255, 69, 58, 0.3);
+    color: #ff9f98;
+    border-bottom-left-radius: 6px;
     font-size: 13px;
   }
 
   .ai-msg-meta {
     font-size: 10px;
-    color: rgba(232, 232, 240, 0.4);
+    color: var(--g-text-3);
     margin-top: 4px;
     text-align: right;
   }
   .ai-msg-bot .ai-msg-meta { text-align: left; }
-  .ai-msg .ai-msg-link { color: #4eecc8; text-decoration: underline; word-break: break-all; }
+  .ai-msg .ai-msg-link { color: #6cb5ff; text-decoration: underline; text-underline-offset: 2px; word-break: break-all; }
+  .ai-msg-user .ai-msg-link { color: #fff; }
 
   .ai-typing {
     align-self: flex-start;
@@ -383,16 +420,16 @@
     align-items: center;
     gap: 4px;
     padding: 12px 16px;
-    background: #1c1c21;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 14px;
-    border-bottom-left-radius: 4px;
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 18px;
+    border-bottom-left-radius: 6px;
   }
   .ai-typing-dot {
     width: 6px;
     height: 6px;
     border-radius: 9999px;
-    background: rgba(232, 232, 240, 0.4);
+    background: var(--g-text-2);
     animation: ai-typing 1.4s infinite ease-in-out;
   }
   .ai-typing-dot:nth-child(2) { animation-delay: 0.16s; }
@@ -409,45 +446,47 @@
     padding: 0 16px 12px;
   }
   .ai-quick-btn {
-    background: rgba(124, 111, 255, 0.1);
-    border: 1px solid rgba(124, 111, 255, 0.25);
-    color: #c5beff;
-    font-size: 12px;
-    padding: 6px 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: var(--g-text);
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 7px 12px;
     border-radius: 9999px;
     cursor: pointer;
-    transition: background 150ms, border-color 150ms, color 150ms;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.14);
+    transition: background 150ms, border-color 150ms, transform 150ms var(--g-ease);
     font-family: inherit;
   }
   .ai-quick-btn:hover {
-    background: rgba(124, 111, 255, 0.18);
-    border-color: rgba(124, 111, 255, 0.4);
-    color: #fff;
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.28);
   }
-  .ai-quick-btn:focus-visible { outline: 2px solid #4eecc8; outline-offset: 2px; }
+  .ai-quick-btn:active { transform: scale(0.97); }
+  .ai-quick-btn:focus-visible { outline: none; box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.45); }
   .ai-quick[hidden] { display: none; }
 
   .ai-input-row {
     display: flex;
     gap: 8px;
-    padding: 12px 12px 14px;
-    border-top: 1px solid rgba(255, 255, 255, 0.07);
-    background: #0e0e10;
+    padding: 12px 12px 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.10);
+    background: rgba(0, 0, 0, 0.18);
   }
   .ai-input {
     flex: 1;
     min-width: 0;
-    background: #16161a;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: #e8e8f0;
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: var(--g-text);
     /* font-size 16px is REQUIRED on iOS: WebKit auto-zooms the viewport
        on focus for any text input with computed font-size < 16px and
        does NOT reset the scale on blur, leaving the page stuck zoomed in.
        This MUST stay at 16px for any text input inside the panel. */
     font-size: 16px;
     font-family: inherit;
-    padding: 8px 12px;
-    border-radius: 12px;
+    padding: 9px 14px;
+    border-radius: 20px;
     resize: none;
     /* Single-line visual: scroll only when user types Enter for newline.
        overflow-y: hidden kills the inner WebKit scrollbar; we manage
@@ -457,16 +496,17 @@
     overflow-x: hidden;
     max-height: 120px;
     line-height: 1.3;
-    transition: border-color 150ms;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.10);
+    transition: border-color 150ms, background 150ms;
     /* Prevent inherited zoom on iOS Safari (iOS 16+). */
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
   }
-  /* Placeholder can stay smaller — it is NOT focused, so it does not
+  /* Placeholder can stay smaller: it is NOT focused, so it does not
      trigger iOS auto-zoom. This frees horizontal space so the hint
      fits on one line in narrow mobile viewports. */
   .ai-input::placeholder {
-    color: rgba(232, 232, 240, 0.4);
+    color: var(--g-text-3);
     font-size: 13px;
   }
   /* Belt-and-suspenders: kill any webkit scrollbar that could appear
@@ -476,39 +516,45 @@
   .ai-input { scrollbar-width: none; }
   .ai-input:focus {
     outline: none;
-    border-color: #7c6fff;
+    border-color: rgba(10, 132, 255, 0.8);
+    background: rgba(255, 255, 255, 0.14);
   }
   .ai-input:disabled { opacity: 0.6; cursor: not-allowed; }
 
   .ai-send {
-    background: linear-gradient(135deg, #7c6fff 0%, #4eecc8 100%);
+    background: var(--g-accent);
     border: none;
-    color: #0a0a0b;
+    color: #fff;
     font-weight: 600;
-    padding: 0 14px;
-    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 9999px;
     cursor: pointer;
     font-size: 13px;
-    transition: transform 150ms, opacity 150ms;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 4px 12px rgba(10, 132, 255, 0.35);
+    transition: transform 150ms var(--g-ease), opacity 150ms, background 150ms;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    align-self: flex-end;
   }
-  .ai-send:hover:not(:disabled) { transform: scale(1.04); }
-  .ai-send:disabled { opacity: 0.4; cursor: not-allowed; }
-  .ai-send:focus-visible { outline: 2px solid #4eecc8; outline-offset: 2px; }
+  .ai-send:hover:not(:disabled) { background: #2b8fff; }
+  .ai-send:active:not(:disabled) { transform: scale(0.94); }
+  .ai-send:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+  .ai-send:focus-visible { outline: none; box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.45); }
   .ai-send svg { width: 16px; height: 16px; }
 
   .ai-footer {
     text-align: center;
     font-size: 10px;
-    color: rgba(232, 232, 240, 0.3);
-    padding: 6px;
-    background: #0e0e10;
+    color: var(--g-text-3);
+    padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
+    background: rgba(0, 0, 0, 0.18);
   }
-  .ai-footer a { color: rgba(124, 111, 255, 0.6); text-decoration: none; }
-  .ai-footer a:hover { color: #7c6fff; }
+  .ai-footer a { color: var(--g-text-2); text-decoration: none; }
+  .ai-footer a:hover { color: #fff; }
 
   @media (max-width: 480px) {
     .ai-panel {
@@ -519,8 +565,13 @@
       max-height: 100dvh;
       border-radius: 0;
       border: none;
+      background: rgba(20, 20, 22, 0.94);
     }
+    .ai-header { padding-top: calc(14px + env(safe-area-inset-top)); }
     .ai-fab[data-mobile="true"] { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ai-panel, .ai-fab, .ai-msg, .ai-fab-label { transition: none; animation: none; }
   }
   `;
 

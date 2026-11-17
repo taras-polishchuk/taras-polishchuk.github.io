@@ -306,7 +306,8 @@ p { margin: 0; text-wrap: pretty; }
 
 .hero-side { display: grid; gap: 14px; }
 .hero-portrait { display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: 22px; }
-.hero-portrait img { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; object-position: 60% 30%; box-shadow: 0 0 0 2px rgba(255,255,255,0.5); flex-shrink: 0; }
+.hero-portrait picture { flex-shrink: 0; width: 84px; height: 84px; display: block; }
+.hero-portrait img { width: 84px; height: 84px; aspect-ratio: 1 / 1; border-radius: 50%; object-fit: cover; object-position: 60% 30%; box-shadow: 0 0 0 2px rgba(255,255,255,0.5); flex-shrink: 0; }
 .hero-portrait .who { font-size: 15px; color: rgba(255,255,255,0.86); line-height: 1.35; }
 .hero-portrait .who strong { display: block; color: #fff; font-weight: 600; font-size: 17px; }
 .proof { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
@@ -982,6 +983,6 @@ booking with manual confirmation</div></div>
 })();
 </script>
 <script src="./assets/sound.js" defer></script>
-<script src="./chat-widget.js?v=2.0.7" defer></script>
+<script src="./chat-widget.js?v=2.1.0" defer></script>
 </body>
 </html>
