@@ -20,7 +20,7 @@
   // can read which build is loaded. Bump it whenever the widget changes
   // in a user-visible way, AND whenever STORAGE_KEY / STORAGE_RATE_KEY /
   // STORAGE_COUNT_KEY schema changes — that triggers a flush-and-restart.
-  const WIDGET_VERSION = '2.0.6';
+  const WIDGET_VERSION = '2.0.7';
   const STORAGE_VERSION_KEY = 'taras-ai-widget-version';
 
   // If the on-disk widget version differs from the running version, nuke
@@ -263,6 +263,18 @@
     flex-shrink: 0;
   }
   .ai-header-meta { flex: 1; min-width: 0; }
+  .ai-book {
+    flex-shrink: 0;
+    padding: 7px 12px;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #7c6fff 0%, #4eecc8 100%);
+    color: #0a0a0b;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .ai-book:focus-visible { outline: 2px solid #4eecc8; outline-offset: 2px; }
   .ai-header-title {
     font-size: 14px;
     font-weight: 600;
@@ -513,19 +525,16 @@
   `;
 
   // Welcome: portfolio-only topics, no company/Shopify mention (hardening v2).
-  const WELCOME_MESSAGE = `Hi 👋 I'm Taras's AI Portfolio Assistant. Ask me about:
-• AI automation projects
-• n8n workflows
-• Hermes platform
-• technical stack
-• engineering experience`;
+  const BOOKING_URL = 'https://calendar.app.google/VN55jao7H4GcvMqq5';
+  const WELCOME_MESSAGE = `Hi 👋 I'm Taras's AI assistant. Taras builds AI agents and automation that run in production.
+Tell me what you want to automate, or ask about his projects and experience. To talk to Taras directly, book a call: ${BOOKING_URL}`;
 
   // Quick prompts: portfolio-focused only (hardening v2).
   const QUICK_PROMPTS = [
-    'What AI systems have you built?',
-    'How do you use n8n?',
-    'What is Hermes?',
-    'What is your strongest project?',
+    'What can you build for my business?',
+    'Do you have real client results?',
+    'How much does a project cost?',
+    'How do I book a call?',
   ];
 
   /* ---------- helpers ---------- */
@@ -664,6 +673,7 @@
         el('h2', { class: 'ai-header-title' }, 'Taras\'s AI Assistant'),
         statusEl,
       ]),
+      el('a', { class: 'ai-book', href: BOOKING_URL, target: '_blank', rel: 'noopener noreferrer' }, 'Book a call'),
       el(
         'button',
         {
@@ -708,7 +718,7 @@
       class: 'ai-input',
       id: 'ai-input',
       rows: 1,
-      placeholder: 'Ask about projects, stack, experience…',
+      placeholder: 'Describe your project or ask a question…',
       'aria-label': 'Message',
       onkeydown: handleInputKey,
       oninput: autosizeInput,
