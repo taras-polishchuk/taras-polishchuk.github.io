@@ -20,7 +20,7 @@
   // can read which build is loaded. Bump it whenever the widget changes
   // in a user-visible way, AND whenever STORAGE_KEY / STORAGE_RATE_KEY /
   // STORAGE_COUNT_KEY schema changes — that triggers a flush-and-restart.
-  const WIDGET_VERSION = '2.0.5';
+  const WIDGET_VERSION = '2.0.6';
   const STORAGE_VERSION_KEY = 'taras-ai-widget-version';
 
   // If the on-disk widget version differs from the running version, nuke
@@ -363,6 +363,7 @@
     text-align: right;
   }
   .ai-msg-bot .ai-msg-meta { text-align: left; }
+  .ai-msg .ai-msg-link { color: #4eecc8; text-decoration: underline; word-break: break-all; }
 
   .ai-typing {
     align-self: flex-start;
@@ -757,10 +758,35 @@
     scrollToBottom();
   }
 
+  // Render message text with clickable links (https URLs and emails) and
+  // **bold**. DOM nodes only, never innerHTML: model output stays untrusted.
+  function appendRichText(parent, text) {
+    const re = /(https:\/\/[^\s<>"')]+|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|\*\*[^*\n]+\*\*)/g;
+    let last = 0;
+    let m;
+    const str = String(text == null ? '' : text);
+    while ((m = re.exec(str)) !== null) {
+      if (m.index > last) parent.appendChild(document.createTextNode(str.slice(last, m.index)));
+      let tok = m[0];
+      if (tok.startsWith('**')) {
+        parent.appendChild(el('strong', null, tok.slice(2, -2)));
+      } else {
+        let tail = '';
+        const tm = /[.,;:!?*]+$/.exec(tok);
+        if (tm) { tail = tm[0]; tok = tok.slice(0, -tail.length); }
+        const href = tok.startsWith('https://') ? tok : 'mailto:' + tok;
+        parent.appendChild(el('a', { href: href, target: '_blank', rel: 'noopener noreferrer', class: 'ai-msg-link' }, tok));
+        if (tail) parent.appendChild(document.createTextNode(tail));
+      }
+      last = m.index + m[0].length;
+    }
+    if (last < str.length) parent.appendChild(document.createTextNode(str.slice(last)));
+  }
+
   function addMessage(role, text, opts) {
     opts = opts || {};
     const msg = el('div', { class: `ai-msg ai-msg-${role}`, role: 'article' });
-    msg.appendChild(document.createTextNode(text));
+    appendRichText(msg, text);
     if (opts.ts) {
       msg.appendChild(el('div', { class: 'ai-msg-meta' }, new Date(opts.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })));
     }
