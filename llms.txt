@@ -1,0 +1,51 @@
+# Taras Polishchuk
+
+> Solution Architect and AI Automation Engineer. Builds production AI automation for companies: agent systems, n8n workflows, CRM and lead automation, chatbots, internal tools. 5+ years of production engineering across AI, web and Shopify Plus. Kyiv, Ukraine, remote worldwide, UTC+2.
+
+Site: https://taras-polishchuk.github.io/
+Contact: poli.taras.shchuk@gmail.com, https://t.me/taras_pie, https://www.linkedin.com/in/taras-p-349902213/, https://github.com/taras-polishchuk
+Book a call: https://calendar.app.google/VN55jao7H4GcvMqq5
+
+## Current role
+- Solution Architect and Team Lead, AI automation, German B2B company (NDA), Aug 2026 to present. Built the AI automation practice from scratch; full stack deployed in about 3 months: CRM and lead automation, customer lifecycle engine, onboarding, agent runtime with persistent memory, internal tools and dashboards, training platforms, chat widget with voice agent. Live systems atlas of 82 systems and 372 URLs. Leads 2 automation specialists, works directly with the CEO.
+
+## Services
+- AI automation stack for a company (CRM, leads, onboarding, internal tools, agent runtime), self-hosted or cloud.
+- AI agents and chatbots: website, Instagram, Telegram, voice; research, qualification and drafting agents; QA and operations agents; prompt-injection defense and hardening tests.
+- Web and Shopify engineering: sites with CMS and admin panels, landing pages, Shopify Plus themes, Checkout UI Extensions, Functions, integrations.
+- Process: 20-minute intro call, written scope with fixed quote, small production pilot, then expand.
+
+## Selected work
+- QA agent kit for a Shopify client's 4-person QA team: reads Jira, checks Figma, writes test docs in Testomat.io and Confluence, builds release test plans from code diffs, comments in Slack. Handles about 70% of task testing.
+- Chatbots for small businesses: an Instagram shop assistant answering 200 to 300 customers a month; Telegram and voice assistants (VAPI).
+- Hotel group website rebuilt from scratch: 7 hotels, 15 to 20 rooms each, CMS, admin panel, booking.
+- AI Portfolio Assistant: hardened n8n agent live on the site, 3-layer prompt-injection defense, 54/54 tests across 11 threat vectors. https://taras-polishchuk.github.io/case-study-portfolio-agent.html and https://github.com/taras-polishchuk/portfolio-agent-hardening
+- case-04: multi-agent AI discovery platform, 7 specialist agents, 8 provider adapters, SvelteKit, TypeScript, Zod.
+- Agent operating environment on Hermes Agent (Nous Research): agent profiles on kanban boards, pixel-office dashboard, Telegram approvals. https://github.com/taras-polishchuk/operator-office-plugin and https://github.com/taras-polishchuk/agent-contracts
+- AI video pipeline for YouTube Shorts: sourcing, scripting, fact-checking with a second model family, TTS, rendering. https://github.com/taras-polishchuk/video-factory
+- Website factory: brief to generated SvelteKit site with Directus CMS, Docker, Hetzner via OpenTofu, live HTTPS preview. 11 stages, 11 CI gates.
+- OperatorOS (MIT, v0.8.7) and Workspace OS: https://taras-polishchuk.github.io/operatoros-framework/ and https://github.com/taras-polishchuk/workspace-os
+- WhisperClip: Windows push-to-talk transcription with local Whisper. https://github.com/taras-polishchuk/whisper-clip-win
+- Shopify Plus engineering at Lime (2024 to 2026): 5+ storefronts, OS 2.0, Checkout UI Extensions, Functions, Klaviyo.
+- Landing-page playbook: https://github.com/taras-polishchuk/landing-page-playbook
+
+## Experience
+- Aug 2026 to present: Solution Architect and Team Lead, German B2B company (NDA), remote.
+- Mar 2026 to present: Independent AI automation engineer, freelance.
+- Sep 2024 to Mar 2026: Shopify Developer, Lime (Shopify agency), remote.
+- Jan 2021 to Sep 2024: Frontend Developer, LLC Global Support Services, Kyiv.
+
+## Stack
+n8n, Python (FastAPI), TypeScript (SvelteKit, NestJS, Node.js), Anthropic API, OpenAI API, Ollama, PostgreSQL, pgvector, Docker, Caddy, Cloudflare Tunnel and Access, Coolify, Proxmox, Infisical, GitHub Actions, Telegram Bot API, Shopify Plus, Liquid. AI-assisted development with Claude Code, Codex and Copilot, reviewed by hand.
+
+## Languages
+Ukrainian (native), English (B2), Spanish (conversational).
+
+## Honest gaps
+No fine-tuning of foundation models, no Kubernetes or Terraform at scale, no production RAG serving thousands of users yet.
+
+## Pages
+- https://taras-polishchuk.github.io/ : profile, services, work, FAQ
+- https://taras-polishchuk.github.io/blog/ : articles on AI agents, n8n, Shopify, frontend
+- https://taras-polishchuk.github.io/case-study-portfolio-agent.html : n8n agent hardening case study
+- https://taras-polishchuk.github.io/case-study-wispr-flow-bypass.html : reverse-engineering case study
