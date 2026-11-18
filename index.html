@@ -192,7 +192,8 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; }
+@media (pointer: coarse) { html { scroll-behavior: smooth; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 body {
   margin: 0; font-family: var(--font-body); font-size: var(--text-base); line-height: var(--leading-body);
@@ -921,6 +922,7 @@ booking with manual confirmation</div></div>
   <button class="audio-hint-dismiss" aria-label="Dismiss">✕</button>
 </div>
 
+<script src="./assets/smooth-scroll.js" defer></script>
 <script src="./assets/analytics.js" defer></script>
 <script>
 (function () {
@@ -983,6 +985,6 @@ booking with manual confirmation</div></div>
 })();
 </script>
 <script src="./assets/sound.js" defer></script>
-<script src="./chat-widget.js?v=2.1.0" defer></script>
+<script src="./chat-widget.js?v=2.1.1" defer></script>
 </body>
 </html>

@@ -20,7 +20,7 @@
   // can read which build is loaded. Bump it whenever the widget changes
   // in a user-visible way, AND whenever STORAGE_KEY / STORAGE_RATE_KEY /
   // STORAGE_COUNT_KEY schema changes — that triggers a flush-and-restart.
-  const WIDGET_VERSION = '2.1.0';
+  const WIDGET_VERSION = '2.1.1';
   const STORAGE_VERSION_KEY = 'taras-ai-widget-version';
 
   // If the on-disk widget version differs from the running version, nuke
@@ -356,6 +356,7 @@ const CSS = `
     gap: 10px;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
   .ai-messages::-webkit-scrollbar { width: 6px; }
   .ai-messages::-webkit-scrollbar-track { background: transparent; }
