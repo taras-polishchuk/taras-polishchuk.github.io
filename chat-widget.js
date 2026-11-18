@@ -20,7 +20,7 @@
   // can read which build is loaded. Bump it whenever the widget changes
   // in a user-visible way, AND whenever STORAGE_KEY / STORAGE_RATE_KEY /
   // STORAGE_COUNT_KEY schema changes — that triggers a flush-and-restart.
-  const WIDGET_VERSION = '2.1.1';
+  const WIDGET_VERSION = '2.2.0';
   const STORAGE_VERSION_KEY = 'taras-ai-widget-version';
 
   // If the on-disk widget version differs from the running version, nuke
@@ -152,7 +152,55 @@ const CSS = `
     --g-highlight: rgba(255, 255, 255, 0.42);
     --g-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
     --g-ease: cubic-bezier(0.28, 0, 0.22, 1);
+    --g-bot-bg: rgba(255, 255, 255, 0.10);
+    --g-bot-border: rgba(255, 255, 255, 0.10);
+    --g-input-bg: rgba(255, 255, 255, 0.10);
+    --g-input-border: rgba(255, 255, 255, 0.16);
+    --g-row-bg: rgba(0, 0, 0, 0.18);
+    --g-divider: rgba(255, 255, 255, 0.10);
+    --g-chip-bg: rgba(255, 255, 255, 0.08);
+    --g-chip-border: rgba(255, 255, 255, 0.16);
+    --g-close-bg: rgba(255, 255, 255, 0.08);
+    --g-link: #6cb5ff;
+    --g-book-bg: #ffffff;
+    --g-book-fg: #1d1d1f;
   }
+  /* Adaptive material: over light page sections the panel becomes light glass.
+     The page sets <html data-surface="light|dark"> from its scroll position. */
+  :root[data-surface="light"] #ai-assistant-root {
+    --g-text: #1d1d1f;
+    --g-text-2: rgba(29, 29, 31, 0.68);
+    --g-text-3: rgba(29, 29, 31, 0.42);
+    --g-glass: rgba(255, 255, 255, 0.66);
+    --g-glass-strong: rgba(255, 255, 255, 0.82);
+    --g-border: rgba(255, 255, 255, 0.85);
+    --g-highlight: rgba(255, 255, 255, 1);
+    --g-shadow: 0 24px 60px rgba(29, 29, 31, 0.18), 0 0 0 1px rgba(29, 29, 31, 0.06);
+    --g-bot-bg: rgba(29, 29, 31, 0.06);
+    --g-bot-border: rgba(29, 29, 31, 0.06);
+    --g-input-bg: rgba(29, 29, 31, 0.06);
+    --g-input-border: rgba(29, 29, 31, 0.10);
+    --g-row-bg: rgba(255, 255, 255, 0.35);
+    --g-divider: rgba(29, 29, 31, 0.08);
+    --g-chip-bg: rgba(29, 29, 31, 0.05);
+    --g-chip-border: rgba(29, 29, 31, 0.12);
+    --g-close-bg: rgba(29, 29, 31, 0.06);
+    --g-link: #0066cc;
+    --g-book-bg: #1d1d1f;
+    --g-book-fg: #ffffff;
+  }
+  :root[data-surface="light"] .ai-fab { color: #1d1d1f; background: rgba(255,255,255,0.7); border-color: rgba(255,255,255,0.9); box-shadow: inset 0 1px 0 #fff, 0 10px 30px rgba(29,29,31,0.18), 0 0 0 1px rgba(29,29,31,0.06); }
+  :root[data-surface="light"] .ai-fab-label { color: #1d1d1f; background: rgba(255,255,255,0.78); border-color: rgba(255,255,255,0.9); }
+  :root[data-surface="light"] .ai-header { background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 100%); }
+  :root[data-surface="light"] .ai-msg-bot, :root[data-surface="light"] .ai-typing { box-shadow: none; }
+  :root[data-surface="light"] .ai-close:hover { background: rgba(29,29,31,0.12); color: #1d1d1f; }
+  :root[data-surface="light"] .ai-quick-btn { box-shadow: none; }
+  :root[data-surface="light"] .ai-quick-btn:hover { background: rgba(29,29,31,0.10); }
+  :root[data-surface="light"] .ai-input { box-shadow: none; }
+  :root[data-surface="light"] .ai-input:focus { background: #fff; }
+  :root[data-surface="light"] .ai-footer a:hover { color: #1d1d1f; }
+  :root[data-surface="light"] .ai-messages::-webkit-scrollbar-thumb { background: rgba(29,29,31,0.18); }
+  @media (max-width: 480px) { :root[data-surface="light"] .ai-panel { background: rgba(250, 250, 252, 0.96); } }
 
   /* Liquid Glass FAB */
   .ai-fab {
@@ -271,7 +319,7 @@ const CSS = `
     align-items: center;
     gap: 12px;
     padding: 14px 14px 14px 16px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    border-bottom: 1px solid var(--g-divider);
     background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 100%);
   }
   .ai-header-avatar {
@@ -288,13 +336,16 @@ const CSS = `
     color: #fff;
     flex-shrink: 0;
   }
+  .ai-header-avatar { position: relative; overflow: hidden; }
+  .ai-header-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 30%; border-radius: inherit; }
+  .ai-header-initials { position: relative; z-index: 0; }
   .ai-header-meta { flex: 1; min-width: 0; }
   .ai-book {
     flex-shrink: 0;
     padding: 7px 13px;
     border-radius: 9999px;
-    background: #fff;
-    color: #1d1d1f;
+    background: var(--g-book-bg);
+    color: var(--g-book-fg);
     font-size: 12px;
     font-weight: 600;
     text-decoration: none;
@@ -302,7 +353,7 @@ const CSS = `
     box-shadow: 0 2px 8px rgba(0,0,0,0.25);
     transition: transform 150ms var(--g-ease), background 150ms;
   }
-  .ai-book:hover { background: #f5f5f7; }
+  .ai-book:hover { filter: brightness(0.95); }
   .ai-book:active { transform: scale(0.96); }
   .ai-book:focus-visible { outline: none; box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.45); }
   .ai-header-title {
@@ -331,8 +382,8 @@ const CSS = `
   .ai-header-status[data-state="error"] { color: #ff6b6b; }
   .ai-header-status[data-state="error"]::before { background: #ff453a; box-shadow: 0 0 0 3px rgba(255, 69, 58, 0.22); }
   .ai-close {
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.10);
+    background: var(--g-close-bg);
+    border: 1px solid var(--g-divider);
     cursor: pointer;
     width: 30px;
     height: 30px;
@@ -389,8 +440,8 @@ const CSS = `
 
   .ai-msg-bot {
     align-self: flex-start;
-    background: rgba(255, 255, 255, 0.10);
-    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: var(--g-bot-bg);
+    border: 1px solid var(--g-bot-border);
     color: var(--g-text);
     border-bottom-left-radius: 6px;
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.14);
@@ -412,7 +463,7 @@ const CSS = `
     text-align: right;
   }
   .ai-msg-bot .ai-msg-meta { text-align: left; }
-  .ai-msg .ai-msg-link { color: #6cb5ff; text-decoration: underline; text-underline-offset: 2px; word-break: break-all; }
+  .ai-msg .ai-msg-link { color: var(--g-link); text-decoration: underline; text-underline-offset: 2px; word-break: break-all; }
   .ai-msg-user .ai-msg-link { color: #fff; }
 
   .ai-typing {
@@ -421,8 +472,8 @@ const CSS = `
     align-items: center;
     gap: 4px;
     padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.10);
-    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: var(--g-bot-bg);
+    border: 1px solid var(--g-bot-border);
     border-radius: 18px;
     border-bottom-left-radius: 6px;
   }
@@ -447,8 +498,8 @@ const CSS = `
     padding: 0 16px 12px;
   }
   .ai-quick-btn {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: var(--g-chip-bg);
+    border: 1px solid var(--g-chip-border);
     color: var(--g-text);
     font-size: 12.5px;
     font-weight: 500;
@@ -471,14 +522,14 @@ const CSS = `
     display: flex;
     gap: 8px;
     padding: 12px 12px 12px;
-    border-top: 1px solid rgba(255, 255, 255, 0.10);
-    background: rgba(0, 0, 0, 0.18);
+    border-top: 1px solid var(--g-divider);
+    background: var(--g-row-bg);
   }
   .ai-input {
     flex: 1;
     min-width: 0;
-    background: rgba(255, 255, 255, 0.10);
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: var(--g-input-bg);
+    border: 1px solid var(--g-input-border);
     color: var(--g-text);
     /* font-size 16px is REQUIRED on iOS: WebKit auto-zooms the viewport
        on focus for any text input with computed font-size < 16px and
@@ -552,7 +603,7 @@ const CSS = `
     font-size: 10px;
     color: var(--g-text-3);
     padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
-    background: rgba(0, 0, 0, 0.18);
+    background: var(--g-row-bg);
   }
   .ai-footer a { color: var(--g-text-2); text-decoration: none; }
   .ai-footer a:hover { color: #fff; }
@@ -578,6 +629,7 @@ const CSS = `
 
   // Welcome: portfolio-only topics, no company/Shopify mention (hardening v2).
   const BOOKING_URL = 'https://calendar.app.google/VN55jao7H4GcvMqq5';
+  const AVATAR_URL = new URL('assets/Taras-Polishchuk-128.webp', 'https://taras-polishchuk.github.io/').href;
   const WELCOME_MESSAGE = `Hi 👋 I'm Taras's AI assistant. Taras builds AI agents and automation that run in production.
 Tell me what you want to automate, or ask about his projects and experience. To talk to Taras directly, book a call: ${BOOKING_URL}`;
 
@@ -720,7 +772,11 @@ Tell me what you want to automate, or ask about his projects and experience. To 
     // Header
     statusEl = el('p', { class: 'ai-header-status' }, 'Online · n8n workflow');
     const header = el('header', { class: 'ai-header' }, [
-      el('div', { class: 'ai-header-avatar' }, 'AI'),
+      el('div', { class: 'ai-header-avatar' }, [
+        el('img', { class: 'ai-header-photo', src: AVATAR_URL, alt: 'Taras Polishchuk', width: '36', height: '36', loading: 'lazy', decoding: 'async',
+          onerror: function () { this.remove(); } }),
+        el('span', { class: 'ai-header-initials', 'aria-hidden': 'true' }, 'TP'),
+      ]),
       el('div', { class: 'ai-header-meta' }, [
         el('h2', { class: 'ai-header-title' }, 'Taras\'s AI Assistant'),
         statusEl,

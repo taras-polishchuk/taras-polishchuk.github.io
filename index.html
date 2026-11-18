@@ -933,6 +933,10 @@ booking with manual confirmation</div></div>
     var y = window.scrollY + 40;
     var onDark = darkZones.some(function (z) { return z && y >= z.offsetTop && y < z.offsetTop + z.offsetHeight; });
     nav.classList.toggle('on-light', !onDark);
+    /* Chat panel sits bottom-right: judge the surface under it, not under the nav */
+    var py = window.scrollY + window.innerHeight * 0.6;
+    var panelOnDark = darkZones.some(function (z) { return z && py >= z.offsetTop && py < z.offsetTop + z.offsetHeight; });
+    document.documentElement.setAttribute('data-surface', panelOnDark ? 'dark' : 'light');
   }
   syncNav();
   window.addEventListener('scroll', syncNav, { passive: true });
@@ -985,6 +989,6 @@ booking with manual confirmation</div></div>
 })();
 </script>
 <script src="./assets/sound.js" defer></script>
-<script src="./chat-widget.js?v=2.1.1" defer></script>
+<script src="./chat-widget.js?v=2.2.0" defer></script>
 </body>
 </html>
