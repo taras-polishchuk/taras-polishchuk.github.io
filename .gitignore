@@ -25,3 +25,9 @@ Thumbs.db
 # Logs
 *.log
 logs/
+
+# Playwright e2e (dev only)
+node_modules/
+test-results/
+playwright-report/
+package-lock.json
