@@ -15,6 +15,7 @@ DST = Path("/home/taras/projects/career/taras-polishchuk.github.io/insidedynamic
 HTML_HEAD = '''<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
+<meta name="robots" content="noindex, nofollow">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>InsideDynamic Architecture | Taras Polishchuk</title>
