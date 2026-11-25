@@ -19,7 +19,7 @@ Book a call: https://calendar.app.google/VN55jao7H4GcvMqq5
 - QA agent kit for a Shopify client's 4-person QA team: reads Jira, checks Figma, writes test docs in Testomat.io and Confluence, builds release test plans from code diffs, comments in Slack. Handles about 70% of task testing.
 - Chatbots for small businesses: an Instagram shop assistant answering 200 to 300 customers a month; Telegram and voice assistants (VAPI).
 - Hotel group website rebuilt from scratch: 7 hotels, 15 to 20 rooms each, CMS, admin panel, booking.
-- AI Portfolio Assistant: hardened n8n agent live on the site, 3-layer prompt-injection defense, 54/54 tests across 11 threat vectors. https://taras-polishchuk.github.io/case-study-portfolio-agent.html and https://github.com/taras-polishchuk/portfolio-agent-hardening
+- AI Portfolio Assistant: hardened n8n agent live on the site, 3-layer prompt-injection defense, pytest suite (80+ tests, unit + e2e). https://taras-polishchuk.github.io/case-study-portfolio-agent.html and https://github.com/taras-polishchuk/portfolio-agent-hardening
 - case-04: multi-agent AI discovery platform, 7 specialist agents, 8 provider adapters, SvelteKit, TypeScript, Zod.
 - Agent operating environment on Hermes Agent (Nous Research): agent profiles on kanban boards, pixel-office dashboard, Telegram approvals. https://github.com/taras-polishchuk/operator-office-plugin and https://github.com/taras-polishchuk/agent-contracts
 - AI video pipeline for YouTube Shorts: sourcing, scripting, fact-checking with a second model family, TTS, rendering. https://github.com/taras-polishchuk/video-factory
