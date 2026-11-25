@@ -13,7 +13,7 @@ Book a call: https://calendar.app.google/VN55jao7H4GcvMqq5
 - AI automation stack for a company (CRM, leads, onboarding, internal tools, agent runtime), self-hosted or cloud.
 - AI agents and chatbots: website, Instagram, Telegram, voice; research, qualification and drafting agents; QA and operations agents; prompt-injection defense and hardening tests.
 - Web and Shopify engineering: sites with CMS and admin panels, landing pages, Shopify Plus themes, Checkout UI Extensions, Functions, integrations.
-- Process: 20-minute intro call, written scope with fixed quote, small production pilot, then expand.
+- Process: 30-minute intro call, written scope with fixed quote, small production pilot, then expand.
 
 ## Selected work
 - QA agent kit for a Shopify client's 4-person QA team: reads Jira, checks Figma, writes test docs in Testomat.io and Confluence, builds release test plans from code diffs, comments in Slack. Handles about 70% of task testing.
